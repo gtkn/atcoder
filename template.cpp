@@ -10,6 +10,8 @@ using namespace std;
 #define bit(n,k) ((n>>k)&1) //nのk bit目
 #define vec(T) vector<T>
 #define vvec(T) vector<vector<T>>
+#define all(x) x.begin(),x.end()
+#define watch(x) cout << (#x) << " is " << (x) << endl
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
