@@ -1,5 +1,0 @@
-# 無視するファイル
-githubtoken.txt
-.gitignore
-in.dat
-out.dat
