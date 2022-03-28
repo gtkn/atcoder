@@ -29,53 +29,50 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    
-
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N,M,K;
+        cin >> N >> M >> K;
 
-        scc_graph graph(N);
-        vec(Pll) gr;
-        rep(_,M){
-            ll u,v;
-            cin >> u >> v;
-            u--; v--;
-            graph.add_edge(u,v);
-            gr.emplace_back(v,u);
+        vvec(ll) vv(N);
+        dsu d(N);
+        rep(i,M+K){
+            ll a,b;
+            cin >> a >> b;
+            a--;b--;
+            if(i<M) d.merge(a,b);
+            vv[a].push_back(b);
+            vv[b].push_back(a);
         }
 
-        vector<vector<int>> vv=graph.scc();
-        ll nn = vv.size();
+        vector<set<ll>> vs(N);
+        ll cnt = 0;
         vec(ll) v(N);
-        rep(i, nn){
-            for(ll j:vv[i]) v[j]=i;
+        for(auto g:d.groups()){
+            for(ll x:g){
+                vs[cnt].insert(x);
+                v[x]=cnt;
+            }
+            cnt++;
         }
 
-        vector<set<ll>> g(nn);
-        for(Pll ei:gr) g[v[ei.first]].insert(v[ei.second]);
-
-        vec(ll) used(nn);
-        queue<ll> q;
-        auto qpush = [&](ll to){
-            if(used[to]) return;
-            used[to] = true;
-            q.push(to);
-        };
-
-        rep(i,nn) if(vv[i].size()>1) qpush(i);
-
-        while(!q.empty()){
-            ll now = q.front();
-            q.pop();
-            for(ll to:g[now]) qpush(to);
+        rep(i,N){
+            ll x = v[i];
+            ll res = vs[x].size()-1;
+            for(ll j:vv[i]) if(vs[x].find(j)!=vs[x].end()) res--;
+            cout << res << " ";
         }
+        cout << endl;
 
-        ll ans = 0;
-        rep(i,nn) if(used[i]) ans += vv[i].size();
 
-        cout << ans << endl;
-        //rep(i,N) cout << i << " ; " << v[i] << ", " << used[v[i]] << endl;
 
 
     }

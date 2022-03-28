@@ -29,54 +29,56 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    
-
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N;
+        cin >> N;
 
-        scc_graph graph(N);
-        vec(Pll) gr;
-        rep(_,M){
-            ll u,v;
-            cin >> u >> v;
-            u--; v--;
-            graph.add_edge(u,v);
-            gr.emplace_back(v,u);
-        }
-
-        vector<vector<int>> vv=graph.scc();
-        ll nn = vv.size();
+        vector<fenwick_tree<int>> vf(26,fenwick_tree<int>(N));
+        
+        string S;
+        cin >> S;
         vec(ll) v(N);
-        rep(i, nn){
-            for(ll j:vv[i]) v[j]=i;
+        rep(i,N){
+            v[i]=S[i]-'a';
+            vf[v[i]].add(i,1);
         }
 
-        vector<set<ll>> g(nn);
-        for(Pll ei:gr) g[v[ei.first]].insert(v[ei.second]);
+        ll Q;
+        cin >> Q;
 
-        vec(ll) used(nn);
-        queue<ll> q;
-        auto qpush = [&](ll to){
-            if(used[to]) return;
-            used[to] = true;
-            q.push(to);
-        };
+        while(Q--){
+            ll t,a;
+            cin >> t >> a;
+            a--;
+            if(t==1){
+                char b;
+                cin >> b;
 
-        rep(i,nn) if(vv[i].size()>1) qpush(i);
+                ll now = v[a];
+                ll to = b-'a';
 
-        while(!q.empty()){
-            ll now = q.front();
-            q.pop();
-            for(ll to:g[now]) qpush(to);
+                vf[now].add(a,-1);
+                vf[to].add(a,1);
+                v[a]=to;
+            }else{
+                ll b; cin >> b;
+                ll res = 0;
+                rep(i,26) if( vf[i].sum(a,b)>0 ) res++;
+                cout << res << endl;
+            }
         }
 
-        ll ans = 0;
-        rep(i,nn) if(used[i]) ans += vv[i].size();
 
-        cout << ans << endl;
-        //rep(i,N) cout << i << " ; " << v[i] << ", " << used[v[i]] << endl;
-
+        
 
     }
 };
