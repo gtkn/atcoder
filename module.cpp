@@ -68,19 +68,21 @@ ll id(){return 0;}
 
 
 
-//---modintで組み合わせ扱う用の構造体---
+    //---modintで組み合わせ扱う用の構造体---
     struct mconb{
         ll nmax;
-        vec(mint) fa;
+        vec(mint) fa,af;
         mconb(ll sz=1e9+10){
             nmax = sz;
             fa.resize(nmax+1);
             fa[0]=1;
             rep1(i,nmax) fa[i]=fa[i-1]*i;
+            af.resize(nmax+1);
+            rep(i,nmax+1) af[i]=fa[i].inv();
         }
         mint c(ll n, ll k){
             if(n<k || k<0 || n>nmax) return 0;
-            return fa[n]/(fa[k]*fa[n-k]);
+            return fa[n]*af[k]*af[n-k];
         }
     };
 
