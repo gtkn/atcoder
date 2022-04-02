@@ -33,12 +33,6 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
  
  
     vec(int) dh = {1,0,-1,0};
@@ -48,10 +42,24 @@ struct Solver{
         ll N;
         cin >> N;
 
-        for(ll i=2; i*i<N; i++){
-            if(N%i==0) cout << i << endl;
+        auto fmax=[](ll x){return x*x*x;};
+        auto fmin=[](ll x){return x*x*x/2;};
+        auto f=[](ll a,ll b){return a*a*a + a*a*b + a*b*b + b*b*b;};
+
+        ll A = 0;
+        while(fmin(A)<=N) A++;
+        ll b = A/2;
+
+        ll ans = llINF;
+        while(fmax(A)>=N){
+            while(b>=0 && f(A-b,b)<N) b--;
+            chmin(ans, f(A-b,b));
+            A--;
         }
-        
+
+        cout << ans << endl;
+
+
 
     }
 };

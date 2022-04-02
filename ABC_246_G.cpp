@@ -29,16 +29,10 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
-
  
  
     vec(int) dh = {1,0,-1,0};
@@ -47,10 +41,44 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep1(i,N-1) cin >> A[i];
 
-        for(ll i=2; i*i<N; i++){
-            if(N%i==0) cout << i << endl;
+        vvec(ll) g(N);
+        rep(_,N-1){
+            ll u,v;
+            cin >> u >> v;
+            u--;v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
         }
+
+        vec(ll) dp(N,-1);
+        queue<ll> q;
+        q.push(0);
+        dp[0]=0;
+        while(!q.empty()){
+            ll now=q.front();
+            q.pop();
+            for(ll to:g[now]){
+                if(dp[to]>=0) continue;
+                dp[to]=dp[now]+1;
+                q.push(to);
+            }
+        }
+        
+        vec(abc) v;
+        rep(i,N) v.emplace_back(A[i],dp[i],i);
+        sort(all(A),[](abc const& x, abc const& y){
+            if(x.a!=y.a) return x.a>y.a;
+            if(x.b!=y.b) return x.b<y.b;
+            return x.c < y.c;
+        });
+
+        vec(ll) B(N);
+        ll cnt=0;
+
+
         
 
     }

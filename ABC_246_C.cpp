@@ -33,24 +33,27 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
  
  
     vec(int) dh = {1,0,-1,0};
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-
-        for(ll i=2; i*i<N; i++){
-            if(N%i==0) cout << i << endl;
+        ll N,K,X;
+        cin >> N >> K >> X;
+        vec(ll) A;
+        rep(_,N){
+            ll ai; cin >> ai;
+            ll ki = min(K,ai/X);
+            K-=ki;
+            A.push_back(ai-ki*X);
         }
+        sort(all(A));
+        while(!A.empty() && K--) A.pop_back();
+        ll ans=0;
+        for(ll ai:A) ans+=ai;
+        cout << ans << endl;
+
         
 
     }
