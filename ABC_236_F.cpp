@@ -41,44 +41,30 @@ struct Solver{
 
  
  
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
-        vec(ll) A(N),B(N),C(M),D(M);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
-        rep(i,M) cin >> C[i];
-        rep(i,M) cin >> D[i];
+        ll N;
+        cin >> N;
 
-        vec(abc) v;
-        rep(i,N) v.emplace_back(A[i],B[i],0);
-        rep(i,M) v.emplace_back(C[i],D[i],1);
-
-        sort(all(v),[](abc const& x, abc const& y){
-            if(x.a!=y.a) return x.a<y.a;
-            if(x.b!=y.b) return x.b<y.b;
-            return x.c<y.c;
-        });
-
-
-        multiset<ll> s;
-        while(!v.empty()){
-            abc now=v.back();
-            v.pop_back();
-
-            if(now.c==0){
-                auto itr = s.lower_bound(now.b);
-                if(itr==s.end()){
-                    cout << "No" << endl;
-                    return;
-                }
-                s.erase(itr);
-            }else{
-                s.insert(now.b);
-            }
+        ll nn = (1<<N);
+        vec(Pll) v;
+        rep1(i,nn-1){
+            ll c; cin >> c;
+            v.emplace_back(c,i);
         }
-        cout << "Yes" << endl;
+        sort(all(v));
+
+        vec(bool) used(nn);
+        ll ans=0;
+        for(Pll vi:v){
+            if(used[vi.second]) continue;
+            used[vi.second]=true;
+            rep1(i,nn-1) if(used[i]) used[ i^vi.second ] = true;
+            ans += vi.first;
+        }
+        cout << ans << endl;
 
 
     }
