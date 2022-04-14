@@ -54,45 +54,30 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M,K,L;
-        cin >> N >> M >> K >> L;
+        ll Q;
+        cin >> Q;
 
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        vec(ll) B(L);
-        rep(i,L) cin >> B[i];
-        rep(i,L) B[i]--;
+        queue<Pll> q;
 
-        vvec(Pll) g(N);
-        rep(_,M){
-            ll u,v,c;
-            cin >> u >> v >> c;
-            u--;v--;
-            g[u].emplace_back(v,c);
-            g[v].emplace_back(u,c);
-        }
-
-        vec(ll) dp1(N,-1),dp2(N,-1);
-        priority_queue<tuple<ll,ll,ll>> q;
-        for(ll bi:B) q.emplace(0,bi,A[bi]);
-
-        vec(ll) from(N),cnt(N);
-        while(!q.empty()){
-            auto [c,x,y] = q.top();
-            q.pop();
-            if(cnt[x]==0){
-                dp1[x]=-c;
-                from[x]=y;
-            }else if(cnt[x]==1 && from[x]!=y){
-                dp2[x]=-c;
-            }else continue;
-
-            cnt[x]++;
-            for(Pll to:g[x]) q.emplace(c-to.second, to.first, y);
-        }
-
-        rep(i,N) cout << ( (from[i]!=A[i])? dp1[i] :dp2[i] ) <<" ";
-        cout << endl;
+        while(Q--){
+            ll t; cin >> t;
+            if(t==1){
+                ll x,c;
+                cin >> x >> c;
+                q.emplace(x,c);
+            }else{
+                ll c; cin >> c;
+                ll res = 0;
+                while(c>0){
+                    Pll b = q.front();
+                    res += b.first*min(c,b.second);
+                    c-=b.second;
+                    if(c<0) q.front().second = -c;
+                    else q.pop();
+                }
+                cout << res << endl;
+            }
+        }        
 
     }
 };

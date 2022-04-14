@@ -38,61 +38,44 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M,K,L;
-        cin >> N >> M >> K >> L;
+        ll N,X,Y;
+        cin >> N >> X >> Y;
 
         vec(ll) A(N);
         rep(i,N) cin >> A[i];
-        vec(ll) B(L);
-        rep(i,L) cin >> B[i];
-        rep(i,L) B[i]--;
-
-        vvec(Pll) g(N);
-        rep(_,M){
-            ll u,v,c;
-            cin >> u >> v >> c;
-            u--;v--;
-            g[u].emplace_back(v,c);
-            g[v].emplace_back(u,c);
+        vec(ll) B={0};
+        rep(i,N) B.push_back( A[i]<=X && A[i]>=Y );
+        B.push_back(0);
+        
+        ll l;
+        vec(Pll) rng;
+        rep1(i,N+1){
+            if(B[i]-B[i-1]==1) l=i-1;
+            if(B[i]-B[i-1]==-1) rng.emplace_back(l,i-1);
         }
 
-        vec(ll) dp1(N,-1),dp2(N,-1);
-        priority_queue<tuple<ll,ll,ll>> q;
-        for(ll bi:B) q.emplace(0,bi,A[bi]);
+        ll ans = 0;
+        for(Pll ri:rng){
+            ll L,R;
+            L = ri.first; R=ri.second;
+            
+            queue<ll> vx,vy;
+            for(ll i=L ; i<R ; i++){
+                if(A[i]==X) vx.push(i);
+                if(A[i]==Y) vy.push(i);
+            }
 
-        vec(ll) from(N),cnt(N);
-        while(!q.empty()){
-            auto [c,x,y] = q.top();
-            q.pop();
-            if(cnt[x]==0){
-                dp1[x]=-c;
-                from[x]=y;
-            }else if(cnt[x]==1 && from[x]!=y){
-                dp2[x]=-c;
-            }else continue;
-
-            cnt[x]++;
-            for(Pll to:g[x]) q.emplace(c-to.second, to.first, y);
+            for(ll i=L ; i<R && !vx.empty() && !vy.empty() ; i++){
+                ll xi,yi;
+                xi = vx.front(); yi = vy.front();
+                ans += R-max(xi,yi);
+                if(i==xi) vx.pop();
+                if(i==yi) vy.pop();
+            }
         }
-
-        rep(i,N) cout << ( (from[i]!=A[i])? dp1[i] :dp2[i] ) <<" ";
-        cout << endl;
+        cout << ans << endl;
 
     }
 };

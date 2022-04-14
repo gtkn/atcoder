@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (int i = 0; i < (n); ++i)
 #define rep1(i,n) for (int i = 1; i <= (n); ++i)
 #define repr(i,n) for (int i = (n)-1; i >= 0; --i)
@@ -54,45 +54,33 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M,K,L;
-        cin >> N >> M >> K >> L;
+        ll N;
+        cin >> N;
 
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        vec(ll) B(L);
-        rep(i,L) cin >> B[i];
-        rep(i,L) B[i]--;
+        ll big = 1e15;
+        ll ab = 150;
 
-        vvec(Pll) g(N);
-        rep(_,M){
-            ll u,v,c;
-            cin >> u >> v >> c;
-            u--;v--;
-            g[u].emplace_back(v,c);
-            g[v].emplace_back(u,c);
+        vec(ll) A(N),B(N),C(N);
+        rep(i,N) cin >> A[i] >> B[i] >> C[i];
+
+        vec(ll) ans;
+        rep1(x,N){
+            mcf_graph<ll,ll> g(ab*2+10);
+            rep(i,N){
+                g.add_edge(A[i],ab+B[i],1, big-C[i]);
+            }
+            rep1(i,ab){
+                g.add_edge(0,i,1,0);
+                g.add_edge(i+ab,ab*2+1,1,0);
+            }
+
+            Pll res = g.flow(0,ab*2+1,x);
+            if(res.first != x) break;
+            ans.push_back(big*x-res.second);
         }
 
-        vec(ll) dp1(N,-1),dp2(N,-1);
-        priority_queue<tuple<ll,ll,ll>> q;
-        for(ll bi:B) q.emplace(0,bi,A[bi]);
-
-        vec(ll) from(N),cnt(N);
-        while(!q.empty()){
-            auto [c,x,y] = q.top();
-            q.pop();
-            if(cnt[x]==0){
-                dp1[x]=-c;
-                from[x]=y;
-            }else if(cnt[x]==1 && from[x]!=y){
-                dp2[x]=-c;
-            }else continue;
-
-            cnt[x]++;
-            for(Pll to:g[x]) q.emplace(c-to.second, to.first, y);
-        }
-
-        rep(i,N) cout << ( (from[i]!=A[i])? dp1[i] :dp2[i] ) <<" ";
-        cout << endl;
+        cout << ans.size() << endl;
+        for(ll ai:ans) cout << ai << endl;
 
     }
 };
