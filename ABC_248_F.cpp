@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -28,7 +28,7 @@ using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
-
+using mint = modint;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
@@ -37,43 +37,30 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
-
 struct Solver{
+ 
     void solve(){
-        ll X;
-        cin >> X;
+        ll N,P;
+        cin >> N >> P;
+        mint::set_mod(P);
 
-        ll x2 = sqrt(X);//+1e-9;
-        ll x4 = sqrt(x2);//+1e-9;
+        vvvec(mint) dp(N+10,vvec(mint)(N+10,vec(mint)(2)));
+        dp[0][0][1] = 1;
+        dp[0][1][0] = 1;
 
-        vec(ll) v(x4+1);
-        rep1(i,x4) v[i] = x2-i*i+1;
-
-
-        //rep(_,20){
-        while(v[2]>0){ 
-            vec(ll) tot(x4+1);
-            rep1(i,x4) tot[i] = tot[i-1]+v[i];
-            rep1(i,x4){
-                if(i*i-1<=x4) v[i] = tot[x4]-tot[ i*i-1 ];
-                else v[i]=0;
-            }
-        }
-        cout << v[1] << endl;
-
-        /*
-        vec(ll) a(x4+1);
-        ll tot=0;
-        for(ll i=x4; i>=1; i--){
-            tot += a[i];
-            v[i] += tot;            
-            ll xx = sqrt(i)+1e-9;
-            a[xx]+= v[i];
+        rep(i,N-1)rep(j,N){
+            dp[i+1][j+1][0] += dp[i][j][0];
+            dp[i+1][j][1] += dp[i][j][0];
+            
+            dp[i+1][j+2][0] += dp[i][j][1]*2;
+            dp[i+1][j+1][1] += dp[i][j][1]*3;
+            dp[i+1][j][1] += dp[i][j][1];
         }
 
-        cout << v[1] << endl;
-        */
+        rep1(i,N-1) cout << dp[N-1][i][1].val() << " ";
+        cout << endl;
+
+
 
     }
 };
@@ -81,7 +68,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

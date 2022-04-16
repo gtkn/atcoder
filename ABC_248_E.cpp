@@ -54,12 +54,55 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        for(ll i=2; i*i<N; i++){
-            if(N%i==0) cout << i << endl;
+        vec(Pll) v(N);
+        rep(i,N) cin >> v[i].first >> v[i].second;
+
+        if(K==1){
+            cout << "Infinity" << endl;
+            return;
         }
+
+
+        ll ans = 0;
+        set<tri> used;
+        for(ll i=0; i<N; i++)for(ll j=i+1; j<N; j++){
+            ll a,b,c;
+            a = v[j].second - v[i].second;
+            b = v[i].first - v[j].first;
+            c = v[j].first*v[i].second - v[i].first*v[j].second;
+            if(a<0 || (a==0 && b<0)){
+                a=-a;
+                b=-b;
+                c=-c;
+            }
+
+            ll x;
+            if(a==0) x=abs(b);
+            else if(b==0) x=abs(a);
+            else x = __gcd(abs(a),abs(b));
+
+            if(c!=0) x = __gcd(x,abs(c));
+
+            //cout << i << "," << j << ";" << a << " ," << b << " , " << c << " : " << x << endl;
+
+            a/=x;
+            b/=x;
+            c/=x;
+
+            tri now={a,b,c};
+            if(used.find(now)!=used.end()) continue;
+            used.insert(now);
+
+            ll cnt=0;
+            for(Pll vi:v) if(a*vi.first+b*vi.second+c==0) cnt++;
+            if(cnt>=K) ans++;
+
+        }
+
+        cout << ans << endl;
         
 
     }
