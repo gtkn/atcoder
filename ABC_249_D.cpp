@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -27,7 +27,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-using mint = modint998244353;
+//using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -37,59 +37,43 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-using mm = map<ll,pair<mint,mint>>;
-
 struct Solver{
-    ll N;
-    vec(ll) A;
-    vvec(ll) g;
-    vec(bool) used;
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    mint ans = 0;
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
-    mm dfs(ll now){
-        used[now]=true;
-
-        mm res;
-        res[A[now]] = {1,1};
-
-        for(ll to:g[now]){
-            if(used[to]) continue;
-            mm tmp = dfs(to);
-
-            for(auto mi:res)for(auto mj:tmp){
-                ll x = __gcd(mi.first, mj.first);
-                ans += x*(mi.second.first*mj.second.second + mi.second.second*mj.second.first);
-            }
-
-            for(auto mi:tmp){
-                ll x = __gcd(mi.first,A[now]);
-                res[x].first += mi.second.first;
-                res[x].second += mi.second.first + mi.second.second;
-            }
-        }
-        return res;
-    }
-
-
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
+        ll N;
         cin >> N;
-        A.resize(N);
-        g.resize(N);
-        used.resize(N);
 
-        rep(i,N) cin >> A[i];
-        rep(_,N-1){
-            ll u,v;
-            cin >> u >> v;
-            u--; v--;
-            g[u].push_back(v);
-            g[v].push_back(u);
+        vec(ll) v(200200);
+        rep(i,N){
+            ll a; cin >> a;
+            v[a]++;
         }
 
-        dfs(0);
+        ll ans = 0;
+        rep1(i,200000){
+            for(ll a=1; a*a<=i; a++){
+                if(i%a>0) continue;
+                ll b=i/a;
+                if(a!=b) ans += v[i]*v[a]*v[b]*2;
+                else ans += v[i]*v[a]*v[b];
+            }
+        }
+        cout << ans << endl;
 
-        cout << ans.val() << endl;
         
 
     }

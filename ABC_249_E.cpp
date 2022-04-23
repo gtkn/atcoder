@@ -27,7 +27,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-using mint = modint998244353;
+//using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -37,60 +37,37 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-using mm = map<ll,pair<mint,mint>>;
+using mint = modint;
 
 struct Solver{
-    ll N;
-    vec(ll) A;
-    vvec(ll) g;
-    vec(bool) used;
-
-    mint ans = 0;
-
-    mm dfs(ll now){
-        used[now]=true;
-
-        mm res;
-        res[A[now]] = {1,1};
-
-        for(ll to:g[now]){
-            if(used[to]) continue;
-            mm tmp = dfs(to);
-
-            for(auto mi:res)for(auto mj:tmp){
-                ll x = __gcd(mi.first, mj.first);
-                ans += x*(mi.second.first*mj.second.second + mi.second.second*mj.second.first);
-            }
-
-            for(auto mi:tmp){
-                ll x = __gcd(mi.first,A[now]);
-                res[x].first += mi.second.first;
-                res[x].second += mi.second.first + mi.second.second;
-            }
-        }
-        return res;
-    }
-
-
+ 
     void solve(){
-        cin >> N;
-        A.resize(N);
-        g.resize(N);
-        used.resize(N);
+        ll N,P;
+        cin >> N >> P;
+        mint::set_mod(P);
 
-        rep(i,N) cin >> A[i];
-        rep(_,N-1){
-            ll u,v;
-            cin >> u >> v;
-            u--; v--;
-            g[u].push_back(v);
-            g[v].push_back(u);
+        vvec(mint) dp(N+10,vec(mint)(N+10));
+
+        dp[0][0]=1;
+        rep(i,N)rep(j,N){
+            if(i>0) dp[i+1][j] += dp[i][j];
+
+            ll ten=1;
+            ll x=25;
+            if(i==0) x=26;
+            for(ll k=2; i+ten<=N ;k++){
+                //cout << i << " , " << j << "< " << ten << " , " << k << endl;
+                dp[i+ten][j+k] += dp[i][j]*x;
+                if(i+ten*10<=N) dp[i+ten*10][j+k] -= dp[i][j]*x;
+                ten*=10;
+            }
         }
 
-        dfs(0);
-
+        mint ans = 0;
+        rep(i,N) ans+=dp[N][i];
         cout << ans.val() << endl;
-        
+
+
 
     }
 };

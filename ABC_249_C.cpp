@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -27,7 +27,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-using mint = modint998244353;
+//using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -37,60 +37,30 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-using mm = map<ll,pair<mint,mint>>;
-
 struct Solver{
-    ll N;
-    vec(ll) A;
-    vvec(ll) g;
-    vec(bool) used;
-
-    mint ans = 0;
-
-    mm dfs(ll now){
-        used[now]=true;
-
-        mm res;
-        res[A[now]] = {1,1};
-
-        for(ll to:g[now]){
-            if(used[to]) continue;
-            mm tmp = dfs(to);
-
-            for(auto mi:res)for(auto mj:tmp){
-                ll x = __gcd(mi.first, mj.first);
-                ans += x*(mi.second.first*mj.second.second + mi.second.second*mj.second.first);
-            }
-
-            for(auto mi:tmp){
-                ll x = __gcd(mi.first,A[now]);
-                res[x].first += mi.second.first;
-                res[x].second += mi.second.first + mi.second.second;
-            }
-        }
-        return res;
-    }
-
-
     void solve(){
-        cin >> N;
-        A.resize(N);
-        g.resize(N);
-        used.resize(N);
+        ll N,K;
+        cin >> N >> K;
 
-        rep(i,N) cin >> A[i];
-        rep(_,N-1){
-            ll u,v;
-            cin >> u >> v;
-            u--; v--;
-            g[u].push_back(v);
-            g[v].push_back(u);
+        vvec(bool) vv(N,vec(bool)(30));
+        rep(i,N){
+            string s;
+            cin >> s;
+            for(char ci:s) vv[i][ci-'a']=true;
         }
 
-        dfs(0);
-
-        cout << ans.val() << endl;
-        
+        ll ans = 0;
+        rep(b,(1<<N)){
+            vec(ll) v(30);
+            rep(i,N){
+                if(bit(b,i)) continue;
+                rep(j,30) v[j]+=vv[i][j];
+            }
+            ll cnt = 0;
+            for(ll vi:v) if(vi==K) cnt++;
+            chmax(ans,cnt);
+        }
+        cout << ans << endl;
 
     }
 };
