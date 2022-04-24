@@ -37,43 +37,39 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
-
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
+
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll X;
-        cin >> X;
+        ll N;
+        cin >> N;
+        vec(ll) T(N);
+        rep(i,N) cin >> T[i];
 
-        ll x2 = floor(sqrt(X)+1e-9);
-        ll x4 = floor(sqrt(x2)+1e-9);
-
-        vec(ll) v(x4+10);
-        rep1(i,x4) v[i] = max(0LL,x2-i*i+1);
-
-
-        //rep(_,20){
-        while(v[2]>0){
-            vec(ll) tot(x4+10);
-            rep1(i,x4+1) tot[i] = tot[i-1]+v[i];
-            rep1(i,x4+1){
-                if(i*i-1<=x4) v[i] = tot[x4+1]-tot[ i*i-1 ];
-                else v[i]=0;
-            }
+        ll ans = 0LL;
+        for(ll ti:T){
+            ll mask = (1LL<<ti)-1;
+            //cout << "---" << ti << "---" << endl << ans << endl <<  mask << endl;
+            ans &= ~mask;
+            ll x = ti;
+            if(bit(ans,ti)) x++;
+            ans += (1LL<<x);
         }
-        cout << v[1] << endl;
-
-        /*
-        vec(ll) a(x4+1);
-        ll tot=0;
-        for(ll i=x4; i>=1; i--){
-            tot += a[i];
-            v[i] += tot;            
-            ll xx = sqrt(i)+1e-9;
-            a[xx]+= v[i];
-        }
-
-        cout << v[1] << endl;
-        */
+        cout << ans << endl;
+        
 
     }
 };
@@ -81,7 +77,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

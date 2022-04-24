@@ -37,43 +37,51 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
-
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
+
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll X;
-        cin >> X;
+        ll N,M;
+        cin >> N >> M;
 
-        ll x2 = floor(sqrt(X)+1e-9);
-        ll x4 = floor(sqrt(x2)+1e-9);
+        vec(Pll) ans;
+        for(ll a=4; a<=4*(N+M); a++){
+            ll m = (3*a)%8;
+            if(m%3==0){
+                ll x = (3*m-a)/8;
+                ll y = (3*a-m)/8;
+                if(x>0 && y<=M && x<=N && y) ans.emplace_back(x, y);
+            }
+            rep1(i,3){
+                if( (8*i+m)%3>0) continue;
+                for(ll b = m+8*i;; b+=8*i){
+                    ll x = (3*b-a)/8;
+                    ll y = (3*a-b)/8;
+                    if(x<1 || y>M) continue;
+                    if(x>N || y<1) break;
+                    ans.emplace_back(x, y);
+                    //cout << a << " , " << b << endl;
 
-        vec(ll) v(x4+10);
-        rep1(i,x4) v[i] = max(0LL,x2-i*i+1);
+                }
 
 
-        //rep(_,20){
-        while(v[2]>0){
-            vec(ll) tot(x4+10);
-            rep1(i,x4+1) tot[i] = tot[i-1]+v[i];
-            rep1(i,x4+1){
-                if(i*i-1<=x4) v[i] = tot[x4+1]-tot[ i*i-1 ];
-                else v[i]=0;
             }
         }
-        cout << v[1] << endl;
-
-        /*
-        vec(ll) a(x4+1);
-        ll tot=0;
-        for(ll i=x4; i>=1; i--){
-            tot += a[i];
-            v[i] += tot;            
-            ll xx = sqrt(i)+1e-9;
-            a[xx]+= v[i];
-        }
-
-        cout << v[1] << endl;
-        */
+        cout << ans.size() << endl;
+        for(Pll ai:ans) cout << ai.first << " " << ai .second << endl;
 
     }
 };
@@ -81,7 +89,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
