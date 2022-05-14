@@ -22,7 +22,6 @@ using namespace std;
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -59,9 +58,38 @@ struct Solver{
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(ll) a(N),b(N);
+        rep(i,N) cin >> a[i];
+        rep(i,N) cin >> b[i];
 
+        vec(Pll) v(N, {0,0});
+        set<ll> sa,sb,saa,sbb;
+        ll a0=0,b0=0;
+        while(a0<N && b0<N){
+            sa.insert(a[a0]);
+            sb.insert(b[b0]);
+
+            if(sfind(sbb,a[a0])) sbb.erase(a[a0]);
+            else saa.insert(a[a0]);
+            if(sfind(saa,b[b0])) saa.erase(b[b0]);
+            else sbb.insert(b[b0]);
+
+            ll a1=a0,b1=b0;
+            while(sfind(sa,a[a1])) a1++;
+            while(sfind(sb,b[b1])) b1++;
+            
+            if(saa.empty() && sbb.empty()) for(ll i = a0; i<a1; i++) v[i] = {b0,b1};
+            a0=a1;
+            b0=b1;
+        }
+
+        ll Q; cin >> Q;
+        while(Q--){
+            ll x,y;
+            cin >> x >> y;
+            x--; y--;
+            cout << ( (v[x].first<=y && y<v[x].second)? "Yes" : "No" ) << endl;
+        }
     }
 };
 

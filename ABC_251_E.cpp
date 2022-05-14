@@ -58,9 +58,39 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll ans = llINF;
+
+        vvec(ll) dp(N+10,vec(ll)(2,llINF));
+        dp[0][0]=0;
+        rep(i,N){
+            chmin(dp[i+1][1], dp[i][0]+A[i]);
+            chmin(dp[i+1][0], dp[i][1]);
+            chmin(dp[i+1][1], dp[i][1]+A[i]);
+        }
+
+        
+        chmin(ans,dp[N-1][1]);
+        
+        rep(i,N+10)rep(j,2) dp[i][j]=llINF;
+        dp[0][1]=A[N-1];
+        rep(i,N){
+            chmin(dp[i+1][1], dp[i][0]+A[i]);
+            chmin(dp[i+1][0], dp[i][1]);
+            chmin(dp[i+1][1], dp[i][1]+A[i]);
+        }
+
+        //cout << "---" << endl;
+        //rep(i,N) cout << dp[i][0] << " "; cout << endl;
+        //rep(i,N) cout << dp[i][1] << " "; cout << endl;
+
+
+        chmin(ans,dp[N-1][0]);
+        chmin(ans,dp[N-1][1]);
+
+        cout << ans << endl;
 
     }
 };

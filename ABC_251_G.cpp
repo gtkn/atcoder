@@ -58,9 +58,57 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(Pll) v;
+        rep(i,N){
+            ll x,y;
+            cin >> x >> y;
+            v.emplace_back(x,y);
+        }
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll M; cin >> M;
+        vec(Pll) u;
+        rep(i,M){
+            ll x,y;
+            cin >> x >> y;
+            u.emplace_back(x,y);
+        }
+
+        ll Q; cin >> Q;
+        vec(Pll) q;
+        rep(i,Q){
+            ll x,y;
+            cin >> x >> y;
+            q.emplace_back(x,y);
+        }
+
+
+        vec(ll) c(N, -llINF);
+        v.push_back(v[0]);
+        rep(i,N){
+            ll x1,x2,y1,y2;
+            x1 = v[i].first;   y1 = v[i].second;
+            x2 = v[i+1].first; y2 = v[i+1].second;
+            for(Pll uj:u){
+                ll dx,dy;
+                dx = uj.first; dy = uj.second;
+                chmax(c[i],  -(x1+dx)*(y2+dy) +(x2+dx)*(y1+dy) );                
+            }
+        }
+
+        for(Pll qi:q){
+            ll a,b;
+            a = qi.first; b = qi.second;
+
+            string ans = "Yes";
+            rep(i,N){
+                ll x1,x2,y1,y2;
+                x1 = v[i].first; y1 = v[i].second;
+                x2 = v[i+1].first; y2 = v[i+1].second;
+                if( b*(x2-x1) -a*(y2-y1) < c[i] ) ans = "No";
+            }
+            cout << ans << endl;
+
+        }
 
     }
 };

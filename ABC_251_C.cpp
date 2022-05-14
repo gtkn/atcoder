@@ -59,8 +59,19 @@ struct Solver{
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        set<string> s;
+        ll x = 0;
+        ll ans = 0;
+        rep1(i,N){
+            string si;
+            ll ti;
+            cin >> si >> ti;
+            if(sfind(s,si)) continue;
+            s.insert(si);
+            if(chmax(x,ti)) ans = i;
+        }
+        cout << ans << endl;
+
 
     }
 };
