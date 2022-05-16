@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -50,30 +50,19 @@ struct Solver{
         cin >> N;
 
         vec(ll) v(N);
-        rep(i,N) cin >> v[i];
-        segtree<ll,op,e> seg(v);
+        //rep(i,N) cin >> v[i];
 
-        vec(Pll) q;
-        rep(i,N) q.emplace_back(v[i],i);
-        sort(all(q),[](Pll const& a, Pll const& b){
-            if(a.first!=b.first) return a.first > b.first;
-            return a.second<b.second;
-        });
-
-        map<ll,vector<ll>> mv;
-        repr(i,N) mv[v[i]].push_back(i);
-
-
+        priority_queue<ll,vector<ll>,greater<ll>> q;
+        q.push(llINF);
         ll ans = 0;
-        for(Pll qi:q){
-            ll x = seg.prod(0,qi.second);
-            if(x<qi.first){
-                cout << qi.first << "< " << x << endl;
-                ans += qi.first-x;
-                seg.set(qi.second, llINF);
-                seg.set(mv[x].back() ,llINF);
-                mv[x].pop_back();
+        rep(_,N){
+            ll pi; cin >> pi;
+            if(q.top() < pi){
+                ans += pi-q.top();
+                q.pop();
+                q.push(pi);
             }
+            q.push(pi);
         }
         cout << ans << endl;
 

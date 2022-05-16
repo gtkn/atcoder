@@ -20,6 +20,16 @@ using mint = modint998244353;
 //==================================================================================
 
 
+    // floor(sqrt(N))
+    // https://atcoder.jp/contests/abc243/editorial/3510
+    ll llsqrt(ll N){
+        ll sqrtN=sqrt(N)-1;
+        while(sqrtN+1<=N/(sqrtN+1))sqrtN++;
+        return sqrtN;
+    }
+
+
+
 // オーバーフローとmod考慮したpow
     ll mypow(ll x, ll y, ll modnum){
         assert(y>=0);
