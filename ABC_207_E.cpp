@@ -1,12 +1,12 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
-#define rep(i,n) for (ll i = 0; i < (n); ++i)
-#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
-#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
-#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#include <atcoder/all>
+using namespace atcoder;
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+#define rep1(i,n) for (int i = 1; i <= (n); ++i)
+#define repr(i,n) for (int i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
 
 #define vec(T) vector<T>
@@ -21,14 +21,12 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
-//using mint = modint1000000007;
+using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -40,27 +38,31 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(ll) B(N+1);
+        rep1(i,N) B[i] = B[i-1]+A[i-1];
+
+        vvec(mint) dp(N+1,vec(mint)(N+1));
+        vvec(mint) tot(N+1,vec(mint)(N+1));
+        
+        dp[0][0]=1;
+        tot[1][0]=1;
+
+        rep1(i,N)rep1r(j,N){
+            dp[i][j] += tot[j][B[i]%j];
+            if(j<N) tot[j+1][B[i]%(j+1)] += dp[i][j];
+        }
+
+        mint ans = 0;
+        rep1(i,N) ans += dp[N][i];
+        cout << ans.val() << endl;
+
 
     }
 };

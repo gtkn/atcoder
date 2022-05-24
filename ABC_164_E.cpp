@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -40,15 +38,12 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+
     struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
+        ll to,c,t;
+        edge(ll to=0, ll c=0, ll t=0):to(to),c(c),t(t){}
     };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
  
  
@@ -56,11 +51,55 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M,S;
+        cin >> N >> M >> S;
+        ll XX = 5050;
+        chmin(S,XX);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vvec(edge) g(N);
+        rep(_,M){
+            ll u,v,a,b;
+            cin >> u >> v >> a >> b;
+            u--; v--;
+            g[u].emplace_back(v,a,b);
+            g[v].emplace_back(u,a,b);
+        }
+
+        vec(ll) C(N),D(N);
+        rep(i,N) cin >> C[i] >> D[i];
+
+
+        vvec(ll) dp(N+10,vec(ll)(XX+10,llINF));
+        queue<edge> q;
+        auto qpush = [&](ll to,ll c, ll t){
+            if(c<0) return;
+            if(chmin(dp[to][c],t)){
+                //cout << to << "," <<c <<","<<t << endl;
+                q.emplace(to,c,t);
+            }
+        };
+        qpush(0,S,0);
+
+        while(!q.empty()){
+            edge q0 = q.front();
+            q.pop();
+            ll now,c0,t0;
+            now = q0.to; c0=q0.c; t0=q0.t;
+            if(dp[now][c0]<t0) continue;
+            for(edge gi:g[now]){
+                qpush(gi.to, c0-gi.c, t0+gi.t);
+            }
+            while(c0<XX){
+                qpush(now, c0, t0);
+                c0+=C[now];
+                t0+=D[now];
+            }
+        }
+
+        vec(ll) ans(N,llINF);
+        rep(i,N)rep(j,XX) chmin(ans[i],dp[i][j]);
+        rep1(i,N-1) cout << ans[i] << endl;
+
 
     }
 };

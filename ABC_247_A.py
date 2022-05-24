@@ -4,8 +4,9 @@ import sys
 def main():
     input = sys.stdin.readline
 
-    n = int(input())
-    v = list(map(int,input().split()))
+    s = input()
+    s = '0'+s[:3]
+    print(s)
 
 
 

@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -56,11 +54,29 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll a,b,c,d,e,f,x;
+        cin >> a >> b >> c >> d >> e >> f >> x;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll ta=0,ao=0;
+        ll y=x;
+        while(x>=0){
+            ta += min(a,x)*b;
+            x-=a;
+            x-=c;
+        }
+        while(y>=0){
+            ao += min(d,y)*e;
+            y-=d;
+            y-=f;
+        }
+
+        string ans;
+        if(ta>ao) ans="Takahashi";
+        else if(ta<ao) ans = "Aoki";
+        else ans = "Draw";
+
+        cout << ans << endl;
+        
 
     }
 };

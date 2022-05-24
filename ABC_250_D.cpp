@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -59,8 +57,30 @@ struct Solver{
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll X = 1e6+10;
+
+        vec(ll) isok(X,true);
+        isok[1]=false;
+
+        vec(ll) v;
+
+        rep1(i,X-1){
+            if(!isok[i]) continue;
+            v.push_back(i);
+            for(ll j=i; j<X; j+=i) isok[j]=false;
+        }
+
+        //cout << v.size() << endl;
+
+        ll ans = 0;
+        for(ll q:v){
+            ll pmax = min(N/(q*q*q)+1,q);
+            ans += distance(v.begin(), lower_bound(all(v),pmax));
+            //cout << q << " , " << pmax << ","<<ans << endl; 
+            //if(q>50) break;
+        }
+        cout << ans << endl;
+        
 
     }
 };

@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -40,27 +38,49 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+        ll nn = -(N/2);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vector<map<ll,ll>> dp(N);
+        rep(i,2){
+            dp[i][0]=0;
+            dp[i][-1]=A[i];
+        }
+        chmax(dp[1][-1], A[0]);
+
+        ll th=10;
+        for(ll i=2;i<N;i++){
+            ll cnt=0;
+            for(auto mi:dp[i-1]){
+                dp[i][mi.first] = mi.second;
+                
+                cnt++;
+                if(cnt>th) break;
+            }
+            cnt=0;
+            for(auto mi:dp[i-2]){
+                ll j = mi.first-1;
+                if(j<nn) continue;
+
+                if(dp[i].find(j)==dp[i].end()) dp[i][j] = mi.second+A[i];
+                else chmax(dp[i][j], mi.second+A[i]);
+                
+                cnt++;
+                if(cnt>th) break;
+            }
+        }
+
+
+
+
+        ll ans = -llINF;
+        rep(i,N) if(dp[i].find(nn)!=dp[i].end()) chmax(ans,dp[i][nn]);
+        cout << ans << endl;
 
     }
 };

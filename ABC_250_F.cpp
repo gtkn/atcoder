@@ -34,7 +34,7 @@ using tri = tuple<ll,ll,ll>;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
-const ll llINF = 1LL << 60;
+const ll llINF = 1LL << 62;
 const int iINF = 1e9;
 
 //------------------------------------------------
@@ -51,17 +51,57 @@ struct Solver{
     };
 
  
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
+    ll f(Pll a,Pll b, Pll c){
+        a.first  -= c.first;
+        a.second -= c.second;
+        b.first  -= c.first;
+        b.second -= c.second;
+        ll res = abs(a.first*b.second-a.second*b.first);
+        res*=4;
+        return res;
+    }
+
+
  
     void solve(){
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(Pll) v;
+        rep(_,N){
+            ll x,y;
+            cin >> x >> y;
+            v.emplace_back(x,y);
+        }
 
+        vec(Pll) v2 = v;
+        for(Pll vi:v) v2.push_back(vi);
+
+        ll a = 0;
+        ll x0,y0;
+        x0 = (v[0].first +v[N/2].first)/2;
+        y0 = (v[0].second+v[N/2].second)/2;
+        rep(i,N) a += f(v2[i],v2[i+1], {x0,y0} );
+        a/=4;
+
+        //cout << a << endl;
+
+        ll l=0,r=1;
+        ll b = 0;
+        ll ans = llINF;
+        while(l<N){
+            //cout << l << ", " << r << " : " << b << endl;
+            if(b<=a){
+                b += f(v2[l],v2[r],v2[r+1]);
+                r++;
+            }else{
+                b -= f(v2[l],v2[l+1],v2[r]);
+                l++;
+            }
+            assert(l<r);
+            chmin(ans, abs(a-b));
+        }
+        cout << ans << endl;
     }
 };
 

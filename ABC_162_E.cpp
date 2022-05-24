@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -21,14 +21,12 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
-//using mint = modint1000000007;
+using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -56,11 +54,28 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+
+        vec(mint) dp(K+1);
+        mint ans = 0;
+
+        rep1r(i,K){
+            mint a,b;
+            b = 0;
+            ll cnt = 1;
+            for(ll j = i*2; j<=K; j+=i){
+                b+=dp[j];
+                cnt++;
+            }
+            a = cnt;
+            a = a.pow(N);
+            dp[i] = a-b;
+            //cout << i << " ; " << dp[i].val() << " ," << cnt << endl;
+            ans += i*dp[i];
+        }    
+        cout << ans.val() << endl;
 
     }
 };

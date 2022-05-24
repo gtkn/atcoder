@@ -39,28 +39,32 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return min(a,b);};
+ll e(){return llINF;};
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(ll) v(N);
+        //rep(i,N) cin >> v[i];
+
+        priority_queue<ll,vector<ll>,greater<ll>> q;
+        q.push(llINF);
+        ll ans = 0;
+        rep(_,N){
+            ll pi; cin >> pi;
+            if(q.top() < pi){
+                ans += pi-q.top();
+                q.pop();
+                q.push(pi);
+            }
+            q.push(pi);
+        }
+        cout << ans << endl;
 
     }
 };

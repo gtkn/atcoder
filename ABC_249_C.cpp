@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -40,27 +38,29 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vvec(bool) vv(N,vec(bool)(30));
+        rep(i,N){
+            string s;
+            cin >> s;
+            for(char ci:s) vv[i][ci-'a']=true;
+        }
+
+        ll ans = 0;
+        rep(b,(1<<N)){
+            vec(ll) v(30);
+            rep(i,N){
+                if(bit(b,i)) continue;
+                rep(j,30) v[j]+=vv[i][j];
+            }
+            ll cnt = 0;
+            for(ll vi:v) if(vi==K) cnt++;
+            chmax(ans,cnt);
+        }
+        cout << ans << endl;
 
     }
 };

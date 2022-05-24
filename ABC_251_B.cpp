@@ -56,11 +56,25 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,W;
+        cin >> N >> W;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        set<ll> s;
+        for(ll i=0; i<N; i++){
+            if(A[i]<=W) s.insert(A[i]);
+            for(ll j=i+1; j<N; j++){
+                if(A[i]+A[j]<=W) s.insert(A[i]+A[j]);
+                for(ll k=j+1; k<N; k++){
+                    ll x = A[i]+A[j]+A[k];
+                    if(x<=W) s.insert(x);        
+                }
+            }
+        }
+
+        cout << s.size() << endl;
 
     }
 };

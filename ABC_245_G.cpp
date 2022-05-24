@@ -1,17 +1,13 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (int i = 0; i < (n); ++i)
 #define rep1(i,n) for (int i = 1; i <= (n); ++i)
 #define repr(i,n) for (int i = (n)-1; i >= 0; --i)
 #define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
-<<<<<<< HEAD
-#define vec(T) vector<T>
-#define vvec(T) vector<vector<T>>
-=======
 
 #define vec(T) vector<T>
 #define vvec(T) vector<vec(T)>
@@ -23,7 +19,6 @@ using namespace atcoder;
 //typedef vector<vvi>vvvi;
 //typedef vector<vvvi>vvvvi;
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
 using ll = long long;
@@ -32,11 +27,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-<<<<<<< HEAD
 //using mint = modint998244353;
-=======
-using mint = modint998244353;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -51,62 +42,57 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-<<<<<<< HEAD
-=======
 
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
  
  
     vec(int) dh = {1,0,-1,0};
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-<<<<<<< HEAD
-        vec(ll) p(N),q(N);
-        rep(i,N) cin >> p[i];
-        rep(i,N) cin >> q[i];
+        ll N,M,K,L;
+        cin >> N >> M >> K >> L;
 
-        
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+        vec(ll) B(L);
+        rep(i,L) cin >> B[i];
+        rep(i,L) B[i]--;
 
-        
-=======
-
-        vec(ll) v(N);
-        rep(i,N) cin >> v[i];
-
-        dsu d(N);
-        rep(i,N){
-            ll x; cin >> x;
-            d.merge(x-1,v[i]-1);
-        }
-        
-        vvec(mint) a(N,vec(mint)(2));
-        vvec(mint) b(N,vec(mint)(2));
-
-        a[0][0]=1; b[0][1]=1;
-        rep(i,N-1){
-            a[i+1][0] += a[i][1];
-            a[i+1][1] += a[i][0]+a[i][1];
-            b[i+1][0] += b[i][1];
-            b[i+1][1] += b[i][0]+b[i][1];
+        vvec(Pll) g(N);
+        rep(_,M){
+            ll u,v,c;
+            cin >> u >> v >> c;
+            u--;v--;
+            g[u].emplace_back(v,c);
+            g[v].emplace_back(u,c);
         }
 
-        mint ans=1;
-        for(auto gi:d.groups()){
-            ll nn = gi.size()-2;
-            if(nn<0) continue;
-            ans *= a[nn][1] + a[nn][0] + b[nn][0] + b[nn][1]*2;
+        vec(ll) dp1(N,-1),dp2(N,-1);
+        priority_queue<tuple<ll,ll,ll>> q;
+        for(ll bi:B) q.emplace(0,bi,A[bi]);
+
+        vec(ll) from(N),cnt(N);
+        while(!q.empty()){
+            auto [c,x,y] = q.top();
+            q.pop();
+            if(cnt[x]==0){
+                dp1[x]=-c;
+                from[x]=y;
+            }else if(cnt[x]==1 && from[x]!=y){
+                dp2[x]=-c;
+            }else continue;
+
+            cnt[x]++;
+            for(Pll to:g[x]) q.emplace(c-to.second, to.first, y);
         }
 
-        cout << ans.val() << endl;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
+        rep(i,N) cout << ( (from[i]!=A[i])? dp1[i] :dp2[i] ) <<" ";
+        cout << endl;
 
     }
 };

@@ -56,11 +56,23 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
+        vec(ll) A(N),B(K);
+        rep(i,N) cin >> A[i];
+        rep(i,K) cin >> B[i];
+        set<ll> s;
+        for(ll bi:B) s.insert(bi);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll amax = 0;
+        for(ll ai:A) chmax(amax,ai);
+        string ans = "No";
+        rep(i,N){
+            if(A[i]==amax){
+                if( sfind(s,i+1) ) ans = "Yes";
+            }
+        }
+        cout << ans << endl;
 
     }
 };

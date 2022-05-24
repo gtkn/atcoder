@@ -1,12 +1,12 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
-#define rep(i,n) for (ll i = 0; i < (n); ++i)
-#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
-#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
-#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#include <atcoder/all>
+using namespace atcoder;
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+#define rep1(i,n) for (int i = 1; i <= (n); ++i)
+#define repr(i,n) for (int i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
 
 #define vec(T) vector<T>
@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -34,33 +32,45 @@ using tri = tuple<ll,ll,ll>;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
-const ll llINF = 1LL << 60;
+const ll llINF = 1e9;//1LL << 60;
 const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return min(a,b);}
+ll e(){return llINF;}
+
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+        
+        set<ll> s;
+        rep(i,N) s.insert(A[i]);
+        ll cnt = 0;
+        map<ll,ll> m;
+        for(ll si:s) m[si]=cnt++;
+
+        vec(ll) v(N);
+        rep(i,N) v[i] = m[A[i]];
+
+        segtree<ll,op,e> seg(cnt);
+        for(ll i = N-1; i>=K ;i--) seg.set(v[i], i);
+        
+        ll ans = llINF;
+        rep(i,K){
+            ll x = seg.prod(v[i]+1,cnt);
+            if(x!=llINF) chmin(ans, x - i);
+        }
+        if(ans>=llINF) ans=-1;
+        cout<< ans << endl;
+
 
     }
 };

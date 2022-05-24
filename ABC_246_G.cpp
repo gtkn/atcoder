@@ -3,26 +3,15 @@
 using namespace std;
 //#include <atcoder/all>
 //using namespace atcoder;
-#define rep(i,n) for (ll i = 0; i < (n); ++i)
-#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
-#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
-#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+#define rep1(i,n) for (int i = 1; i <= (n); ++i)
+#define repr(i,n) for (int i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
-
 #define vec(T) vector<T>
-#define vvec(T) vector<vec(T)>
-#define vvvec(T) vector<vvec(T)>
-#define vvvvec(T) vector<vvvec(T)>
-
-//typedef vector<mint>vi;
-//typedef vector<vi>vvi;
-//typedef vector<vvi>vvvi;
-//typedef vector<vvvi>vvvvi;
-
+#define vvec(T) vector<vector<T>>
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -40,16 +29,10 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
-
  
  
     vec(int) dh = {1,0,-1,0};
@@ -58,9 +41,45 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep1(i,N-1) cin >> A[i];
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vvec(ll) g(N);
+        rep(_,N-1){
+            ll u,v;
+            cin >> u >> v;
+            u--;v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        vec(ll) dp(N,-1);
+        queue<ll> q;
+        q.push(0);
+        dp[0]=0;
+        while(!q.empty()){
+            ll now=q.front();
+            q.pop();
+            for(ll to:g[now]){
+                if(dp[to]>=0) continue;
+                dp[to]=dp[now]+1;
+                q.push(to);
+            }
+        }
+        
+        vec(abc) v;
+        rep(i,N) v.emplace_back(A[i],dp[i],i);
+        sort(all(A),[](abc const& x, abc const& y){
+            if(x.a!=y.a) return x.a>y.a;
+            if(x.b!=y.b) return x.b<y.b;
+            return x.c < y.c;
+        });
+
+        vec(ll) B(N);
+        ll cnt=0;
+
+
+        
 
     }
 };

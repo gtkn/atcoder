@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -40,27 +38,66 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    ll N,M;
+    vvec(ll) g;
+    vec(bool) used;
+    vec(ll) v;
+    vec(ll) ans;
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    vec(ll) cnt;
+
+    void f(ll now){
+        used[now]=true;
+        ans.push_back(now);
+        cnt[now]++;
+        for(ll to:g[now]){
+            if(used[to]) continue;
+            f(to);
+            ans.push_back(now);
+            cnt[now]++;
+            if(cnt[to]%2!=v[to]){
+                ans.push_back(to);
+                ans.push_back(now);
+                cnt[to]++; cnt[now]++;
+            }
+        }
+        return;
+    }
+
+
     void solve(){
-        ll N;
-        cin >> N;
+        cin >> N >> M;
+        g.resize(N);
+        cnt.resize(N);
+        used.resize(N);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        rep(_,M){
+            ll u,v;
+            cin >> u >> v;
+            u--;v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        string S;
+        cin >> S;
+        for(char ci:S) v.push_back(ci-'0');
+
+        f(0);
+        if(cnt[0]%2!=v[0]) ans.pop_back();
+
+        if(false){
+            vec(ll) aa(N);
+            for(ll ai:ans) aa[ai]++;
+            rep(i,N) cout << aa[i]%2;
+            cout << endl;
+        }
+
+        cout << ans.size() << endl;
+        for(ll ai:ans) cout << ai+1 << " ";
+        cout << endl;
+        
 
     }
 };

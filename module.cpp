@@ -20,6 +20,16 @@ using mint = modint998244353;
 //==================================================================================
 
 
+    // floor(sqrt(N))
+    // https://atcoder.jp/contests/abc243/editorial/3510
+    ll llsqrt(ll N){
+        ll sqrtN=sqrt(N)-1;
+        while(sqrtN+1<=N/(sqrtN+1))sqrtN++;
+        return sqrtN;
+    }
+
+
+
 // オーバーフローとmod考慮したpow
     ll mypow(ll x, ll y, ll modnum){
         assert(y>=0);
@@ -68,19 +78,21 @@ ll id(){return 0;}
 
 
 
-//---modintで組み合わせ扱う用の構造体---
+    //---modintで組み合わせ扱う用の構造体---
     struct mconb{
         ll nmax;
-        vec(mint) fa;
+        vec(mint) fa,af;
         mconb(ll sz=1e9+10){
             nmax = sz;
             fa.resize(nmax+1);
             fa[0]=1;
             rep1(i,nmax) fa[i]=fa[i-1]*i;
+            af.resize(nmax+1);
+            rep(i,nmax+1) af[i]=fa[i].inv();
         }
         mint c(ll n, ll k){
             if(n<k || k<0 || n>nmax) return 0;
-            return fa[n]/(fa[k]*fa[n-k]);
+            return fa[n]*af[k]*af[n-k];
         }
     };
 

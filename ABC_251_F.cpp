@@ -40,27 +40,61 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
+    ll N,M;
+    vvec(ll) g;
+    vec(Pll) ans1,ans2;
+    vec(bool) used;
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    void dfs(ll now){
+        used[now]=true;
+        for(ll to:g[now]){
+            if(used[to]) continue;
+            ans1.emplace_back(now,to);
+            dfs(to);
+        }
+    }
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
+    void bfs(){
+        queue<ll> q;
+        q.push(0);
+        used[0]=true;
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll to:g[now]){
+                if(used[to]) continue;
+                used[to]=true;
+                ans2.emplace_back(now,to);
+                q.push(to);
+            }
+        }
+    }
+
+
+
  
     void solve(){
-        ll N;
-        cin >> N;
+        cin >> N >> M;
+        g.resize(N);
+        rep(_,M){
+            ll u,v;
+            cin >> u >> v;
+            u--; v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        used = vector<bool>(N,false);
+        dfs(0);
+
+        used = vector<bool>(N,false);
+        bfs();
+
+        assert(ans1.size()==N-1);
+        assert(ans2.size()==N-1);
+
+        for(Pll ai:ans1) cout << ai.first+1 << " " << ai.second+1 << endl;
+        for(Pll ai:ans2) cout << ai.first+1 << " " << ai.second+1 << endl;
 
     }
 };

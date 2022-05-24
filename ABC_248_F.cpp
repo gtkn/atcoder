@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -30,7 +28,7 @@ using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
-
+using mint = modint;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
@@ -40,27 +38,29 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,P;
+        cin >> N >> P;
+        mint::set_mod(P);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vvvec(mint) dp(N+10,vvec(mint)(N+10,vec(mint)(2)));
+        dp[0][0][1] = 1;
+        dp[0][1][0] = 1;
+
+        rep(i,N-1)rep(j,N){
+            dp[i+1][j+1][0] += dp[i][j][0];
+            dp[i+1][j][1] += dp[i][j][0];
+            
+            dp[i+1][j+2][0] += dp[i][j][1]*2;
+            dp[i+1][j+1][1] += dp[i][j][1]*3;
+            dp[i+1][j][1] += dp[i][j][1];
+        }
+
+        rep1(i,N-1) cout << dp[N-1][i][1].val() << " ";
+        cout << endl;
+
+
 
     }
 };

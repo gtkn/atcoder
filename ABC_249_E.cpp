@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -39,28 +37,37 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+using mint = modint;
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,P;
+        cin >> N >> P;
+        mint::set_mod(P);
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        vvec(mint) dp(N+10,vec(mint)(N+10));
+
+        dp[0][0]=1;
+        rep(i,N)rep(j,N){
+            if(i>0) dp[i+1][j] += dp[i][j];
+
+            ll ten=1;
+            ll x=25;
+            if(i==0) x=26;
+            for(ll k=2; i+ten<=N ;k++){
+                //cout << i << " , " << j << "< " << ten << " , " << k << endl;
+                dp[i+ten][j+k] += dp[i][j]*x;
+                if(i+ten*10<=N) dp[i+ten*10][j+k] -= dp[i][j]*x;
+                ten*=10;
+            }
+        }
+
+        mint ans = 0;
+        rep(i,N) ans+=dp[N][i];
+        cout << ans.val() << endl;
+
+
 
     }
 };

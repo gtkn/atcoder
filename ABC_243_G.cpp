@@ -21,8 +21,6 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -39,28 +37,46 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    ll llsqrt(ll N){
+        ll sqrtN=sqrt(N)-1;
+        while(sqrtN+1<=N/(sqrtN+1))sqrtN++;
+        return sqrtN;
+    }
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll X;
+        cin >> X;        
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        ll x2 = llsqrt(X);//floor(sqrt(X)+1e-9);
+        ll x4 = llsqrt(x2);//floor(sqrt(x2)+1e-9);
+
+        /*
+        vec(ll) dp(x4+10);
+        dp[1]=1;
+        for(ll x=2; x<=x4; x++){
+            for(ll i = 1; i*i<=x; i++) dp[x] += dp[i];
+        }
+        ll ans = 0;
+        rep1(i,x4) ans += ( x2 - i*i + 1 )*dp[i];
+        cout << ans << endl;
+        */
+
+        vec(ll) v(x4+10);
+        rep1(i,x4) v[i] = max(0LL,x2-i*i+1);
+
+        while(v[2]>0){
+            vec(ll) tot(x4+10);
+            rep1(i,x4+1) tot[i] = tot[i-1]+v[i];
+            rep1(i,x4+1){
+                if(i*i-1<=x4) v[i] = tot[x4+1]-tot[ i*i-1 ];
+                else v[i]=0;
+            }
+        }
+        cout << v[1] << endl;
 
     }
 };
@@ -68,7 +84,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

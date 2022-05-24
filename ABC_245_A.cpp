@@ -3,26 +3,15 @@
 using namespace std;
 //#include <atcoder/all>
 //using namespace atcoder;
-#define rep(i,n) for (ll i = 0; i < (n); ++i)
-#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
-#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
-#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#define rep(i,n) for (int i = 0; i < (n); ++i)
+#define rep1(i,n) for (int i = 1; i <= (n); ++i)
+#define repr(i,n) for (int i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
-
 #define vec(T) vector<T>
-#define vvec(T) vector<vec(T)>
-#define vvvec(T) vector<vvec(T)>
-#define vvvvec(T) vector<vvvec(T)>
-
-//typedef vector<mint>vi;
-//typedef vector<vi>vvi;
-//typedef vector<vvi>vvvi;
-//typedef vector<vvvi>vvvvi;
-
+#define vvec(T) vector<vector<T>>
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
-#define sfind(s,x) (s.find(x)!=s.end())
-
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -44,23 +33,19 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
  
  
     vec(int) dh = {1,0,-1,0};
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll a,b,c,d;
+        cin >> a >> b >> c >> d;
+        string ans = "Takahashi";
+        if(a==c && b>d) ans = "Aoki";
+        if(a>c) ans = "Aoki";
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        cout << ans << endl;
 
     }
 };

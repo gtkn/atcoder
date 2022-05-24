@@ -1,17 +1,13 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
-#define rep(i,n) for (int i = 0; i < (n); ++i)
-#define rep1(i,n) for (int i = 1; i <= (n); ++i)
-#define repr(i,n) for (int i = (n)-1; i >= 0; --i)
-#define rep1r(i,n) for (int i = (n); i > 0; --i)
+//#include <atcoder/all>
+//using namespace atcoder;
+#define rep(i,n) for (ll i = 0; i < (n); ++i)
+#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
+#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (ll i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
-<<<<<<< HEAD
-#define vec(T) vector<T>
-#define vvec(T) vector<vector<T>>
-=======
 
 #define vec(T) vector<T>
 #define vvec(T) vector<vec(T)>
@@ -23,20 +19,17 @@ using namespace atcoder;
 //typedef vector<vvi>vvvi;
 //typedef vector<vvvi>vvvvi;
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
+
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-<<<<<<< HEAD
 //using mint = modint998244353;
-=======
-using mint = modint998244353;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -51,15 +44,12 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-<<<<<<< HEAD
-=======
 
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
  
  
     vec(int) dh = {1,0,-1,0};
@@ -68,45 +58,32 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
-<<<<<<< HEAD
-        vec(ll) p(N),q(N);
-        rep(i,N) cin >> p[i];
-        rep(i,N) cin >> q[i];
 
-        
-
-        
-=======
-
-        vec(ll) v(N);
-        rep(i,N) cin >> v[i];
-
-        dsu d(N);
+        vvec(ll) vv(N);
         rep(i,N){
-            ll x; cin >> x;
-            d.merge(x-1,v[i]-1);
-        }
-        
-        vvec(mint) a(N,vec(mint)(2));
-        vvec(mint) b(N,vec(mint)(2));
-
-        a[0][0]=1; b[0][1]=1;
-        rep(i,N-1){
-            a[i+1][0] += a[i][1];
-            a[i+1][1] += a[i][0]+a[i][1];
-            b[i+1][0] += b[i][1];
-            b[i+1][1] += b[i][0]+b[i][1];
+            string s;
+            cin >> s;
+            for(char si:s) vv[i].push_back(si-'0');
         }
 
-        mint ans=1;
-        for(auto gi:d.groups()){
-            ll nn = gi.size()-2;
-            if(nn<0) continue;
-            ans *= a[nn][1] + a[nn][0] + b[nn][0] + b[nn][1]*2;
+        vector<set<ll>> vs(10);
+        rep(i,N){
+            rep(j,10){
+                ll x = vv[i][j];
+                ll y = j;
+                while(sfind(vs[x], y)) y+=10;
+                vs[x].insert(y);
+            }
         }
 
-        cout << ans.val() << endl;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
+
+        ll ans = llINF;
+        rep(i,10){
+            ll x = 0;
+            for(ll si:vs[i]) chmax(x,si);
+            chmin(ans, x);
+        }
+        cout << ans << endl;
 
     }
 };

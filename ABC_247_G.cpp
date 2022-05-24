@@ -8,10 +8,6 @@ using namespace atcoder;
 #define repr(i,n) for (int i = (n)-1; i >= 0; --i)
 #define rep1r(i,n) for (int i = (n); i > 0; --i)
 #define bit(n,k) ((n>>k)&1) //nのk bit目
-<<<<<<< HEAD
-#define vec(T) vector<T>
-#define vvec(T) vector<vector<T>>
-=======
 
 #define vec(T) vector<T>
 #define vvec(T) vector<vec(T)>
@@ -23,7 +19,6 @@ using namespace atcoder;
 //typedef vector<vvi>vvvi;
 //typedef vector<vvvi>vvvvi;
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
 using ll = long long;
@@ -32,11 +27,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-<<<<<<< HEAD
 //using mint = modint998244353;
-=======
-using mint = modint998244353;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -51,15 +42,12 @@ struct Solver{
         ll to,c;
         edge(ll to=0, ll c=0):to(to),c(c){}
     };
-<<<<<<< HEAD
-=======
 
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
 
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
  
  
     vec(int) dh = {1,0,-1,0};
@@ -68,45 +56,31 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
-<<<<<<< HEAD
-        vec(ll) p(N),q(N);
-        rep(i,N) cin >> p[i];
-        rep(i,N) cin >> q[i];
 
-        
+        ll big = 1e15;
+        ll ab = 150;
 
-        
-=======
+        vec(ll) A(N),B(N),C(N);
+        rep(i,N) cin >> A[i] >> B[i] >> C[i];
 
-        vec(ll) v(N);
-        rep(i,N) cin >> v[i];
+        vec(ll) ans;
+        rep1(x,N){
+            mcf_graph<ll,ll> g(ab*2+10);
+            rep(i,N){
+                g.add_edge(A[i],ab+B[i],1, big-C[i]);
+            }
+            rep1(i,ab){
+                g.add_edge(0,i,1,0);
+                g.add_edge(i+ab,ab*2+1,1,0);
+            }
 
-        dsu d(N);
-        rep(i,N){
-            ll x; cin >> x;
-            d.merge(x-1,v[i]-1);
-        }
-        
-        vvec(mint) a(N,vec(mint)(2));
-        vvec(mint) b(N,vec(mint)(2));
-
-        a[0][0]=1; b[0][1]=1;
-        rep(i,N-1){
-            a[i+1][0] += a[i][1];
-            a[i+1][1] += a[i][0]+a[i][1];
-            b[i+1][0] += b[i][1];
-            b[i+1][1] += b[i][0]+b[i][1];
+            Pll res = g.flow(0,ab*2+1,x);
+            if(res.first != x) break;
+            ans.push_back(big*x-res.second);
         }
 
-        mint ans=1;
-        for(auto gi:d.groups()){
-            ll nn = gi.size()-2;
-            if(nn<0) continue;
-            ans *= a[nn][1] + a[nn][0] + b[nn][0] + b[nn][1]*2;
-        }
-
-        cout << ans.val() << endl;
->>>>>>> b4f7141aebc52fd771ee51657bc6baf03d77c90a
+        cout << ans.size() << endl;
+        for(ll ai:ans) cout << ai << endl;
 
     }
 };

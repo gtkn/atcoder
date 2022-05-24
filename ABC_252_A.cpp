@@ -58,9 +58,7 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
-
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        cout << char(N) << endl;
 
     }
 };
