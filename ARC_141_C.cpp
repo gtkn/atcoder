@@ -66,53 +66,76 @@ struct Solver{
         rep(i,N2) P[i]--;
         rep(i,N2) Q[i]--;
 
-        vec(char) ans(N2,'.');
+        vec(char) ans(N2,'?');
+        rep(i,N2-1){
+            if(P[i]>P[i+1]){
+                ans[P[i]]='(';
+                ans[P[i+1]]=')';
+            }
+        }
+        rep(i,N2-1){
+            if(Q[i]<Q[i+1]){
+                ans[Q[i]]='(';
+                ans[Q[i+1]]=')';
+            }
+        }
 
         bool isok=true;
-        rep(i,N){
-            ll i1 = P[i*2];
-            ll i2 = P[i*2+1];
-            if(i1 > i2 ){
-                if(ans[i1]==')' || ans[i2]=='(') isok=false;
-                ans[i1]='(';
-                ans[i2]=')';
-            }
-        }
-        rep(i,N){
-            ll i1 = Q[i*2];
-            ll i2 = Q[i*2+1];
-            if(i1 < i2 ){
-                if(ans[i1]==')' || ans[i2]=='(') isok=false;
-                ans[i1]='(';
-                ans[i2]=')';
-            }
-        }
-        
-        //for(char ai:ans ) cout << ai; cout << endl;
 
-        ll cnt = 0;
-        for(ll pi:P){
-            if(ans[pi]!='.'){
-                if(cnt<N){
-                    ans[pi] =
-                }
-
+        ll cnt=0;
+        queue<ll> q;
+        vec(ll) v;
+        rep(i,N2){
+            if(ans[i]=='('){
+                v.push_back(i);
+                cnt++;
             }else{
-
+                q.push(i);
             }
-            ans[pi] = (open? ')' : '(');
-            open=!open;
+            while(cnt>0 && !q.empty()){
+                cnt--;
+                v.push_back(q.front());
+                q.pop();
+            }
         }
-        if(open) isok=false;
-
-        if(isok){
-            for(char ai:ans) cout << ai;
-            cout << endl;
-        }else{
-            cout << -1 << endl;
+        while(!q.empty()){
+            v.push_back(q.front());
+            q.pop();
         }
+        //rep(i,N2) cout << v[i] << " "; cout << endl;
+        rep(i,N2) if(P[i]!=v[i]) isok=false;
+        if(cnt!=0) isok=false;
 
+        
 
+        cnt=0;
+        v.clear();
+        repr(i,N2){
+            if(ans[i]=='('){
+                v.push_back(i);
+                cnt++;
+            }else{
+                q.push(i);
+            }
+            while(cnt>0 && !q.empty()){
+                cnt--;
+                v.push_back(q.front());
+                q.pop();
+            }
+        }
+        while(!q.empty()){
+            v.push_back(q.front());
+            q.pop();
+        }
+        //rep(i,N2) cout << v[i] << " "; cout << endl;
+        //for(char ai:ans) cout << ai; cout << endl;
+
+        rep(i,N2) if(Q[i]!=v[i]) isok=false;
+        if(cnt!=0) isok=false;
+
+        if(isok) for(char ai:ans) cout << ai;
+        else cout << -1;
+        cout << endl;
 
 
     }
