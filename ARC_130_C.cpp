@@ -21,6 +21,8 @@ using namespace std;
 
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
+
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
@@ -54,35 +56,27 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,A,B,X,Y,Z;
-        cin >> N >> A >> B >> X >> Y >> Z;
+        string a,b;
+        cin >> a >> b;
+        map<ll,ll> ma,mb;
+        for(char ci:a) ma[ci-'0']++;
+        for(char ci:b) mb[ci-'0']++;
 
-        if(chmin(Y, A*X) && chmin(Z, B*X)){
-            cout << N*X << endl;
-            return;
-        }
+        vvec(Pll) vv(20);
+        rep1(i,9)rep1(j,9) vv[i+j].emplace_back(i,j);
 
-        if( Y*B > Z*A ){
-            swap(A,B);
-            swap(Y,Z);
-        }
-
-        ll ans = llINF;
-
-        ll namax = N/A;
-        if(namax < A){
-            rep(na,namax+1){
-                ll nb = (N-na*A)/B;
-                chmin(ans, na*Y + nb*Z + (N-na*A-nb*B)*X);
-            }
-        }else{
-            rep(nb,A){
-                if(N-nb*B<0) break;
-                ll na = (N-nb*B)/A;
-                chmin(ans, na*Y + nb*Z + (N-na*A-nb*B)*X);                
+        map<ll,ll> ma1,mb1;
+        ma1 = ma;
+        mb1 = mb;
+        for(Pll x:vv[9]){
+            while(ma1[x.first]>0 && mb1[x.second]>0){
+                ma1[x.first]--;
+                mb1[x.second]--;
             }
         }
-        cout << ans << endl;
+
+        
+
 
 
     }
@@ -91,7 +85,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
