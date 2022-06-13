@@ -59,8 +59,9 @@ struct Solver{
         ll N;
         cin >> N;
 
-        set<ll> s = {1,2,4};
-        rep(i,5) if(sfind(s,i)) cout << i << endl;
+        map<ll,ll> m;
+        m[0]+=10;
+        cout << m[0]<< endl;
 
     }
 };
