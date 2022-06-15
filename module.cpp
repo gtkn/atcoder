@@ -20,6 +20,10 @@ using mint = modint998244353;
 //==================================================================================
 
 
+// multisetで1つだけ消す
+//ms.erase(ms.find(5));
+
+
     // floor(sqrt(N))
     // https://atcoder.jp/contests/abc243/editorial/3510
     ll llsqrt(ll N){

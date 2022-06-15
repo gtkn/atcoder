@@ -37,34 +37,56 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return 0;}
-#define yn {puts("Yes");}else{puts("No");}
-
 //------------------------------------------------
 
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll H,W;
+        cin >> H >> W;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        set<Pll> s;
+        multiset<ll> ms={llINF};
+        rep1(i,W){
+            s.emplace(i,i);
+            ms.insert(0);
+        }
+
+        rep1(k,H){
+            ll a,b;
+            cin >> a >> b;
+            
+            vec(Pll) v;
+            for(auto itr=s.lower_bound({a,0}); itr!=s.end() ;itr++){
+                Pll si = *itr;
+                if(si.first>b) break;
+                v.push_back(si);
+            }
+
+            ll x=0;
+            for(Pll vi:v){
+                chmax(x,vi.second);
+                s.erase(vi);
+                ms.erase(ms.find(vi.first-vi.second));
+            }
+
+            if(b==W) b=llINF+W+10;
+            if(x>0){
+                s.emplace(b+1,x);
+                ms.insert(b+1-x);
+            }
+
+
+
+            ll res = *ms.begin();
+            if(res>=llINF) res = -1;
+            else res += k;
+            cout << res << endl;
+        }
+
+
+
 
     }
 };

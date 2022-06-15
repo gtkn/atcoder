@@ -43,28 +43,39 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    vvec(ll) dp;
+    ll N;
+    vec(Pll) v;
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+
+    ll f(ll l,ll r){
+        if(dp[l][r]>=0) return dp[l][r];
+
+        ll res = 0;
+        ll x = l+r-1;
+        if(l>0) chmax(res, f(l-1,r) +  v[x].first*abs(l-1-v[x].second)  );
+        if(r>0) chmax(res, f(l,r-1) +  v[x].first*abs(N-r-v[x].second)  );
+        dp[l][r]=res;
+        return res;
+    }
+
+
+
     void solve(){
-        ll N;
         cin >> N;
+        rep(i,N){
+            ll a; cin >> a;
+            v.emplace_back(a,i);
+        }
+        sort(all(v),greater<Pll>());
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        dp = vvec(ll)(N+1,vec(ll)(N+1,-llINF));
+        dp[0][0]=0;
+
+        ll ans = 0;
+        rep(i,N+1) chmax(ans, f(i,N-i));
+        cout << ans << endl;
 
     }
 };
