@@ -86,7 +86,7 @@ ll id(){return 0;}
     struct mconb{
         ll nmax;
         vec(mint) fa,af;
-        mconb(ll sz=1e9+10){
+        mconb(ll sz=200020){
             nmax = sz;
             fa.resize(nmax+1);
             fa[0]=1;
