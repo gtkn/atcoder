@@ -26,6 +26,7 @@ using namespace std;
 using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
+using Pld = pair<ll,double>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
@@ -42,29 +43,56 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    ll N;
+    double dp[(1<<17)];
+
+    double f(ll now){
+        if(dp[now]>=0) return dp[now];
+
+        double res = llINF;
+
+        rep(i,15){
+            ll a = (1<<i);
+            ll cnt = 0;
+            double tmp = 1.;
+
+            rep(_,3){
+                if(now&a){
+                    cnt++;
+                    tmp+=f(now-a)/3.;
+                }
+                a<<=1;
+            }
+            if(cnt==0) continue;
+            chmin(res, tmp*3./cnt);
+        }
+
+        dp[now]=res;
+        return res;
+    }
+
+
+
     void solve(){
-        ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        ll st = 0;
+        rep(_,N){
+            ll x; cin >> x;
+            st |= (1<<x);
+        }
+        rep(i,(1<<17)) dp[i]=-1;
+        dp[0]=0;
+
+        double ans = f(st);
+
+        printf("%.8f\r\n",ans);
+
 
     }
 };
