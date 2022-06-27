@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,29 +42,60 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return max(a,b);};
+ll ee(){return 0;};
+ll mapping(ll f, ll x){return max(f,x);}
+ll composition(ll f,ll g){return max(f,g);}
+ll id(){return 0;}
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
 
+        vec(Pll) v;
+        rep(_,N){
+            ll x,r;
+            cin >> x >> r;
+            v.emplace_back(x-r,x+r);
+        }
+
+        sort(all(v));
+        /*
+        ,[](Pll const& a, Pll const& b){
+            if(a.first!=b.first) return a.first<b.first;
+            return a.second < b.second;
+
+        });
+        */
+
+
+        set<ll> s;
+        for(Pll vi:v){
+            s.insert(vi.first);
+            s.insert(vi.second);
+        }
+
+        ll cnt = 0;
         map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        for(ll si:s) m[si]=cnt++;
+        
+        lazy_segtree<ll,op,ee,ll,mapping,composition,id> ls(cnt+10);
+
+        for(Pll vi:v){
+            ll l,r;
+            l = m[vi.first];
+            r = m[vi.second];
+            ls.apply(l,r+1, ls.get(r+1)+1);
+
+            //rep(i,cnt+1) cout << ls.get(i) << " "; cout << endl;
+        }
+
+        ll ans = ls.all_prod();
+
+        cout << ans << endl;
 
     }
 };

@@ -43,66 +43,54 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+
     struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
+        ll to,id,dr;
+        edge(ll to=0, ll id=0, ll dr=0):to(to),id(id),dr(dr){}
     };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    ll N,M;
+    ll A[200020];
+    ll B[200020];
+    vvec(edge) g;
+    vec(ll) ans;
+    vec(bool) used;
+
+    void dfs(ll now){
+        if(used[now]) return;
+        used[now] = true;
+
+        for(edge gi:g[now]){
+            if(ans[gi.id]>=0) continue;
+            ans[gi.id] = gi.dr;
+            if(!used[gi.to]) dfs(gi.to);
+        }
+
+    }
+
+
+
+
     void solve(){
-        ll N,M;
         cin >> N >> M;
-        vec(ll) A(M),B(M);
         rep(i,M) cin >> A[i];
         rep(i,M) cin >> B[i];
-
-        //dsu d(N+1);
-        //rep(i,M) d.merge(A[i],B[i]);
-
-
-        vvec(ll) g0(N+1);
-        rep(i,N){
-            g0[A[i]].push_back(B[i]);
-            g0[B[i]].push_back(A[i]);
-        }
-
-        vector<set<ll>> g1(N+1);
-        vec(bool) used(N+1);
-
-        rep1(st,N){
-            if(used[st]) continue;
-            queue<ll> q;
-            auto qpush = [&](ll to, ll fr){
-                if(used[to]) return;
-                used[to]=true;
-                g1[fr].insert(to);
-                q.push(to);
-            };
-            qpush(st,0);
-
-            while(!q.empty()){
-                ll now = q.front();
-                q.pop();
-                for(ll to:g0[now]) qpush(to,now);
-            }
-        }
-
-
-        vec(ll) ans(M);
+        
+        g.resize(N+1);
         rep(i,M){
-            if( sfind( g1[A[i]], B[i]) ) ans[i]=0;
-            else ans[i]=1;
+            ll a,b;
+            a = A[i]; b=B[i];
+            g[a].emplace_back(b,i,0);
+            g[b].emplace_back(a,i,1);
         }
-        for(ll ai:ans ) cout << ai; cout << endl;
+
+        ans = vec(ll)(M,-1);
+        used = vec(bool)(N+1);
+
+        rep1(i,N) dfs(i);
+
+        for(ll ai:ans) cout << ai; cout << endl;
 
 
     }
