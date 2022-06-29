@@ -20,6 +20,40 @@ using mint = modint998244353;
 //==================================================================================
 
 
+
+    vvec(mint) vvxvv(vvec(mint) const& vv1, vvec(mint) const& vv2){
+        ll h,w,d;
+        h = vv1.size(); w=vv1[0].size(); d=vv2[0].size();
+        assert(w==vv2.size());
+
+        vvec(mint) res(h,vec(mint)(d));
+        rep(i,h)rep(j,d)rep(k,w) res[i][j]+=vv1[i][k]*vv2[k][j];
+        return res;
+    }
+
+
+    vec(mint) vvxv(vvec(mint) const& vv, vec(mint) const& v){
+        ll h,w;
+        h = vv.size(); w=vv[0].size();
+        assert(w==v.size());
+
+        vec(mint) res(h);
+        rep(i,h)rep(j,w) res[i]+=vv[i][j]*v[j];
+        return res;
+    }
+
+    mint vxv(vec(mint) const& v1, vec(mint) const& v2){
+        ll h;
+        h = v1.size();
+        assert(h==v2.size());
+
+        mint res=0;
+        rep(i,h) res+=v1[i]*v2[i];
+        return res;
+    }
+
+
+
 // multisetで1つだけ消す
 //ms.erase(ms.find(5));
 
