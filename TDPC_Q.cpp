@@ -75,44 +75,58 @@ struct Solver{
         }
 
 
-        ll m8 = (1<<8)-1;
-
-        vvec(ll) vv0(128,vec(ll)(8));
-        vvec(ll) vv1(128,vec(ll)(8));
+        vvec(bool) vv0(128,vec(bool)(8));
+        vvec(bool) vv1(128,vec(bool)(8));
         rep(i,128){
             string s;
             rep(j,7) s += ((bit(i,j)? '1' : '0'));
-
-            rep(j,7){
+            
+            rep(j,8){
                 string s0,s1;
-                s0 = s.substr(7-j,j) + '0';
-                s1 = s.substr(7-j,j) + '1';
+                s0 = '0' + s.substr(0,j);
+                s1 = '1' + s.substr(0,j);
 
-                bool f = true;
-                rep(k,N) if(s0==w[k]) f=false;
-                if(f) vv0[i][j] = j+1;
-
-                f = true;
-                rep(k,N) if(s1==w[k]) f=false;
-                if(f) vv1[i][j] = j+1;
+                rep(k,N) if(s0==w[k]) vv0[i][j]=true;
+                rep(k,N) if(s1==w[k]) vv1[i][j]=true;
             }
         }
 
-        vvvec(mint) dp(L+1,vvec(mint)(256,vec(mint)(9)));
-        dp[0][0][0]=1;
-        rep(i,L)rep(j,128)rep(k,7){
-            ll x = i & ((1<<j) -1);
-            ll x0,x1;
-            x0 = x<<1;
-            x1 = x0+1;
-            x0&=m8;
-            x1&=m8;                
-            dp[i+1][x0][vv0[j][k]] += dp[i][j][k];
-            dp[i+1][x1][vv1[j][k]] += dp[i][j][k];
+        ll m7 = (1<<7)-1;
+        ll m8 = (1<<8)-1;
+
+
+        vvvec(mint) dp(L+1,vvec(mint)(128,vec(mint)(256)));
+        dp[0][0][1]=1;
+        rep(n,L)rep(i,128)rep(j,256){
+            ll ii = (i<<1)&m7;
+            ll j0,j1;
+            j0 = j1 = j*2;
+            rep(k,8) if(bit(j,k) && vv0[i][k]) j0 = j*2+1;
+            rep(k,8) if(bit(j,k) && vv1[i][k]) j1 = j*2+1;
+            j0 &= m8;
+            j1 &= m8;
+
+            dp[n+1][ii][j0] += dp[n][i][j];
+            dp[n+1][ii+1][j1] += dp[n][i][j];
         }
 
+        /*
+        rep(i,4){
+            rep(j,4) cout << vv0[i][j] << " ";cout<<endl;
+        }cout << endl;
+        rep(i,4){
+            rep(j,4) cout << vv1[i][j] << " ";cout<<endl;
+        }cout << endl;
+
+        rep(n,L+1){
+            rep(i,4){
+                rep(j,4) cout << dp[n][i][j].val() << " "; cout<< endl;
+            }cout << endl;
+        }
+        */
+
         mint ans = 0;
-        rep(j,128) ans += dp[L][j][0];
+        rep(i,128)for(ll j=1; j<256; j+=2) ans += dp[L][i][j];
         cout << ans.val() << endl;
 
     }

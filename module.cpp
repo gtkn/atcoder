@@ -9,7 +9,9 @@ using namespace atcoder;
 #define vvec(T) vec(vec(T))
 using ll = long long;
 using P = pair<int,int>;
-
+#define all(x) x.begin(),x.end()
+#define watch(x) cout << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
@@ -24,10 +26,70 @@ using bs = bitset<8>;
 
 
 
-        vec(ll) md = {31,28,31, 30,31,30, 31,31,30, 31,30,31};
+//---自作SCC---
+    struct SCC{
+        ll n;
+        vvec(ll) gf,gr;
+        vec(bool) used;
+        vec(ll) memo;
+
+        SCC(ll _n, vvec(ll) _gf, vvec(ll) _gr){
+            n = _n;
+            gf = _gf;
+            gr = _gr;
+            assert(n==gf.size() && n==gr.size());
+            used.resize(n);
+        }
+
+        void dfsf(ll now){
+            used[now] = true;
+            for(auto to:gf[now]) if(!used[to]) dfsf(to);
+            memo.push_back(now);
+            return;
+        }
+
+        vec(ll) tmp;
+
+        void dfsr(ll now){
+            tmp.push_back(now);
+            used[now]=true;
+            for(auto to:gr[now]) if(!used[to]) dfsr(to);
+            return;
+        }
 
 
 
+        vvec(ll) get_group(){
+            rep(i,n) used[i] = false;
+            memo.clear();
+
+            rep(st,n) if(!used[st]) dfsf(st);
+
+            rep(i,n) used[i] = false;
+            
+            vvec(ll) res;
+            reverse(all(memo));
+            for(auto st:memo){
+                if(used[st]) continue;
+                tmp.clear();
+                dfsr(st);
+                res.push_back(tmp);
+            }
+
+            return res;
+        }
+
+    };
+
+
+
+
+//---月ごとの日数---
+    vec(ll) md = {31,28,31, 30,31,30, 31,31,30, 31,30,31};
+
+
+
+//---ベクトルとか行列の掛け算---
     vvec(mint) vvxvv(vvec(mint) const& vv1, vvec(mint) const& vv2){
         ll h,w,d;
         h = vv1.size(); w=vv1[0].size(); d=vv2[0].size();
