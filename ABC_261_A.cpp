@@ -59,12 +59,19 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        vec(ll) v(110);
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        rep(_,2){
+            ll l,r;
+            cin >> l >> r;
+            for(ll i=l; i<=r; i++) v[i]++;
+        }
+
+        ll ans = 0;
+        rep(i,110) if(v[i]==2) ans++;
+        if(ans) ans--;
+        cout<<ans << endl;
+
 
     }
 };

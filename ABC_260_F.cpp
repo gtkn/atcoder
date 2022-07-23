@@ -59,12 +59,29 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll S,T,M;
+        cin >> S >> T >> M;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vvec(ll) g(S+1);
+        rep(_,M){
+            ll u,v;
+            cin >> u >> v;
+            g[u].push_back(v);
+        }
+
+
+        vvec(ll) vv(1e7);
+        rep1(i,S){
+            
+
+
+
+
+        }
+
+
+
+
 
     }
 };

@@ -37,7 +37,7 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return;}
+#define dame { puts("-1"); return 0;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
@@ -62,9 +62,16 @@ struct Solver{
         ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        ll a = N/4;
+        N -= 4*a;
+
+        ll M = 2*N + 8*a;
+        cout << M << endl;
+
+        if(N>0) cout << N;
+        rep(_,a) cout << 4;
+        cout << endl;
+
 
     }
 };

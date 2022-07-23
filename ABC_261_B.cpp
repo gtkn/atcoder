@@ -62,9 +62,21 @@ struct Solver{
         ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vvec(ll) vv(N,vec(ll)(N));
+        rep(i,N){
+            string s;
+            cin >> s;
+            rep(j,N){
+                if(s[j]=='W') vv[i][j]=1;
+                if(s[j]=='L') vv[i][j]=-1;
+            }
+        }
+
+        string ans = "correct";
+        rep(i,N)rep(j,i){
+            if(vv[i][j]!=-vv[j][i]) ans = "incorrect";
+        }
+        cout << ans << endl;
 
     }
 };

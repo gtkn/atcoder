@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,6 +42,9 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return min(a,b);}
+ll ee(){return llINF;}
+
 struct Solver{
     struct edge{
         ll to,c;
@@ -59,12 +62,41 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vec(ll) ans(N+1,-1);
+
+        segtree<ll,op,ee> seg(N+1);
+
+        vec(ll) par(N+1),v(N+1);
+
+        rep(i,N){
+            ll x; cin >> x;
+            ll y = seg.prod(x,N+1);//*lower_bound(all(s),x);
+
+            if(y==llINF) y=0;
+
+            v[x] = v[y]+1;
+            par[x] = y;
+            //if(y>0) s.erase(y);
+            seg.set(y,llINF);
+
+            if(v[x]==K){
+                ll now = x;
+                while(now!=0){
+                    ans[now]=i+1;
+                    now = par[now];
+                }
+            }else{
+                //s.insert(x);
+                seg.set(x,x);
+            }
+        }
+
+        rep1(i,N) cout << ans[i] << endl;
+
+
 
     }
 };

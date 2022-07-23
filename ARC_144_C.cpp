@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,6 +42,10 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return min(a,b);};
+ll ee(){return llINF;};
+
+
 struct Solver{
     struct edge{
         ll to,c;
@@ -59,12 +63,50 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        if(N<2*K) dame;
+
+        vec(ll) ans;
+
+
+
+        vec(ll) v(N+1);
+        rep(i,N+1) v[i]=i;
+        v[0]=llINF;
+        segtree<ll,op,ee> seg(v);
+
+
+
+        rep1(i,N){
+            ll x;
+            if(i+K>N-K && i+K<=N){
+                x = i+K;
+            }else{
+                ll a=llINF,b=llINF;
+                if(i-K>0) a = seg.prod(0,i-K+1);
+                if(i+K<=N) b = seg.prod(i+K,N+1);
+                x = min(a,b);
+            }
+            ans.push_back(x);
+            seg.set(x,llINF);
+        }
+
+        for(ll ai:ans) cout << ai << " ";cout<<endl;
+
+
+        /*
+        assert(ans.size()==N);
+
+        vec(bool) used(N+1);
+        rep(i,N){
+            if(abs(ans[i]-i-1)<K) cout << i+1 <<" : " << ans[i]  <<" over " << endl;
+            if(used[ans[i]]) cout << "used " << ans[i] << endl;
+            used[ans[i]]=true;
+        }
+        rep1(i,N) if(!used[i]) cout << "not used " << i << endl;
+        */
 
     }
 };

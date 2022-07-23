@@ -62,9 +62,17 @@ struct Solver{
         ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        map<string,ll> m;
+        set<string> s;
+        rep(_,N){
+            string si; cin >> si;
+            cout << si;
+            if(sfind(s,si))  cout << "("<<m[si] << ")";
+            cout << endl;
+            s.insert(si);
+            m[si]++;
+        }
+
 
     }
 };

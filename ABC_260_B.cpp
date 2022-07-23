@@ -59,12 +59,45 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,X,Y,Z;
+        cin >> N >> X >> Y >> Z;
+        vec(ll) A(N),B(N);
+        rep(i,N) cin >> A[i];
+        rep(i,N) cin >> B[i];
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vec(ll) used(N);
+
+        vec(Pll) v;
+        rep(i,N) v.emplace_back(A[i],i);
+        sort(all(v),[](Pll const& a,Pll const& b){
+            if(a.first!=b.first) return a.first>b.first;
+            return a.second<b.second;
+        });
+
+        rep(i,X) used[ v[i].second ] = true;
+        v.clear();
+
+
+        rep(i,N) if(!used[i]) v.emplace_back(B[i],i);
+        sort(all(v),[](Pll const& a,Pll const& b){
+            if(a.first!=b.first) return a.first>b.first;
+            return a.second<b.second;
+        });
+
+        rep(i,Y) used[ v[i].second ] = true;
+        v.clear();
+        
+
+        rep(i,N) if(!used[i]) v.emplace_back(A[i]+B[i],i);
+        sort(all(v),[](Pll const& a,Pll const& b){
+            if(a.first!=b.first) return a.first>b.first;
+            return a.second<b.second;
+        });
+
+        rep(i,Z) used[ v[i].second ] = true;
+        v.clear();
+        
+        rep(i,N) if(used[i]) cout << i+1 << endl;
 
     }
 };

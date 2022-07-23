@@ -37,7 +37,7 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return;}
+#define dame { puts("-1"); return 0;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
@@ -59,12 +59,26 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,a,b;
+        cin >> N >> a >> b;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        ll l=0,r=1e9+10;
+        while(r-l>1){
+            ll m = (l+r)/2;
+
+            ll cnt = 0;
+            for(ll ai:A){
+                if(ai>=m) cnt += (ai-m)/b;
+                else cnt -= (m-ai+a-1)/a;
+            }
+            
+            if(cnt>=0) l=m;
+            else r=m;
+        }
+        cout << l << endl;
 
     }
 };

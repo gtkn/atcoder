@@ -59,12 +59,14 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        string s;
+        cin >> s;
+        map<char,ll> m;
+        for(char si:s) m[si]++;
+        string ans = "-1";
+        for(auto mi:m) if(mi.second==1) ans = mi.first;
+        cout << ans << endl;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
 
     }
 };

@@ -59,12 +59,40 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,C;
+        cin >> N >> C;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vvec(ll) vv(32,vec(ll)(2));
+        rep(i,32) vv[i][1]=1;
+
+        vec(ll) v(32);
+        rep(i,32) if(bit(C,i)) v[i]=1;
+
+        rep(_,N){
+            ll t,c;
+            cin >> t >> c;
+
+            if(t==1){
+                rep(i,32)rep(j,2) vv[i][j] &= bit(c,i);
+            }
+            if(t==2){
+                rep(i,32)rep(j,2) vv[i][j] |= bit(c,i);
+            }
+            if(t==3){
+                rep(i,32)rep(j,2) vv[i][j] ^= bit(c,i);
+            }
+
+            rep(i,32) v[i] = vv[i][v[i]];
+
+            //repr(i,32) cout << v[i]; cout << endl; 
+
+            ll now = 0;
+            repr(i,32) now = now*2 + v[i];
+            cout << now << endl;
+
+        }
+
+
 
     }
 };

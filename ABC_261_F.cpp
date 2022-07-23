@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -43,28 +43,36 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vec(ll) C(N),X(N);
+        rep(i,N) cin >> C[i];
+        rep(i,N) cin >> X[i];
+
+
+        vvec(ll) vv(N+1);
+        rep(i,N) vv[C[i]].push_back(i);
+        rep(i,N) vv[0].push_back(i);
+
+
+        ll ans = 0;
+
+        fenwick_tree<ll> fw(N+10);
+        rep(ci,N+1){
+            ll pm = (ci==0? 1 : -1);
+
+            for(ll x:vv[ci]){
+                ans += fw.sum(X[x]+1,N+1) * pm;
+                fw.add(X[x],1);
+            }
+            for(ll x:vv[ci]) fw.add(X[x],-1);
+
+        }
+
+        cout << ans << endl;
 
     }
 };

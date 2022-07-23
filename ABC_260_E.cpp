@@ -59,12 +59,57 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
+        vec(Pll) v;
+        rep(i,N){
+            ll a,b;
+            cin >> a >> b;
+            v.emplace_back(a,b);
+        }
+        sort(all(v));
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+
+        vec(ll) wa(M+10);
+        ll l,r;
+        l = 1;//v[0].first;
+        r = v[N-1].first;
+
+
+        while(l<=v[0].first){
+            wa[r-l+1]++;
+            wa[M-l+2]--;
+            l++;
+        }
+        l--;
+
+
+
+        ll th = llINF;
+        rep(i,N) chmin(th,v[i].second);
+
+        ll x = 0;
+        while(l<th){
+            while(x<N && v[x].first==l){
+                chmax(r,v[x].second);
+                x++;
+            }
+            l++;
+            //cout << l << ", "<<r<< ": " << th << endl;
+            wa[r-l+1]++;
+            wa[M-l+2]--;
+        }
+
+        ll ans = 0;
+        rep1(i,M){
+            ans += wa[i];
+            cout << ans << " ";
+        }
+        cout << endl;
+
+
+
+
 
     }
 };
