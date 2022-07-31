@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,7 +29,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -59,33 +59,18 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll S,T,M;
-        cin >> S >> T >> M;
+        ll N;
+        cin >> N;
 
-        vvec(ll) g(S+1);
-        rep(_,M){
-            ll u,v;
-            cin >> u >> v;
-            g[u].push_back(v-S);
-        }
+        vec(mint) fa(2*N+1);
+        fa[0]=1;
+        rep1(i,2*N) fa[i]=fa[i-1]*i;
 
-        vvec(ll) vv(T+10,vec(ll)(T+10));
+        mint ans = N+1;
+        ans = ans.inv();
+        ans *= fa[2*N] * fa[N].inv() * mint(2).pow(N);
 
-        rep1(x,S){
-            ll n = g[x].size();
-            rep(i,n)rep(j,i){
-                ll xi,xj;
-                xi = g[x][i];
-                xj = g[x][j];
-                if(vv[xi][xj]!=0){
-                    cout << vv[xi][xj] << " " << x << " " << xi+S << " " << xj+S <<endl;
-                    return;
-                }
-                vv[xi][xj]=x;
-                vv[xj][xi]=x;
-            }
-        }
-        cout << -1 << endl;
+        cout << ans.val() << endl;
 
 
 

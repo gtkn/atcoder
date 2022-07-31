@@ -59,33 +59,66 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll S,T,M;
-        cin >> S >> T >> M;
+        ll N,K;
+        cin >> N >> K;
 
-        vvec(ll) g(S+1);
-        rep(_,M){
-            ll u,v;
-            cin >> u >> v;
-            g[u].push_back(v-S);
+        vec(ll) P(N);
+        rep(i,N) cin >> P[i];
+
+        if(K==0){
+            rep(i,N) cout << P[i] << " ";
+            cout << endl;
+            return;
         }
 
-        vvec(ll) vv(T+10,vec(ll)(T+10));
 
-        rep1(x,S){
-            ll n = g[x].size();
-            rep(i,n)rep(j,i){
-                ll xi,xj;
-                xi = g[x][i];
-                xj = g[x][j];
-                if(vv[xi][xj]!=0){
-                    cout << vv[xi][xj] << " " << x << " " << xi+S << " " << xj+S <<endl;
-                    return;
-                }
-                vv[xi][xj]=x;
-                vv[xj][xi]=x;
+        vec(ll) v(N+1);
+        rep(i,N) v[P[i]] = i;
+
+        ll x = 1;
+        while( v[x]>=K && v[x]<N-K ) x++;
+
+        cout << x<<" : " << v[x] << endl;
+
+        vec(ll) ans;
+        if(N-1-v[x] <= v[x]){
+            ll now = 0;
+            vec(ll) tmp;
+            priority_queue<ll,vector<ll>,greater<ll>> q;
+            rep(_,K-(N-v[x])) q.push(P[now++]);
+
+            while(now<v[x] && q.top() < P[now]){
+                tmp.push_back(q.top());
+                q.pop();
+                q.push(P[now++]);
             }
+            while(now<v[x]) ans.push_back(P[now++]);
+
+            while(!q.empty()) q.pop();
+            for(ll i=v[x];i<N;i++) q.push(P[i]);
+            for(ll i=v[x];i<N;i++){
+                if(P[i]==q.top()){
+                    ans.push_back(q.top());
+                    q.pop();
+                }
+            }
+
+            for(ll ai:tmp) ans.push_back(ai);
+
+        }else{
+            ll now = 0;
+            priority_queue<ll,vector<ll>,greater<ll>> q;
+            rep(_,K) q.push(P[now++]);
+
+            while(now<N && q.top() < P[now]){
+                ans.push_back(q.top());
+                q.pop();
+                q.push(P[now++]);
+            }
+            while(now<N) ans.push_back(P[now++]);
         }
-        cout << -1 << endl;
+
+        for(ll ai:ans ) cout << ai << " "; cout << endl;
 
 
 

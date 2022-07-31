@@ -43,41 +43,121 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    ll H,W;
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    ll f(ll a,ll b){
+        return (a>>(2*b)) & 3;
+    }
+
+
+    // nowの次にbwが来たらどのindexに対応するか
+    ll chk(ll now,ll bw){
+        if(now==0) return -1;
+        rep(i,W-1) if(f(now,i)>0 && f(now,i+1)>0 && f(now,i)!=f(now,i+1)) return -1;
+        //bool isok = false;
+        //rep(i)
+
+
+        dsu d(2*H);
+        rep(i,H){
+            if(i && f(now,i) && f(now,i-1)) d.merge(i,i-1);
+            if(i) if(bit(bw,i) && bit(bw,i-1)) d.merge(i+H, i+H-1);
+            if(f(now,i)>0 && bit(bw,i)) d.merge(i,i+H);
+        }
+        rep(i,H)rep(j,i) if( f(now,i) && f(now,i)==f(now,j) ) d.merge(i,j);
+
+        vec(ll) v(H);
+
+        auto iswhilte = [&](ll n){
+            if(n<H) return (f(now,n)==0); 
+            else return !bit(bw,n);
+        };
+
+
+        for(auto gi:d.groups()){
+            if(gi.size()==1 && iswhilte(gi[0])) continue;
+            ll idx = llINF;
+            for(ll x:gi) if(x<H) chmin(idx,f(now,x));
+
+            if(idx==llINF || idx==0) continue;
+            //if(idx>3) cout << idx << "???" << endl;
+            
+            for(ll x:gi) if(x>=H) v[x-H] = idx;
+        }
+
+        vec(bool) used(4);
+        for(ll vi:v) used[vi]=true;
+        if(!used[1]) return -1;
+        ll aaa = 3;
+        if(!used[2]) aaa = 2;
+
+
+        for(auto gi:d.groups()){
+            if(gi.size()==1 && iswhilte(gi[0])) continue;
+            bool isnow = true;
+            for(ll x:gi) if(x<H) isnow=false;
+
+            if(!isnow) continue;
+            
+            for(ll x:gi) if(x>=H) v[x-H] = aaa;
+            aaa++;
+        }
+
+
+        ll res = 0;
+        repr(i,H) res = (res<<2) + v[i];
+
+
+        return res;
+    }
+
+
+    //---ベクトルとか行列の掛け算---
+    vec(mint) vvxv(vvec(mint) const& vv, vec(mint) const& v){
+        ll h,w;
+        h = vv.size(); w=vv[0].size();
+        assert(w==v.size());
+
+        vec(mint) res(h);
+        rep(i,h)rep(j,w) res[i]+=vv[i][j]*v[j];
+        return res;
+    }
+
+
+
+
+
     void solve(){
-        ll H,W;
         cin >> H >> W;
 
         map<ll,ll> m;
         ll cnt = 0;
 
-        auto f=[](ll a,ll b){
-            return (a>>(2*b)) & 3;
-        };
+        ll h2 = 1<<(2*H);
+        ll h1 = 1<<H;
+        vvec(ll) vv(h2,vec(ll)(h1));
 
-        rep(i,(1<<(2*H))){
-            rep(j,H-1){
-                if(f(i,j)>0 && f(i,j+1)>0 && f(i,j)!=f(i,j+1)) break;
+
+        rep(i,h2){
+            rep(j,h1){
+                vv[i][j] = chk(i,j);
             }
-            m[cnt]=i;
         }
 
-        
+        vvec(mint) dp(W+1,vec(mint)(h2));
+        dp[0][1]=1;
 
+        rep(n,W){
+            rep(i,h2)rep(j,h1){
+                if(vv[i][j]>=0) dp[n+1][vv[i][j]] += dp[n][i];
+            }
+        }
+
+        mint ans = 0;
+        rep(i,h2) if(f(i,H-1)==1) ans += dp[W][i];
+
+        cout << ans.val() << endl;
 
 
 

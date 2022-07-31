@@ -59,34 +59,16 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll S,T,M;
-        cin >> S >> T >> M;
+        ll N;
+        cin >> N;
 
-        vvec(ll) g(S+1);
-        rep(_,M){
-            ll u,v;
-            cin >> u >> v;
-            g[u].push_back(v-S);
-        }
+        ll ans = N;
+        if(N%4==0) ans+=2;
+        if(N%4==1) ans+=1;
+        if(N%4==2) ans+=0;
+        if(N%4==3) ans+=3;
 
-        vvec(ll) vv(T+10,vec(ll)(T+10));
-
-        rep1(x,S){
-            ll n = g[x].size();
-            rep(i,n)rep(j,i){
-                ll xi,xj;
-                xi = g[x][i];
-                xj = g[x][j];
-                if(vv[xi][xj]!=0){
-                    cout << vv[xi][xj] << " " << x << " " << xi+S << " " << xj+S <<endl;
-                    return;
-                }
-                vv[xi][xj]=x;
-                vv[xj][xi]=x;
-            }
-        }
-        cout << -1 << endl;
-
+        cout << ans << endl;
 
 
     }
