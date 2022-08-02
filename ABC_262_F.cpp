@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -41,89 +41,76 @@ const int iINF = 1e9;
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
+ll op(ll a,ll b){return min(a,b);}
+ll ee(){return llINF;}
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N,K;
         cin >> N >> K;
 
-        vec(ll) P(N);
+        vec(ll) P(2*N);
         rep(i,N) cin >> P[i];
+        rep(i,N) P[N+i] = P[i];
+        P.push_back(0);
 
-        if(K==0){
-            rep(i,N) cout << P[i] << " ";
-            cout << endl;
-            return;
-        }
+        vec(ll) pp(N+1);
+        rep(i,N) pp[P[i]] = i;
 
-
-        vec(ll) v(N+1);
-        rep(i,N) v[P[i]] = i;
-
-        ll x = 1;
-        while( v[x]>=K && v[x]<N-K ) x++;
-
-        cout << x<<" : " << v[x] << endl;
 
         vec(ll) ans;
-        if(N-1-v[x] <= v[x]){
-            ll now = 0;
+        rep(i,N) ans.push_back(P[i]);
+
+        auto chk = [&](vec(ll) v){
+            ll n = min(ans.size(), v.size());
+            rep(i,n){
+                if(ans[i]<v[i]) return false;
+                if(ans[i]>v[i]) return true;
+            }
+            return (ans.size() > v.size() );
+        };
+
+
+        segtree<ll,op,ee> seg(P);
+
+
+        rep(i,K){
+            ll l = N-i;
+            ll r = l+K;
+            ll cnt = 0;
             vec(ll) tmp;
-            priority_queue<ll,vector<ll>,greater<ll>> q;
-            rep(_,K-(N-v[x])) q.push(P[now++]);
 
-            while(now<v[x] && q.top() < P[now]){
-                tmp.push_back(q.top());
-                q.pop();
-                q.push(P[now++]);
-            }
-            while(now<v[x]) ans.push_back(P[now++]);
+            while(cnt<K-i){
+                ll x = seg.prod(l,r);
+                ll idx = pp[x];
+                if(idx<l) idx+=N;
+                if(x>P[r]) idx=r;
+                x = P[idx];
+                //cout << i << " : "<< l << "~"<<r <<", " << idx << ", " << x << endl;
 
-            while(!q.empty()) q.pop();
-            for(ll i=v[x];i<N;i++) q.push(P[i]);
-            for(ll i=v[x];i<N;i++){
-                if(P[i]==q.top()){
-                    ans.push_back(q.top());
-                    q.pop();
+                tmp.push_back(x);
+                while(l<idx){
+                    if(l>=N) cnt++;
+                    l++;
                 }
+                l=idx+1;
+                if(idx>=N) r++;
             }
+            //cout << i << " ; "; for(ll x:tmp) cout << x << " ";cout<<endl;
+            while(l<2*N-i) tmp.push_back(P[l++]);
 
-            for(ll ai:tmp) ans.push_back(ai);
+            if(chk(tmp)) ans = tmp;            
 
-        }else{
-            ll now = 0;
-            priority_queue<ll,vector<ll>,greater<ll>> q;
-            rep(_,K) q.push(P[now++]);
-
-            while(now<N && q.top() < P[now]){
-                ans.push_back(q.top());
-                q.pop();
-                q.push(P[now++]);
-            }
-            while(now<N) ans.push_back(P[now++]);
         }
 
-        for(ll ai:ans ) cout << ai << " "; cout << endl;
-
+        for(ll x:ans) cout << x <<" ";cout<<endl;
 
 
     }
 };
+
 
 
 
