@@ -41,7 +41,11 @@ const int iINF = 1e9;
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
-ll op(ll a,ll b){return min(a,b);}
+ll op(ll a,ll b){
+    return min(a,b);
+    //if(a.first<b.first) return a;
+    //else return b;
+}
 ll ee(){return llINF;}
 
 struct Solver{
@@ -51,59 +55,91 @@ struct Solver{
         ll N,K;
         cin >> N >> K;
 
-        vec(ll) P(2*N);
+        vec(ll) P(N);
         rep(i,N) cin >> P[i];
-        rep(i,N) P[N+i] = P[i];
-        P.push_back(0);
 
-        vec(ll) pp(N+1);
-        rep(i,N) pp[P[i]] = i;
-
-
-        vec(ll) ans;
-        rep(i,N) ans.push_back(P[i]);
-
-        auto chk = [&](vec(ll) v){
-            ll n = min(ans.size(), v.size());
-            rep(i,n){
-                if(ans[i]<v[i]) return false;
-                if(ans[i]>v[i]) return true;
-            }
-            return (ans.size() > v.size() );
-        };
-
-
-        segtree<ll,op,ee> seg(P);
-
-
-        rep(i,K){
-            ll l = N-i;
-            ll r = l+K;
-            ll cnt = 0;
-            vec(ll) tmp;
-
-            while(cnt<K-i){
-                ll x = seg.prod(l,r);
-                ll idx = pp[x];
-                if(idx<l) idx+=N;
-                if(x>P[r]) idx=r;
-                x = P[idx];
-                //cout << i << " : "<< l << "~"<<r <<", " << idx << ", " << x << endl;
-
-                tmp.push_back(x);
-                while(l<idx){
-                    if(l>=N) cnt++;
-                    l++;
-                }
-                l=idx+1;
-                if(idx>=N) r++;
-            }
-            //cout << i << " ; "; for(ll x:tmp) cout << x << " ";cout<<endl;
-            while(l<2*N-i) tmp.push_back(P[l++]);
-
-            if(chk(tmp)) ans = tmp;            
-
+        if(K==0){
+            rep(i,N) cout << P[i] << " ";
+            cout << endl;
+            return;
         }
+
+
+        vec(ll) v;
+        rep(i,N) v.emplace_back(P[i]);
+        rep(i,N) v.emplace_back(P[i]);
+
+        vec(ll) res1,res2;
+
+        segtree<ll,op,ee> seg(v);
+
+        ll a0 = llINF;
+        ll k0 = 0;
+        rep1(i,K) if(chmin(a0, v[N-i])) k0=i;
+
+
+        ll l,r;
+        l = N-k0;
+        ll rr = l+N;
+
+        res1.push_back(v[l]);
+        r = l+K+1;
+        l++;
+
+        while(k0<K && l<r ){
+            ll x = seg.prod(l,r);
+            res1.push_back(x);
+            while(v[l]!=x && l<r){
+                if(l>=N) k0++;
+                l++;
+            }
+            if(l>=N && r<rr) r++;
+            l++;
+        }
+
+        while(l<rr){
+            res1.push_back(v[l]);
+            l++;
+        }
+        while(k0<K){
+            res1.pop_back();
+            k0++;
+        }
+
+        //for(ll x:tmp) cout <<x  << " ";cout << endl;
+
+
+        //--
+        l=N;
+        r=N+K+1;
+        rr=2*N;
+
+
+        k0=0;
+        while(k0<K && l<r ){
+            ll x = seg.prod(l,r);
+            res2.push_back(x);
+            while(v[l]!=x && l<r){
+                if(l>=N) k0++;
+                l++;
+            }
+            if(l>=N && r<rr) r++;
+            l++;
+        }
+
+        while(l<rr){
+            res2.push_back(v[l]);
+            l++;
+        }
+        while(k0<K){
+            res2.pop_back();
+            k0++;
+        }
+
+        //for(ll x:res2) cout <<x  << " ";cout << endl;
+
+        vec(ll) ans = min(res1,res2);
+
 
         for(ll x:ans) cout << x <<" ";cout<<endl;
 

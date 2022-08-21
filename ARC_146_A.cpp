@@ -43,85 +43,80 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
- 
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
 
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
         ll N;
         cin >> N;
 
-        vec(string) alp(26);
-        rep(i,26) alp[i] = 'a'+i;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
 
+        sort(all(A),greater<ll>());
 
-
-
-        map<string,ll> cost;
-        set<string> s;
-        rep(_,N){
-            string t;
-            ll p;
-            cin >> t >> p;
-            cost[t] = p;
-            s.insert(t);
+        vec(Pll) v;
+        rep(i,3){
+            ll ten=1;
+            ll ai = A[i];
+            while(ai){
+                ai/=10;
+                ten*=10;
+            }
+            v.emplace_back(A[i],ten);
         }
 
-
-        map<string,ll> m;
-        ll cnt=0;
-        m["$$"] = cnt++;
-        rep(i,26) m["$"+alp[i]] = cnt++;
-        rep(i,26)rep(j,26) m[alp[i]+alp[j]] = cnt++;
-
-
-        auto getc = [&](string now, string x){
-            vec(string) _v;
-            _v.push_back(now+x);
-            _v.push_back(now[1]+x);
-            _v.push_back(x);
-
+        auto f = [&](vec(ll) _v){
             ll res = 0;
-            for(string _vi:_v){
-                if(sfind(s,_vi)) res += cost[_vi];
-            }
+            for(ll _vi:_v) res = res*v[_vi].second + v[_vi].first;
             return res;
         };
 
 
+        ll ans = 0;
+        chmax(ans,f({0,1,2}));
+        chmax(ans,f({0,2,1}));
+        chmax(ans,f({1,0,2}));
+        chmax(ans,f({1,2,0}));
+        chmax(ans,f({2,0,1}));
+        chmax(ans,f({2,1,0}));
+        cout << ans << endl;
 
-        vec(abc) edge;
-        //vvec(Pll) g(cnt);
-        for(auto mi:m){
-            string now = mi.first;
-            ll idx = mi.second;
 
-            for(auto ai:alp){
-                //g[idx].emplace_back( m[now[1]+ai], getc(now,ai) );
-                edge.emplace_back(idx, m[now[1]+ai], getc(now,ai));
+
+
+
+        /*
+        vvec(ll) vv(7);
+        for(ll ai:A){
+            ll cnt = 0;
+            ll ai0=ai;
+            while(ai){
+                ai/=10;
+                cnt++;
             }
+            vv[cnt].push_back(ai0);
         }
 
-        vec(ll) dp(cnt,-llINF);
-        dp[m["$$"]] = 0;
-        
-        bool chk = false;
-        rep(nn,cnt+1){
-            bool update = false;
-            for(abc ei:edge){
-                if(chmax( dp[ei.b] , dp[ei.a] + ei.c )) update = true;
-            }
-            if(nn==cnt && update) chk=true;
+        vvec(ll) vv2;
+        rep1r(i,6){
+            if(vv[i].empty()) continue;
+            sort(all(vv[i]));
+            vv2.push_back(vv[i]);
         }
-
-        if(chk) cout << "Infinity" << endl;
-        else{
-            ll ans = -llINF;
-            rep1(i,cnt-1) chmax(ans,dp[i]);
-            cout << ans << endl;
-        }
+        */
 
 
     }

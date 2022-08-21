@@ -43,86 +43,64 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
- 
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
     struct abc{
         ll a,b,c;
         abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
     };
 
+ 
+ 
+    vec(int) dh = {-1,1,0,0};
+    vec(int) dw = {0,0,-1,1};
+ 
     void solve(){
-        ll N;
-        cin >> N;
+        ll H,W;
+        cin >> H >> W;
 
-        vec(string) alp(26);
-        rep(i,26) alp[i] = 'a'+i;
+        map<char,ll> m;
+        m['U'] = 0;
+        m['D'] = 1;
+        m['L'] = 2;
+        m['R'] = 3;
 
 
-
-
-        map<string,ll> cost;
-        set<string> s;
-        rep(_,N){
-            string t;
-            ll p;
-            cin >> t >> p;
-            cost[t] = p;
-            s.insert(t);
+        vvec(ll) vv(H,vec(ll)(W));
+        rep(i,H){
+            string s;
+            cin >> s;
+            rep(j,W) vv[i][j] = m[s[j]];
         }
 
+        vvec(bool) dp(H,vec(bool)(W));
 
-        map<string,ll> m;
-        ll cnt=0;
-        m["$$"] = cnt++;
-        rep(i,26) m["$"+alp[i]] = cnt++;
-        rep(i,26)rep(j,26) m[alp[i]+alp[j]] = cnt++;
-
-
-        auto getc = [&](string now, string x){
-            vec(string) _v;
-            _v.push_back(now+x);
-            _v.push_back(now[1]+x);
-            _v.push_back(x);
-
-            ll res = 0;
-            for(string _vi:_v){
-                if(sfind(s,_vi)) res += cost[_vi];
-            }
-            return res;
-        };
-
-
-
-        vec(abc) edge;
-        //vvec(Pll) g(cnt);
-        for(auto mi:m){
-            string now = mi.first;
-            ll idx = mi.second;
-
-            for(auto ai:alp){
-                //g[idx].emplace_back( m[now[1]+ai], getc(now,ai) );
-                edge.emplace_back(idx, m[now[1]+ai], getc(now,ai));
-            }
-        }
-
-        vec(ll) dp(cnt,-llINF);
-        dp[m["$$"]] = 0;
-        
+        ll h=0,w=0;
         bool chk = false;
-        rep(nn,cnt+1){
-            bool update = false;
-            for(abc ei:edge){
-                if(chmax( dp[ei.b] , dp[ei.a] + ei.c )) update = true;
+        
+        while(1){
+            dp[h][w]=true;
+            ll x = vv[h][w];
+            ll hh,ww;
+            hh = h+dh[x];
+            ww = w+dw[x];
+            if(hh >=0 && hh<H && ww >=0 && ww<W){
+                if(dp[hh][ww]){
+                    chk=true;
+                    break;
+                }
+                h=hh;
+                w=ww;
+            }else{
+                break;
             }
-            if(nn==cnt && update) chk=true;
         }
 
-        if(chk) cout << "Infinity" << endl;
-        else{
-            ll ans = -llINF;
-            rep1(i,cnt-1) chmax(ans,dp[i]);
-            cout << ans << endl;
-        }
-
+        if(chk) cout << -1 << endl;
+        else cout << h+1 << " " << w+1 << endl;
 
     }
 };
