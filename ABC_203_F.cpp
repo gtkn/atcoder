@@ -59,42 +59,35 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M,K;
-        cin >> N >> M >> K;
+        ll N,K;
+        cin >> N >> K;
+
         vec(ll) A(N);
         rep(i,N) cin >> A[i];
-
         sort(all(A));
 
-        vec(ll) B;
 
-        ll two = (1LL<<32);
-        ll ans = 0;
-        
-        while(two>0){
-            ll tmp = ans + two;
-
-            vec(ll) v;
-            for(ll ai:A){
-                ll x = tmp;
-                repr(j,32){
-                    if(bit(x,j)) continue;
-                    ll mask = (1LL<<j)-1;
-                    if((x|mask) < ai) x += (1<<j);
-                }
-                v.push_back(x-ai);
-            }
-            sort(all(v));
-            ll cnt = 0;
-            rep(i,K) cnt+=v[i];
-            
-            //cout << two << " ; " << cnt << endl;
-            if(cnt<=M) ans += two;
-            two>>=1;
+        vec(ll) v(N+1);
+        ll l = 0;
+        rep(r,N){
+            while(A[l]<=A[r]/2) l++;
+            v[r+1] = l;
         }
 
-        cout << ans << endl;
+        vvec(ll) dp(N+1,vec(ll)(33,llINF));
+        dp[0][0] = 0;
 
+        rep1(i,N)rep(j,31){
+            if(dp[i-1][j]<K) chmin(dp[i][j], dp[i-1][j]+1 );
+            if(j>0) chmin(dp[i][j], dp[v[i]][j-1]);
+        }
+
+        rep(j,33){
+            if(dp[N][j]<llINF){
+                cout << j << " " << dp[N][j] << endl;
+                return;
+            }
+        }
 
 
     }
