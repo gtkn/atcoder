@@ -26,6 +26,69 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+    // LCA tekina
+    struct LCA{
+        ll N,ln;
+        vvec(ll) g;
+        vvec(ll) par;
+        vec(ll) dep;
+
+        void _dfs(ll now,ll frm){
+            par[now][0] = frm;
+            dep[now] = dep[frm]+1;
+
+            for(ll nxt:g[now]){
+                if(nxt==frm) continue;
+                _dfs(nxt,now);
+            }
+        }
+
+
+        LCA(vvec(ll) _g){
+            g = _g;
+            N = g.size();
+            ln = log2(N) + 1;
+            dep.resize(N);
+            par = vvec(ll)(N,vec(ll)(ln));
+
+            dep[0] = -1;
+            _dfs(0,0);
+
+            rep(j,ln){
+                if(j==0) continue;
+                rep(i,N) par[i][j] = par[ par[i][j-1] ][j-1];
+            }
+        }
+
+
+        ll get_dist(ll a,ll b){
+            return dep[a] + dep[b] - 2*dep[get_lca(a,b)];
+        }
+
+        ll get_lca(ll a,ll b){
+            if(dep[a]<dep[b]) swap(a,b);
+            ll dd=dep[a]-dep[b];
+            ll ex=0;
+            while(dd){
+                if(dd&1) a = par[a][ex];
+                dd >>= 1;
+                ex++;
+            }
+
+            if(a==b) return(a);
+            repr(i,ln){
+                if(par[a][i]==par[b][i]) continue;
+                a = par[a][i];
+                b = par[b][i];
+            }
+            return par[a][0];
+        }
+
+    };
+
+
+
+
 
 
     //--- kitamasa法 ---
