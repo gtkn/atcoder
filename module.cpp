@@ -333,10 +333,10 @@ ll id(){return 0;}
 
 
     //---modintで組み合わせ扱う用の構造体---
-    struct mconb{
+    struct mcomb{
         ll nmax;
         vec(mint) fa,af;
-        mconb(ll sz=200020){
+        mcomb(ll sz=200020){
             nmax = sz;
             fa.resize(nmax+1);
             fa[0]=1;
