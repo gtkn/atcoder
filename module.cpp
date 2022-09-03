@@ -44,15 +44,15 @@ using bs = bitset<8>;
         }
 
 
-        LCA(vvec(ll) _g){
+        LCA(vvec(ll) _g, ll rt = 0){
             g = _g;
             N = g.size();
             ln = log2(N) + 1;
             dep.resize(N);
             par = vvec(ll)(N,vec(ll)(ln));
 
-            dep[0] = -1;
-            _dfs(0,0);
+            dep[rt] = -1;
+            _dfs(rt,rt);
 
             rep(j,ln){
                 if(j==0) continue;
