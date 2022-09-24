@@ -26,6 +26,11 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+    // インタラクティブな問題でflush必要なとき
+    //cout << ans << endl; //で通るが
+    //cout << ans << endl << flush; //でもOK
+
+
     // LCA tekina
     struct LCA{
         ll N,ln;
