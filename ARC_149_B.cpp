@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,46 +42,52 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return max(a,b);}
+ll ee(){return 0;};
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N;
+        cin >> N;
 
-        ll ansa=-1,ansb=-1;
-        rep1(b,9){
-            ll tmp = 0;
-            for(ll a=1; a<=N; a++){
-                tmp = (tmp*10+b)%M;
-                if(tmp==0){
-                    if(a>ansa){
-                        ansa=a; ansb=b;
-                    }else if(a==ansa && b>ansb){
-                        ansa=a; ansb=b;
-                    }
-                }
-            }            
+        vec(ll) A(N),B(N);
+        rep(i,N) cin >> A[i];
+        rep(i,N) cin >> B[i];
+
+        map<ll,ll> ma,mb;
+        rep(i,N) ma[A[i]] = B[i];
+        rep(i,N) mb[B[i]] = A[i];
+
+        sort(all(A));
+        sort(all(B));
+
+        vec(ll) va(N),vb(N);
+        rep(i,N) va[i] = mb[B[i]];
+        rep(i,N) vb[i] = ma[A[i]];
+
+        segtree<ll,op,ee> sega(N+1),segb(N+1);
+
+        for(ll vi:va){
+            ll x = sega.prod(0,vi);
+            sega.set(vi,x+1);
         }
-        if(ansa==-1){
-            cout << -1 << endl;
-        }else{
-            rep(_,ansa) cout << ansb;
-            cout << endl;
+
+        for(ll vi:vb){
+            ll x = segb.prod(0,vi);
+            segb.set(vi,x+1);
         }
+
+        ll ans = max(sega.all_prod(), segb.all_prod()) + N;
+
+        cout << ans << endl;
+                
+
+
+
+
+
+
 
     }
 };

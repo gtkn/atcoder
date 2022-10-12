@@ -26,6 +26,46 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 構造体とそれ用の比較演算子
+struct State{
+    ll score;
+    ll X[21];
+    char LastMove;
+    ll LastPos;
+};
+
+bool operator>(const State& a, const State& b){
+    return (a.score > b.score);
+}
+
+
+    // 0.以上1.未満の整数をランダムに返す関数
+    double Randdouble(){
+        return 1. * rand() / RAND_MAX;
+    }
+
+    // vectorの途中を反転
+    // reverse(ans.begin()+a, ans.begin()+b);
+
+
+    // a以上b以下の整数をランダムに返す関数
+    ll RandInt(ll a,ll b){
+        return a + rand()%(b-a+1);
+    }
+
+
+
+        /*
+        // LIS
+        segtree<ll,op,ee> sega(N+1),segb(N+1);
+        for(ll vi:va){
+            ll x = sega.prod(0,vi);
+            sega.set(vi,x+1);
+        }
+        */
+
+
+
     // インタラクティブな問題でflush必要なとき
     //cout << ans << endl; //で通るが
     //cout << ans << endl << flush; //でもOK

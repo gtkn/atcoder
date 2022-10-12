@@ -59,29 +59,66 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N;
+        cin >> N;
 
-        ll ansa=-1,ansb=-1;
-        rep1(b,9){
-            ll tmp = 0;
-            for(ll a=1; a<=N; a++){
-                tmp = (tmp*10+b)%M;
-                if(tmp==0){
-                    if(a>ansa){
-                        ansa=a; ansb=b;
-                    }else if(a==ansa && b>ansb){
-                        ansa=a; ansb=b;
-                    }
-                }
-            }            
+
+        vvec(ll) vv(N,vec(ll)(N));
+
+        vvec(ll) a(3),b(3);
+        rep1(i,N*N){
+            if(i==1 || i==2 || i==7 || i==8) continue;
+            if(i&1) a[i%3].push_back(i);
+            else b[i%3].push_back(i);
         }
-        if(ansa==-1){
-            cout << -1 << endl;
-        }else{
-            rep(_,ansa) cout << ansb;
+
+        ll jj = N/2;
+        bool f=false;
+        rep(i,N){
+            if(i==jj-1 && !f){
+                vv[i][jj-1]=1;
+                vv[i][jj]=8;
+                if(N&1) jj++;
+                vv[i+1][jj-1]=7;
+                vv[i+1][jj]=2;
+                f=true;
+                continue;
+            }
+            if(f){
+                f=false;
+                continue;
+            }
+
+            rep(k,3){
+                if(a[k].empty() || b[k].empty()) continue;
+                vv[i][jj-1] = a[k].back();
+                a[k].pop_back();
+                vv[i][jj] = b[k].back();
+                b[k].pop_back();
+                break;
+            }
+        }
+        vec(ll) aa,bb;
+        rep(k,3) for(ll vi:a[k]) aa.push_back(vi);
+        rep(k,3) for(ll vi:b[k]) bb.push_back(vi);
+
+        rep(i,N)rep(j,N){
+            if(vv[i][j]>0) continue;
+            if(j<jj){
+                vv[i][j] = aa.back();
+                aa.pop_back();
+            }else{
+                vv[i][j] = bb.back();
+                bb.pop_back();
+            }
+        }
+
+
+        rep(i,N){
+            rep(j,N) cout << vv[i][j] << " ";
             cout << endl;
         }
+
 
     }
 };
