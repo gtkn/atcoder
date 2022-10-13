@@ -26,6 +26,33 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// ラムダ式
+auto qpush = [&](ll cost, int id){
+};
+
+
+// 配列をシャッフル
+//random_device seed_gen;
+//mt19937 engine(seed_gen());
+//shuffle(all(v), engine);
+
+
+// ファイル出力
+/*
+#include<iostream>
+#include<fstream>
+
+using namespace std;
+
+int main()
+{
+    ofstream outputfile("test.txt");
+    outputfile<<"test";
+    outputfile.close();
+}
+*/
+
+
 // 構造体とそれ用の比較演算子
 struct State{
     ll score;
