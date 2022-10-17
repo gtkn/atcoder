@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -45,6 +45,9 @@ const int iINF = 1e9;
 random_device seed_gen;
 mt19937 engine(seed_gen());
 
+double op(double a, double b){return max(a,b);}
+double ee(){return -1e10;};
+
 
 struct Solver{
     ll N,K,L;
@@ -53,8 +56,9 @@ struct Solver{
     vec(ll) ans;
     ll start_time;
     ll TIMELIMIT = 0.95 * CLOCKS_PER_SEC;
-    vector<set<ll>> g;
-    
+    vvec(ll) g;
+    vector<set<ll>> gs;
+
     double pave,qave;
     double sf;
 
@@ -72,8 +76,6 @@ struct Solver{
 
         start_time = clock();
         
-        // 適当に解を初期化
-        solve_random();
 
 
         // 隣接する地区リスト
@@ -84,20 +86,25 @@ struct Solver{
             if(i<N-1){
                 ll to = C[i+1][j];
                 if(now!=to && to!=0){
-                    g[now].insert(to);
-                    g[to].insert(now);
+                    g[now].push_back(to);
+                    g[to].push_back(now);
                 }
             }
             if(j<N-1){
                 ll to = C[i][j+1];
                 if(now!=to && to!=0){
-                    g[now].insert(to);
-                    g[to].insert(now);
+                    g[now].push_back(to);
+                    g[to].push_back(now);
                 }
             }
         }
+        rep1(i,K){
+            sort(all(g[i]));
+            g[i].erase(unique(all(g[i])), g[i].end());
+        }
 
 
+        // P,Qの平均に近いほうが良いはず
         pave = 0;
         qave = 0;
         rep1(i,K) pave += A[i];
@@ -115,6 +122,7 @@ struct Solver{
     void Submit(){
         assert(ans.size()==K+1);
         rep1(i,K){
+            if(ans[i]<=0 || ans[i]>L) cout << i << ": " << ans[i] << endl;
             assert(ans[i]>0 && ans[i]<=L);
             cout << ans[i] << endl;
         }
@@ -141,6 +149,13 @@ struct Solver{
     }
 
 
+    // 経過時間
+    ll pasttime(ll st = -1){
+        if(st==-1) st = start_time;
+        return clock()-st;
+    } 
+
+
     // 連結チェック
     bool IsConnected(){
 
@@ -150,7 +165,7 @@ struct Solver{
         rep1(st,K){
             if(reached[st]) continue;
             ll x = ans[st];
-            return false;
+            if(used[x]) return false;
 
             queue<ll> que;
             que.push(st);
@@ -173,7 +188,7 @@ struct Solver{
 
 
     // スコア計算 PQのみ
-    double GetScorePQ(){
+    double GetPQScore(){
         double res = 0;
         vec(ll) pp(L+1),qq(L+1);
 
@@ -189,38 +204,17 @@ struct Solver{
             chmin(qmin, qq[i]);
         }
 
-        res = min( 1.*pmin/pmax, 1.*qmin/qmax );
-        if(IsConnected()) res *= 1000000.;
-        else res *= 1000.;
-
-        if(pmin==0 || qmin==0) res = 0.;
+        res = min( 1.*pmin/pmax, 1.*qmin/qmax ) * 1000000.;
+        if(pmin==0. || qmin==0.) res = 0.;
 
         return res;
     }
 
+
     // スコア計算
     double GetScore(){
-        double res = 0;
-        vec(ll) pp(L+1),qq(L+1);
-
-        rep1(i,K) pp[ans[i]] += A[i];
-        rep1(i,K) qq[ans[i]] += B[i];
-
-
-        ll pmax=0,pmin=llINF,qmax=0,qmin=llINF;
-        rep1(i,L){
-            chmax(pmax, pp[i]);
-            chmin(pmin, pp[i]);
-            chmax(qmax, qq[i]);
-            chmin(qmin, qq[i]);
-        }
-
-        res = min( 1.*pmin/pmax, 1.*qmin/qmax );
-        if(IsConnected()) res *= 1000000.;
-        else res *= 1000.;
-
-        if(pmin==0 || qmin==0) res = 0.;
-
+        double res = GetPQScore();
+        if(!IsConnected()) res/= 1000.;
         return res;
     }
 
@@ -245,32 +239,48 @@ struct Solver{
         */
 
         return pcost + sf*qcost;
+
     }
 
-    double Getpq(ll now){
+
+    // 特別区aが(pave,qave)とどのくらい離れているか
+    double Getdist(ll a){
         double pp=0,qq=0;
-        rep1(i,L) if(ans[i]==now) pp+=A[i];
-        rep1(i,L) if(ans[i]==now) qq+=B[i];
+        rep1(i,L) if(ans[i]==a) pp+=A[i];
+        rep1(i,L) if(ans[i]==a) qq+=B[i];
 
-        pp = abs(pave - pp);
-        qq = abs(qave - qq);
-
-        return pp + sf*qq;
+        return abs(pave-pp) + sf*abs(qave-qq);
     }
 
-
-    double Getdist(ll x,ll b){
+    // 地区xが今の特別区(a)からbに変わった時にaのdistがどのくらい変わるか
+    double Getddist_a(ll x,ll b){
         ll a = ans[x];
 
         double pp=0,qq=0;
-        rep1(i,L) if(ans[i]==x) pp+=A[i];
-        rep1(i,L) if(ans[i]==x) qq+=B[i];
+        rep1(i,L) if(ans[i]==a) pp+=A[i];
+        rep1(i,L) if(ans[i]==a) qq+=B[i];
 
         double bef,aft;
         bef = abs(pave-pp) + sf*abs(qave-qq);
 
         pp -= A[x];
         qq -= B[x];
+        aft = abs(pave-pp) + sf*abs(qave-qq);
+
+        return aft-bef;
+    }
+
+    // 地区xが今の特別区(a)からbに変わった時にbのdistがどのくらい変わるか
+    double Getddist_b(ll x,ll b){
+        double pp=0,qq=0;
+        rep1(i,L) if(ans[i]==b) pp+=A[i];
+        rep1(i,L) if(ans[i]==b) qq+=B[i];
+
+        double bef,aft;
+        bef = abs(pave-pp) + sf*abs(qave-qq);
+
+        pp += A[x];
+        qq += B[x];
         aft = abs(pave-pp) + sf*abs(qave-qq);
 
         return aft-bef;
@@ -328,7 +338,6 @@ struct Solver{
         while(!_solve_bfs_ideal());
     }
 
-
     bool _solve_bfs_ideal(){
         vec(ll) tmpv;
         rep1(i,K) tmpv.push_back(i);
@@ -339,7 +348,7 @@ struct Solver{
         ll lcnt = 1;
 
         // なるべくいい感じの特別区を作る
-        rep1(i,K){
+        for(ll i:tmpv){
             if(ans[i]>0) continue;
 
             queue<ll> que; que.push(i);
@@ -356,7 +365,7 @@ struct Solver{
 
                 for(ll to: g[q0]) if(ans[to]==0) que.push(to);
             }
-            if(lcnt==L) continue;
+            if(lcnt==L) break;
             lcnt++;
         }
 
@@ -369,253 +378,61 @@ struct Solver{
         while(!que.empty()){
             ll q0 = que.front();
             que.pop();
-
-
-            bool f404 = true;
+            
+            double dmax = 1e10;
+            ll nxt = 0;
             for(ll to:g[q0]){
-                if(ans[to]==0) continue;
-                ans[q0]=ans[to];
-                f404 = false;
-                break;
+                ll b = ans[to];
+                if(b==0) continue;
+                if(chmin(dmax, Getddist_b(q0, b))) nxt = b;
             }
 
-            if(f404) que.push(q0);
+            if(nxt!=0) ans[q0] = nxt;
+            else que.push(q0);
         }
 
         return true;
-
-
     }
 
 
 
-
-
-
-    // annealing
-    void solve_annealing_pq(){
-        double tl1 = TIMELIMIT * 0.4;
+    // 焼きなます感じ
+    void solve_annealing(){
+        double tl1 = TIMELIMIT * 0.7;
         double tl2 = TIMELIMIT * 0.7;
 
         // 初期値生成
-        solve_bfs();
-        double nowscore = GetScore();
-        double nowcost = Getpqcost();
-        vec(ll) ans2 = ans;
-
-
-        while(clock()-start_time < tl1){
-            solve_bfs();
-            double nxtscore = GetScore();
-            double nxtcost = Getpqcost();
-            if(nxtscore < 0.) continue;
-            if(chmax(nowscore, nxtscore)){
-                ans2 = ans;
-            }
-
-            /*
-            if(chmin(nowcost, nxtcost)){
-                ans2 = ans;
-            }
-            */
-        }
-        ans = ans2;
-        nowcost = Getpqcost();
-        nowscore = GetScore();
-
-
-
-        while(clock()-start_time < tl2){
-            ll x = RandInt(1,K);
-            ll a = ans[x];
-            shuffle(all(g[x]),engine);
-
-            for(ll y:g[x]){
-                ll b = ans[y];
-                if(a==b) continue;
-
-                double ddist = Getdist(x,b);
-
-                ans[x] = b;
-
-                double nxtscore = GetScore();
-
-                if(nxtscore < 0.){
-                    ans[x]=a;
-                    continue;
-                }
-
-                double nxtcost = Getpqcost();
-
-                //double dt = (clock()-start_time)/TIMELIMIT; //(CLOCKS_PER_SEC);
-                double dt = (clock()-start_time-tl1)/(tl2-tl1);
-
-                //double T = 30. *exp( 1. / (1.-dt) );
-                //double T = (1. - dt)/dt; 
-                double T = 30.*(1.-dt);
-
-                //double probability = exp( min(0., 1.*(nowcost-nxtcost)/T ) );
-                //double probability = ( (nxtcost<nowcost)? 1. : 0.   );
-                //double probability = exp( min(0., -ddist/T) );
-                double probability = ( (ddist<0.)? 1. : 0.   );
-                
-                if(Randdouble() < probability){
-                    nowscore = nxtscore;
-                    nowcost = nxtcost;
-                    break;
-                }else{
-                    ans[x] = a;
-                }
-            }
-        }
-
-
-
-        while(clock()-start_time < TIMELIMIT){
-            ll x = RandInt(1,K);
-            ll a = ans[x];
-            shuffle(all(g[x]),engine);
-
-            for(ll y:g[x]){
-                ll b = ans[y];
-                if(a==b) continue;
-                ans[x] = b;
-
-                double nxtscore = GetScore();
-
-                if(nxtscore < 0.){
-                    ans[x]=a;
-                    continue;
-                }
-
-                //double dt = (clock()-start_time)/TIMELIMIT; //(CLOCKS_PER_SEC);
-                double dt = (clock()-start_time-tl2)/(TIMELIMIT -tl2);
-
-                //double T = 30. *exp( 1. / (1.-dt) );
-                //double T = (1. - dt)/dt; 
-                double T = 30.*(1.-dt);
-
-                double probability = exp( min(0., 1.*(nxtscore-nowscore)/T ) );
-                if(Randdouble() < probability){
-                    nowscore = nxtscore;
-                    break;
-                }else{
-                    ans[x] = a;
-                }
-            }
-        }
-    }
-
-
-
-    // annealing
-    void solve_climb_and_annealing(){
-        double tl1 = TIMELIMIT * 0.4;
-        double tl2 = TIMELIMIT * 0.7;
-
-        // 初期値生成
-        //solve_bfs();
         solve_bfs_ideal();
-        double nowscore = GetScore();
-        double nowcost = Getpqcost();
+        double now = GetPQScore(); // 連結なはずなので
         vec(ll) ans2 = ans;
-
-
         while(clock()-start_time < tl1){
             solve_bfs();
-            double nxtscore = GetScore();
-            double nxtcost = Getpqcost();
-            if(nxtscore < 0.) continue;
-            if(chmax(nowscore, nxtscore)){
-                ans2 = ans;
-            }
+            if(chmax(now, GetPQScore())) ans2 = ans;
         }
         ans = ans2;
-        nowcost = Getpqcost();
-        nowscore = GetScore();
 
 
-        // climb
+
+        // p,qの分布を改善
+        vec(ll) pp(L+1),qq(L+1);
+        rep1(i,K) pp[ans[i]] += A[i];
+        rep1(i,K) qq[ans[i]] += B[i];
+        vec(double) tmpv(L+1);
+        rep1(i,L) tmpv[i] = (pp[i]-pave) + sf * (qq[i]-qave);
+        segtree<double, op, ee> seg(tmpv);
+        vector<set<ll>> vs(L+1);
+        rep1(i,K) vs[ans[i]].insert(i);
+
+
         while(clock()-start_time < tl2){
-            vec(ll) pp(L+1),qq(L+1);
-            rep1(i,K) pp[ans[i]] += A[i];
-            rep1(i,K) qq[ans[i]] += B[i];
-            
-            ll a=0;
-            double dmax = 0.;
-            rep1(i,L) if(chmax(dmax, abs(pp[i]-pave))) a = i;
-            rep1(i,L) if(chmax(dmax, sf*abs(pp[i]-pave))) a = i;
-
-            vec(ll) v;
-            rep1(i,K) if(ans[i]==a) v.push_back(i);
-            shuffle(all(v),engine);
-
-            bool bflag = false;
-            for(ll x:v){
-                shuffle(all(g[x]),engine);
-
-                for(ll y:g[x]){
-                    ll b = ans[y];
-                    if(a==b) continue;
-
-                    if( pave - pp[a] == dmax || (qave - qq[a])*sf == dmax ){
-                        swap(x,y);
-                        swap(a,b);
-                    }
-
-                    double ddist = Getdist(x, b);
-
-                    ans[x] = b;
-                    double nxtscore = GetScore();
-
-                    if(nxtscore < 0.){
-                        ans[x]=a;
-                        continue;
-                    }
-
-                    if(ddist<0.){
-                        bflag=true;
-                        break;
-                    }else{
-                        ans[x] = a;
-                    }
-                    /*
-
-                    double nxtcost = Getpqcost();
-
-                    //double dt = (clock()-start_time)/TIMELIMIT; //(CLOCKS_PER_SEC);
-                    double dt = (clock()-start_time-tl1)/(tl2-tl1);
-
-                    //double T = 30. *exp( 1. / (1.-dt) );
-                    //double T = (1. - dt)/dt; 
-                    double T = 30.*(1.-dt);
-
-                    //double probability = exp( min(0., 1.*(nowcost-nxtcost)/T ) );
-                    //double probability = ( (nxtcost<nowcost)? 1. : 0.   );
-                    //double probability = exp( min(0., -ddist/T) );
-                    double probability = ( (ddist<0.)? 1. : 0.   );
-                    
-                    if(Randdouble() < probability){
-                        //nowscore = nxtscore;
-                        //nowcost = nxtcost;
-                        bflag=true;
-                        break;
-                    }else{
-                        ans[x] = a;
-                    }
-                    */
-
-                }
-
-                if(bflag) break;
-            } 
-
-
-
+            ll a = seg.all_prod();
         }
 
 
 
+
+        // スコアを改善
+        double nowscore = GetScore();
         while(clock()-start_time < TIMELIMIT){
             ll x = RandInt(1,K);
             ll a = ans[x];
@@ -626,12 +443,13 @@ struct Solver{
                 if(a==b) continue;
                 ans[x] = b;
 
-                double nxtscore = GetScore();
-
-                if(nxtscore < 0.){
+                if(!IsConnected()){
                     ans[x]=a;
                     continue;
                 }
+
+                double nxtscore = GetPQScore();
+
 
                 //double dt = (clock()-start_time)/TIMELIMIT; //(CLOCKS_PER_SEC);
                 double dt = (clock()-start_time-tl2)/(TIMELIMIT -tl2);
@@ -649,9 +467,15 @@ struct Solver{
                 }
             }
         }
+
+
+
+
+
     }
 
 
+   
 };
 
 
@@ -660,10 +484,10 @@ int main(){
     //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
-        //solver.solve_climb_and_annealing();
-        solver.solve_bfs_ideal();
+        solver.solve_annealing();
+        //solver.solve_bfs_ideal();
         solver.Submit();
-        solver.Submit_file();
+        //solver.Submit_file();
     }
     return 0;
 }

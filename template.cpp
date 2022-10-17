@@ -62,9 +62,11 @@ struct Solver{
         ll N;
         cin >> N;
 
-        map<ll,ll> m;
-        m[0]+=10;
-        cout << m[0]<< endl;
+        vec(ll) v={1,2,5,23,5};
+        sort(all(v));
+        v.erase(unique(all(v)), v.end());
+
+        for(ll vi:v)cout << vi << " "; cout << endl;
 
     }
 };
