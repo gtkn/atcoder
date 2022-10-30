@@ -59,8 +59,44 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        vvec(bool) vv(9,vec(bool)(9));
+        rep(i,9){
+            string s;
+            cin >> s;
+            rep(j,9) vv[i][j] = (s[j]=='#');
+        }
+
+        ll ans = 0;
+        rep(h0,9)rep(w0,9){
+
+            rep(dh,9){
+                rep1(dw,9){
+                    ll hh,ww;
+
+                    hh = h0; ww=w0;
+                    if(hh<0|| hh>=9 || ww<0 || ww>=9) continue;
+                    if(!vv[hh][ww]) continue;
+                
+                    
+                    hh += dh; ww += dw;
+                    if(hh<0|| hh>=9 || ww<0 || ww>=9) continue;
+                    if(!vv[hh][ww]) continue;
+                
+                    hh += dw; ww -= dh;
+                    if(hh<0|| hh>=9 || ww<0 || ww>=9) continue;
+                    if(!vv[hh][ww]) continue;
+                
+                    hh -= dh; ww -= dw;
+                    if(hh<0|| hh>=9 || ww<0 || ww>=9) continue;
+                    if(!vv[hh][ww]) continue;
+                
+                    ans++;
+                    //cout << h0<<" " << w0 <<" "<< dh <<" "<< dw <<" "<< endl;
+                }
+            }
+        }
+
+        cout << ans << endl;
 
 
     }

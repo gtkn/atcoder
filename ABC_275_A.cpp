@@ -62,6 +62,17 @@ struct Solver{
         ll N;
         cin >> N;
 
+        ll a = -1;
+        ll ans = 0;
+        rep1(i,N){
+            ll H;
+            cin >> H;
+            if(chmax(a,H)) ans = i;
+        }
+
+        cout << ans << endl;
+
+
 
     }
 };

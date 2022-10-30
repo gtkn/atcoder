@@ -59,9 +59,22 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        vec(ll) v(6);
+        rep(i,6) cin >> v[i];
+        
+        ll m = 998244353;
+        rep(i,6) v[i]%=m;
+        ll a=1,b=1;
+        rep(i,3){
+            a = (a*v[i])%m;
+            b = (b*v[3+i])%m;
+        }
+        a+=m;
+        ll ans = (a-b)%m;
+        cout << ans << endl;
 
+        //mint ans = v[0]*v[1]*v[2] - v[3]*v[4]*v[5];
+        //cout << ans.val() << endl;
 
     }
 };

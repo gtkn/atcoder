@@ -59,8 +59,59 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >>M;
+
+        vec(Pll) v;
+        for(ll x = 0; x*x<=M; x++){
+            ll l=0,r=M;
+            ll x2 = x*x;
+            while(r-l>1){
+                ll m = (l+r)/2;
+                if( x2 + m*m <= M ) l=m;
+                else r=m;
+            }
+            if(x2 + l*l != M) continue;
+            v.emplace_back(x,l);
+            v.emplace_back(x,-l);
+            v.emplace_back(-x,l);
+            v.emplace_back(-x,-l);
+
+            v.emplace_back(l,x);
+            v.emplace_back(l,-x);
+            v.emplace_back(-l,x);
+            v.emplace_back(-l,-x);
+
+        }
+
+
+        vvec(ll) dp(N,vec(ll)(N,llINF));
+        
+        queue<Pll> q;
+        auto qpush = [&](ll x,ll y, ll c){
+            if(x<0 || x>=N || y<0 || y>=N) return;
+            if(chmin(dp[x][y], c)) q.emplace(x,y);            
+        };
+
+        qpush(0,0,0);
+
+        while(!q.empty()){
+            Pll q0 = q.front();
+            q.pop();
+            ll x0,y0;
+            x0 = q0.first;
+            y0 = q0.second;
+
+            for(Pll vi:v){
+                qpush(x0 + vi.first, y0+vi.second, dp[x0][y0]+1);
+            }
+        }
+
+        rep(i,N){
+            rep(j,N) cout << ( (dp[i][j]==llINF)? -1 : dp[i][j]  ) << " "; cout << endl;
+        }
+
+
 
 
     }

@@ -43,26 +43,27 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    set<ll> s;
+    map<ll,ll> m;
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    ll f(ll k){
+        if(sfind(s,k)) return m[k];
+
+        ll res = f(k/2) + f(k/3);
+        s.insert(k);
+        m[k]=res;
+
+        return res;
+    }
+
     void solve(){
         ll N;
         cin >> N;
+        s.insert(0);
+        m[0]=1;
 
-
+        cout << f(N) << endl;
     }
 };
 

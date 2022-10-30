@@ -27,6 +27,17 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// setからランダムに値を得る
+ll set_random(set<ll> &s)
+{
+    auto it = s.cbegin();
+    int random = rand() % s.size();
+    advance(it, random);
+ 
+    return *it;
+}
+
+
 // vectorの重複削除
 /*
 vec(ll) v={1,2,5,23,5};

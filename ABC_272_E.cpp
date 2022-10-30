@@ -59,8 +59,42 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
+
+
+        vec(ll) A(N+1);
+        rep1(i,N) cin >> A[i];
+
+        vvec(ll) vva(M+2), vvb(M+2);
+        rep1(i,N){
+            ll x;
+            x = (-A[i]+i-1)/i;
+            chmax(x,0LL); chmin(x,M+1);
+            vva[x].push_back(i);
+        
+            x = (N+10-A[i]+i-1)/i;
+            chmax(x,0LL); chmin(x,M+1);
+            vvb[x].push_back(i);
+        }
+
+        set<ll> uses;
+        for(ll x:vva[0]) uses.insert(x);
+        for(ll x:vvb[0]) uses.erase(x);
+
+        rep1(i,M){
+            for(ll x:vva[i]) uses.insert(x);
+            for(ll x:vvb[i]) uses.erase(x);
+
+            set<ll> s;
+            for(ll x:uses) s.insert(A[x]+x*i);
+            rep(j,N+1){
+                if(sfind(s,j)) continue;
+                cout << j << endl;
+                break;
+            }
+
+        }
 
 
     }

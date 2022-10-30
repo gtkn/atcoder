@@ -42,25 +42,38 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
+
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        vvvec(ll) dp(N+1,vvec(ll)(M+1,vec(ll)(2,llINF)));
+        dp[0][0][1]=0;
+
+        rep(i,N)rep(j,M+1){
+            chmin(dp[i+1][j][0], dp[i][j][0] );
+            chmin(dp[i+1][j][0], dp[i][j][1]+1 );
+
+            ll jj = j + A[i];
+            if(jj>M) continue;
+
+            chmin(dp[i+1][jj][1], dp[i][j][0] );
+            chmin(dp[i+1][jj][1], dp[i][j][1] );
+        
+        }
+
+        rep1(j,M){
+            ll ans = llINF;
+            rep(k,2) chmin(ans, dp[N][j][k]);
+            if(ans==llINF) ans = -1;
+            cout << ans << endl;
+        }
 
 
     }

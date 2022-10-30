@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,7 +29,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -59,8 +59,38 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M,K;
+        cin >> N >> M >> K;
+
+        vvec(mint) dp(K+1,vec(mint)(N+1));
+        dp[0][0]=1;
+
+        mint minv = mint(M).inv();
+
+        rep(ki,K){
+            vec(mint) v(2*N+1);
+
+            rep(ni,N){
+                mint aa = dp[ki][ni] * minv;
+
+                v[ni+1] += aa;
+                v[ni+M+1] -= aa;
+            }
+
+            mint tmp = 0;
+            rep(i,2*N+1){
+                tmp += v[i];
+                ll ni = i;
+                if(i>N) ni = 2*N-i;
+                dp[ki+1][ni] += tmp;
+
+            }
+        }
+
+        mint ans = 0;
+        rep1(i,K) ans += dp[i][N];
+
+        cout << ans.val() << endl;
 
 
     }

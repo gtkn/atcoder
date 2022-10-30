@@ -61,6 +61,37 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N),B(N),C(N);
+        rep(i,N) cin >> A[i] >> B[i] >> C[i];
+
+
+        double x0=1e10,y0=1e10;
+
+        rep(i,N){
+            double x1,y1;
+            x1 = 1.*A[i]/C[i];
+            y1 = 1.*B[i]/C[i];
+
+            double a;
+            double xx,yy;
+
+            a = x0/x1;
+            xx = (x0+x1*a)/(1+a);
+            a = y0/y1;
+            yy = (y0+y1*a)/(1+a);
+
+            cout << a << endl;
+
+            if(max(x1,x1) < max(x0,y0)){
+                x0=x1;
+                y0=y1;
+            }
+
+        }
+
+        double ans = 1. / max(x0,y0);
+
+        printf("%.8f\r\n",ans);
 
 
     }
