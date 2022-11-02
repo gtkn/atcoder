@@ -27,6 +27,39 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+struct Timer{
+    ll start; // [clocks]
+    ll limit;
+    ll endt;
+
+    void begin(ll x){ // x[sec]
+        start = clock();
+        limit = x * CLOCKS_PER_SEC;
+        endt = start + limit;
+    }
+
+    bool inTime(){
+        return (clock()-start < limit);
+    }
+
+    bool inTime(ll x){ // [clocks]
+        return (clock()-start < x);
+    }
+
+    ll remain(){
+        return endt-clock();
+    }
+
+    ll past(){
+        return clock()-start;
+    }
+
+
+};
+
+
+
+
 // setからランダムに値を得る
 ll set_random(set<ll> &s)
 {

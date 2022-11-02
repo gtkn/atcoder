@@ -46,6 +46,37 @@ const int iINF = 1e9;
 random_device seed_gen;
 mt19937 engine(seed_gen());
 
+ll N,K,L;
+
+struct Timer{
+    ll start; // [clocks]
+    ll limit;
+    ll endt;
+
+    void begin(ll x){ // x[sec]
+        start = clock();
+        limit = x * CLOCKS_PER_SEC;
+        endt = start + limit;
+    }
+
+    bool inTime(){
+        return (clock()-start < limit);
+    }
+
+    bool inTime(ll x){ // [clocks]
+        return (clock()-start < x);
+    }
+
+    ll remain(){
+        return endt-clock();
+    }
+
+    ll past(){
+        return clock()-start;
+    }
+};
+
+
 // 0.以上1.未満の整数をランダムに返す関数
 double Randdouble(){
     return 1. * rand() / RAND_MAX;
@@ -64,6 +95,75 @@ ll random_set(set<ll> &s){
     return *it;
 }
 
+struct Timer{
+    ll start; // [clocks]
+    ll limit;
+    ll endt;
+
+    void begin(ll x){ // x[sec]
+        start = clock();
+        limit = x * CLOCKS_PER_SEC;
+        endt = start + limit;
+    }
+
+    bool inTime(){
+        return (clock()-start < limit);
+    }
+
+    bool inTime(ll x){ // [clocks]
+        return (clock()-start < x);
+    }
+
+    ll remain(){
+        return endt-clock();
+    }
+
+    ll past(){
+        return clock()-start;
+    }
+
+
+};
+
+
+struct SR{
+    ll asum,bsum;
+    set<ll> regions;
+    set<ll> neighbors;
+
+    SR(){
+        asum=0,bsum=0;
+    }
+};
+
+
+struct State{
+
+
+
+
+};
+
+
+struct  Solver{
+    vec(ll) A,B;
+    vvec(ll) C;
+    Timer timer;
+
+    void input(){
+        tim
+        cin >> N >> K >> L;
+        A.resize(K+1);
+        B.resize(K+1);
+        rep1(i,K) cin >> A[i] >> B[i];
+
+
+        
+    }
+
+
+};
+
 
 
 //---------------------
@@ -77,8 +177,6 @@ int main(){
 
 
     // 読み込み
-    ll N,K,L;
-    cin >> N >> K >> L;
 
     vec(ll) A(K+1),B(K+1);
     rep1(i,K) cin >> A[i] >> B[i];
