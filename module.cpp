@@ -27,12 +27,13 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
 struct Timer{
     ll start; // [clocks]
     ll limit;
     ll endt;
 
-    void begin(ll x){ // x[sec]
+    void begin(double x){ // x[sec]
         start = clock();
         limit = x * CLOCKS_PER_SEC;
         endt = start + limit;
@@ -42,8 +43,8 @@ struct Timer{
         return (clock()-start < limit);
     }
 
-    bool inTime(ll x){ // [clocks]
-        return (clock()-start < x);
+    bool inTime(double x){ // [sec]
+        return (clock()-start < x*CLOCKS_PER_SEC);
     }
 
     ll remain(){
@@ -53,8 +54,6 @@ struct Timer{
     ll past(){
         return clock()-start;
     }
-
-
 };
 
 
