@@ -59,57 +59,18 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
-
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        ll tot = 0;
-        rep(i,N) tot+= A[i];
-
-        sort(all(A));
-
-        ll cnt = 0;
-        ll last = 0;
-        ll ans = tot;
+        string S,T;
+        cin >> S >> T;
+        
+        ll N = S.size();
         rep(i,N){
-            if(A[i]==last || A[i]==last+1){
-                cnt += A[i];
-            }else{
-                cnt = A[i];
-            }    
-            last = A[i];             
-            chmin(ans, tot-cnt);
+            if(S[i]!=T[i]){
+                cout<< i+1<< endl;
+                return;
+            }
         }
 
-        if(A[N-1]==M-1 && A[0]==0){
-            cnt = 0;
-            last = 0;
-            rep(i,N){
-                if(A[i]==last || A[i]==last+1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
-
-            last = A[N-1];
-            repr(i,N){
-                if(A[i]==last || A[i]==last-1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
-
-            chmin(ans, tot-cnt);
-        }
-        chmax(ans,0LL);
-
-        cout << ans << endl;
-
+        cout << N+1 << endl;
 
 
     }

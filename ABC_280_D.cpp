@@ -58,59 +58,47 @@ struct Solver{
     vec(int) dh = {1,0,-1,0};
     vec(int) dw = {0,1,0,-1};
  
+
+    //---素因数分解------
+    map<ll, ll > prime_factor(ll n) {
+        map<ll, ll > pf;
+        for(ll f=2; f*f<=n; ++f){
+            while(n%f == 0){
+                pf[f]++;
+                n /= f;
+            }
+        }
+        if(n!=1) pf[n]++;
+        return pf;
+    }
+
+
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll K;
+        cin >> K;
 
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        ll tot = 0;
-        rep(i,N) tot+= A[i];
+        map<ll,ll> pf = prime_factor(K);
 
-        sort(all(A));
+        ll ans = 0;
+        for(auto mi:pf){
+            ll cnt = 0;
+            ll now = 0;
+            ll x=mi.first;
+            ll th=mi.second;
 
-        ll cnt = 0;
-        ll last = 0;
-        ll ans = tot;
-        rep(i,N){
-            if(A[i]==last || A[i]==last+1){
-                cnt += A[i];
-            }else{
-                cnt = A[i];
-            }    
-            last = A[i];             
-            chmin(ans, tot-cnt);
-        }
-
-        if(A[N-1]==M-1 && A[0]==0){
-            cnt = 0;
-            last = 0;
-            rep(i,N){
-                if(A[i]==last || A[i]==last+1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
+            while(cnt<th){
+                now+=x;
+                ll tmp = now;
+                while(tmp%x==0){
+                    tmp/=x;
+                    cnt++;
                 }
             }
 
-            last = A[N-1];
-            repr(i,N){
-                if(A[i]==last || A[i]==last-1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
-
-            chmin(ans, tot-cnt);
+            chmax(ans,now);
         }
-        chmax(ans,0LL);
 
         cout << ans << endl;
-
-
 
     }
 };

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,7 +29,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -59,56 +59,31 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N,P;
+        cin >> N >> P;
 
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        ll tot = 0;
-        rep(i,N) tot+= A[i];
+        mint cr=P;
+        cr/=100;
+        mint no = 1-cr;
 
-        sort(all(A));
+        vec(mint) dp0(N+2);
+        vec(mint) dp1(N+2);
+        dp0[0]=0;
+        dp1[0]=1;
 
-        ll cnt = 0;
-        ll last = 0;
-        ll ans = tot;
         rep(i,N){
-            if(A[i]==last || A[i]==last+1){
-                cnt += A[i];
-            }else{
-                cnt = A[i];
-            }    
-            last = A[i];             
-            chmin(ans, tot-cnt);
+            dp0[i+1] += no*(dp0[i]+dp1[i]);
+            dp1[i+1] += no*dp1[i];
+
+            dp0[i+2] += cr*(dp0[i]+dp1[i]);
+            dp1[i+2] += cr*dp1[i];
         }
 
-        if(A[N-1]==M-1 && A[0]==0){
-            cnt = 0;
-            last = 0;
-            rep(i,N){
-                if(A[i]==last || A[i]==last+1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
+        mint ans = dp0[N]+dp0[N+1];
+        cout << ans.val() << endl;
 
-            last = A[N-1];
-            repr(i,N){
-                if(A[i]==last || A[i]==last-1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
 
-            chmin(ans, tot-cnt);
-        }
-        chmax(ans,0LL);
 
-        cout << ans << endl;
 
 
 

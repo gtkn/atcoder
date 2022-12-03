@@ -59,57 +59,54 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,M;
-        cin >> N >> M;
+        ll N,M,K;
+        cin >> N >> M >> K;
 
-        vec(ll) A(N);
-        rep(i,N) cin >> A[i];
-        ll tot = 0;
-        rep(i,N) tot+= A[i];
 
-        sort(all(A));
-
-        ll cnt = 0;
-        ll last = 0;
-        ll ans = tot;
-        rep(i,N){
-            if(A[i]==last || A[i]==last+1){
-                cnt += A[i];
-            }else{
-                cnt = A[i];
-            }    
-            last = A[i];             
-            chmin(ans, tot-cnt);
+        vvec(Pll) g(N);
+        rep(_,M){
+            ll ui,vi,ai;
+            cin >> ui >> vi >> ai;
+            ui--;vi--;
+            g[ui].emplace_back(vi,ai);
+            g[vi].emplace_back(ui,ai);
         }
 
-        if(A[N-1]==M-1 && A[0]==0){
-            cnt = 0;
-            last = 0;
-            rep(i,N){
-                if(A[i]==last || A[i]==last+1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
 
-            last = A[N-1];
-            repr(i,N){
-                if(A[i]==last || A[i]==last-1){
-                    cnt += A[i];
-                    last = A[i];
-                }else{
-                    break;
-                }
-            }
-
-            chmin(ans, tot-cnt);
+        set<ll> s;
+        rep(_,K){
+            ll si;cin >> si;
+            si--;
+            s.insert(si);
         }
-        chmax(ans,0LL);
 
+        vvec(ll) dp(N,vec(ll)(2,llINF));
+
+        queue<Pll> q;
+        auto qpush = [&](ll to,ll cost, ll ab){
+            if(chmin(dp[to][ab],cost)) q.emplace(to,ab);
+        };
+
+        qpush(0,0,1);
+        if(sfind(s,0)) qpush(0,0,0);
+
+        while(!q.empty()){
+            Pll q0 = q.front();
+            q.pop();
+
+            ll now = q0.first;
+            ll ab = q0.second;
+
+            for(Pll gi:g[now]){
+                if(gi.second!=ab) continue;
+                qpush(gi.first, dp[now][ab]+1, ab);
+                if(sfind(s,gi.first)) qpush(gi.first, dp[now][ab]+1, 1-ab);
+            }
+        }
+
+        ll ans = min(dp[N-1][0],dp[N-1][1]);
+        if(ans==llINF) ans = -1;
         cout << ans << endl;
-
 
 
     }
