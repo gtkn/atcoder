@@ -467,7 +467,8 @@ int main(){
 
 
         double dt = timer.past_rate(timelimit1);
-        double T = 1e-10 * (1.-exp(-dt/(1.-dt)));
+        //double T = 1e-10 * (1.-exp(-dt/(1.-dt)));
+        double T = 1e-11 * exp(-dt/(1.-dt));
         //double T0 = 0.1*pow(10, -2);
         //double T1 = 0.5*pow(10, -4);
         //double T= pow(T1, (1-dt))*pow(T0, dt);
@@ -508,7 +509,7 @@ int main(){
 
     // submit
     rep1(i,K) cout << ans[i] << endl;
-    //Submit_file(ans);
+    //submit_file(ans);
     //cout << nowscore<< endl;
 
 
