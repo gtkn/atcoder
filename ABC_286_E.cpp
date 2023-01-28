@@ -43,73 +43,74 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
+        ll N;
+        cin >> N;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        vvec(ll) g(N);
+        rep(i,N){
+            string S;
+            cin >> S;
+            rep(j,N) if(S[j]=='Y') g[i].push_back(j);
         }
+
+
+        vvec(Pll) dp(N,vec(Pll)(N,{llINF,0}));
+        rep(i,N) dp[i][i] = {0,A[i]};
+        rep(i,N){
+            for(ll j:g[i]) dp[i][j] = {1,A[i]+A[j]};
+        }
+
+        rep(k,N){
+            rep(i,N)rep(j,N){
+                ll dist = dp[i][k].first + dp[k][j].first;
+                ll valu = dp[i][k].second + dp[k][j].second - A[k];
+
+                if( dist > dp[i][j].first) continue;
+                if( dist == dp[i][j].first and valu <= dp[i][j].second) continue;
+                dp[i][j] = {dist, valu};
+            }
+        }
+
 
 
         ll Q;
         cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
+        while(Q--){
+            ll U,V;
+            cin >> U >> V;
+            U--; V--;
 
-
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
-
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
-
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
+            if(dp[U][V].first>=llINF){
+                cout << "Impossible" << endl;
             }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
+                cout << dp[U][V].first << " " << dp[U][V].second << endl;
             }
+
+            //rep(i,N) cout << dp[i].first << " :" << dp[i].second << endl;
+
+
         }
 
 
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
-            }
-        }
 
-        
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
-        }
 
 
     }

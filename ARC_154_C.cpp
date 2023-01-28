@@ -43,73 +43,62 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
-        }
+        ll N;
+        cin >> N;
+        vec(ll) A(N),B(N);
+        rep(i,N) cin >> A[i];
+        rep(i,N) cin >> B[i];
 
-
-        ll Q;
-        cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
-
-
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
-
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
-
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
-            }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
+        rep(i,N){
+            if(A[i]!=B[i]) break;
+            if(i==N-1){
+                cout << "Yes" << endl;
+                return;
             }
         }
 
 
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
+        vec(ll) bb={B[0]};
+        rep(i,N) if(B[i]!=bb.back()) bb.push_back(B[i]);
+        if(bb.size()>1 && bb[0]==bb.back()) bb.pop_back();
+
+        ll M = bb.size();
+        if(M>=N){
+            cout << "No" << endl;
+            return;
+        }
+
+        rep(i,N) A.push_back(A[i]);
+
+        rep(st,N){
+            ll cnt = 0;
+            rep(i,N){
+                if(A[st+i]==bb[cnt]) cnt++;
+                if(cnt>=M) break;
+            }
+            if(cnt>=M){
+                cout << "Yes" << endl;
+                return;
             }
         }
 
-        
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
-        }
+        cout << "No" << endl;
 
 
     }
@@ -119,7 +108,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,7 +29,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -43,74 +43,56 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
+        ll N;
+        cin >> N;
+        string A,B;
+        cin >> A >> B;
+
+
+        vec(ll) va(N),vb(N);
+        rep(i,N) va[i] = A[i]-'0';
+        rep(i,N) vb[i] = B[i]-'0';
+
+
+        ll x = 0;
+        rep(i,N){
+            if(va[i]==vb[i]) continue;
+            if(va[i]<vb[i]) swap(va,vb);
+            x = i;
+            break;
         }
 
+        // cout << x <<" ! " << endl;
+        // rep(i,N) cout << va[i]; cout << endl;
+        // rep(i,N) cout << vb[i]; cout << endl;
 
-        ll Q;
-        cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
+        for(ll i=x+1; i<N; i++) if(va[i]-vb[i]<0) swap(va[i],vb[i]);
 
+        // rep(i,N) cout << va[i]; cout << endl;
+        // rep(i,N) cout << vb[i]; cout << endl;
 
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
+        vec(ll) conv = convolution(va,vb);
 
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
+        mint ans = 0;
+        for(ll ci:conv) ans = ans*10 + ci;
 
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
-            }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
-            }
-        }
-
-
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
-            }
-        }
-
-        
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
-        }
-
+        cout << ans.val() << endl;
 
     }
 };

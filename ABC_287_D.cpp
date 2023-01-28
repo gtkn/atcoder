@@ -43,75 +43,47 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
+        string S,T;
+        cin >> S >> T;
+        ll sn,tn;
+        sn = S.size();
+        tn = T.size();
+
+        vec(bool) v0(tn+1),v1(tn+1);
+        v0[0]=true;
+        rep(i,tn){
+            if(S[i]==T[i] || S[i]=='?' || T[i]=='?') v0[i+1] = true;
+            else break;
+        }
+
+        v1[0]=true;
+        rep(i,tn){
+            if(S[sn-1-i]==T[tn-1-i] || S[sn-1-i]=='?' || T[tn-1-i]=='?') v1[i+1] = true;
+            else break;
         }
 
 
-        ll Q;
-        cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
-
-
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
-
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
-
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
-            }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
-            }
-        }
-
-
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
-            }
+        rep(i,tn+1){
+            if(v0[i] && v1[tn-i]) yn;
         }
 
         
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
-        }
-
-
     }
 };
 

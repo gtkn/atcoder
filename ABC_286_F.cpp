@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -43,73 +43,62 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
-        }
 
+        vec(ll) v={4,9,5,7,11,13,17,19,23};
+        vec(ll) A;
 
-        ll Q;
-        cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
+        vec(ll) chk;
 
-
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
-
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
-
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
-            }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
+        for(ll vi:v){
+            ll a0 = A.size()+1;
+            chk.push_back(a0);
+            rep(i,vi){
+                ll diff = (i+1+vi)%vi;
+                A.push_back(a0+diff);
             }
         }
 
+        ll M = A.size();
+        cout << M << endl;
+        rep(i,M) cout << A[i] <<" ";
+        cout << endl;
 
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
-            }
+        vec(ll) B(M);
+        rep(i,M) cin >> B[i];
+
+        vec(ll) amari;
+        rep(i,v.size()){
+            ll ci = chk[i];
+            amari.push_back( (B[ci-1]-ci)%v[i] );
         }
 
-        
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
+        ll x0 = 0;
+        rep1(i,210){
+            bool isok=true;
+            rep(j,4) if(i%v[j]!=amari[j]) isok=false;
+            if(isok) x0=i;
         }
+
+        Pll res = crt(amari,v);
+        cout << res.first << endl;
+
+
 
 
     }

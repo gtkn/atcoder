@@ -27,6 +27,7 @@ using ll = long long;
 using P = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
+using Psl = pair<string,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -43,73 +44,63 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll H,W;
-        cin >> H >> W;
-        vvec(char) A(H,vec(char)(W));
-        rep(i,H){
-            string s;
-            cin >> s;
-            rep(j,W) A[i][j] = s[j];
-        }
-
-
-        ll Q;
-        cin >> Q;
-        vec(ll) va(Q),vb(Q);
-        rep(i,Q) cin >> va[i] >> vb[i];
-
-
-        ll h0=0,h1=1;
-        rep(i,Q){
-            h0 = va[i]-1-h0;
-            if(h0<0) h0+=H;
-
-            h1 = va[i]-1-h1;
-            if(h1<0) h1+=H;
-        }
-
-        ll w0=0,w1=1;
-        rep(i,Q){
-            w0 = vb[i]-1-w0;
-            if(w0<0) w0+=W;
-
-            w1 = vb[i]-1-w1;
-            if(w1<0) w1+=W;
-        }
-
-
-        ll dh = h1-h0;
-        vec(ll) vh(H);
-        rep(i,H){
-            if(i==0){
-                vh[0]=h0;
-            }else{
-                vh[i]=(vh[i-1]+dh+H)%H;
-            }
-        }
-
-
-        ll dw = w1-w0;
-        vec(ll) vw(W);
-        rep(i,W){
-            if(i==0){
-                vw[0]=w0;
-            }else{
-                vw[i]=(vw[i-1]+dw+W)%W;
-            }
-        }
-
+        ll N;
+        cin >> N;
         
-        vvec(char) ans(H,vec(char)(W));
-        rep(i,H)rep(j,W) ans[vh[i]][vw[j]] = A[i][j];
-
-        rep(i,H){
-            rep(j,W) cout << ans[i][j];
-            cout << endl;
+        vec(Psl) v(N);
+        rep(i,N){
+            string s; 
+            cin >> s;
+            v[i] = {s,i};            
         }
+
+        sort(all(v));
+
+        vec(ll) ans(N);
+
+        auto f = [](string a, string b){
+            ll n = min(a.size(),b.size() );
+
+            if( a.substr(0,n)==b.substr(0,n)) return n;
+
+            ll l=0,r=n;
+            while(r-l>1){
+                ll mid = (l+r)/2;
+                if(a.substr(0,mid) == b.substr(0,mid)) l=mid;
+                else r=mid;
+            }
+
+            return l;
+        };
+
+
+
+        rep(i,N-1){
+            ll res = f(v[i].first, v[i+1].first);
+            //cout << v[i].first <<" , " << v[i+1].first << " : " << res << endl;
+            chmax(ans[v[i].second], res);
+            chmax(ans[v[i+1].second], res);
+        }
+
+        rep(i,N) cout << ans[i] << endl;
+
+
 
 
     }
