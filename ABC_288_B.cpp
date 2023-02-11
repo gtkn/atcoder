@@ -59,11 +59,19 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+        vec(string) v;
+        rep(i,N){
+            string s;
+            cin >> s;
+            if(i<K) v.push_back(s);
+        }
+
+        sort(all(v));
+        for(string vi:v) cout << vi << endl;
+
 
     }
 };

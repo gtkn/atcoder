@@ -59,11 +59,38 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll Q,A,B;
+        cin >> Q >> A >> B;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+
+        set<ll> s,ss;
+        auto sadd = [&](ll a_,ll b_){
+            s.insert(a_-b_);
+            s.insert(a_+b_);
+            ss.insert(-a_-b_);
+            ss.insert(-a_+b_);
+        };
+
+        sadd(0,llINF);
+        sadd(A,B);
+
+        while(Q--){
+            ll t,a,b;
+            cin >> t >> a >> b;
+            if(t==1) sadd(a,b);
+            if(t==2){
+                ll res = 0;
+                if(  *s.lower_bound(a) > b){
+                    res = llINF;
+                    chmin(res, *ss.upper_bound(-a) + a );
+                    chmin(res, *s.upper_bound(b) - b );
+                } 
+                cout << res << endl;
+
+            }
+
+        }
+
 
     }
 };

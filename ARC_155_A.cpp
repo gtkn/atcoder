@@ -59,11 +59,48 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,K;
+        cin >> N >> K;
+        string S;
+        cin >> S;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+        bool isok=true;
+
+        ll nn = K/N;
+        ll b = K%N;
+        ll a = N-b;
+
+
+        if( nn&1 ){
+            if((nn/2)%2==0){
+                reverse(all(S));
+            }
+            rep(i,b) if(S[i]!=S[b-1-i]) isok=false;            
+            rep(i,b) if(S[a+i]!=S[N-1-i]) isok=false; 
+            rep(i,a) if(S[i]!=S[b+i]) isok=false;
+
+        }else{
+            if((nn/2)%2==1){
+                reverse(all(S));
+            }
+
+            string T = S.substr(0,b);
+            reverse(all(T));
+
+            string R = S+T;
+            ll M = R.size();
+            rep(i,M) if(R[i]!=R[M-1-i]) isok=false;
+
+            R = T+S;
+            rep(i,M) if(R[i]!=R[M-1-i]) isok=false;
+
+            // rep(i,b) if(S[i]!=S[N-b+i]) isok=false;
+            // rep(i,a) if(S[b+i]!=S[N-1-i]) isok=false;
+        }
+
+
+        if(isok) yn;
+
 
     }
 };
@@ -72,7 +109,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

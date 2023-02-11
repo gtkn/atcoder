@@ -62,8 +62,12 @@ struct Solver{
         ll N;
         cin >> N;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+        rep(_,N){
+            ll a,b;
+            cin >> a >> b;
+            cout << a + b << endl;
+        }
+
 
     }
 };

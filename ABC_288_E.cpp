@@ -59,12 +59,58 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+        vec(ll) A(N+1),C(N+1),X(M);
+        rep1(i,N) cin >> A[i];
+        rep1(i,N) cin >> C[i];
+        rep(i,M) cin >> X[i];
 
+        sort(all(X),greater<ll>());
+
+        vvec(ll) tbl(N+1,vec(ll)(N+1,llINF));
+        rep1(i,N){
+            for(ll j=i; j<=N; j++){
+                tbl[i][j] = min(tbl[i][j-1], C[j]); // min( C[i~j] )
+            }
+        }
+
+        // rep(i,N+1){
+        //     rep(j,N+1) cout << tbl[i][j] <<" "; cout << endl;
+        // }
+        // cout << endl;
+
+
+        vvec(ll) dp(N+1,vec(ll)(N+1,llINF));
+        dp[0][0] = 0;
+
+        rep(i,N){
+            bool must = false;
+            if(X.back() == i+1 && !X.empty()){
+                must = true;
+                X.pop_back();
+            }
+
+            rep(j,i+1){
+                // buy
+                chmin(dp[i+1][j+1],  dp[i][j] + A[i+1] + tbl[i+1-j][i+1] );
+
+                // not buy
+                if(!must){
+                    chmin(dp[i+1][j], dp[i][j]);
+                }
+            }
+        }
+
+        ll ans = llINF;
+        rep(j,N+1) chmin(ans,dp[N][j]);
+        // rep(i,N+1){
+        //     rep(j,N+1) cout <<  dp[i][j] << " "; cout << endl;
+        // }
+        // assert(X.empty());
+
+        cout << ans << endl;
     }
 };
 

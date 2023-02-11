@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -59,11 +59,25 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
-        cout << sqrt(4./19)*500 << endl;
-        cout << sqrt(10./19)*500 << endl;
+        dsu d(N);
+
+        rep(_,M){
+            ll a,b;
+            cin >> a >> b;
+            a--;b--;
+            d.merge(a,b);
+        }
+
+        ll ans = M;
+        for(auto g:d.groups()){
+            ans -= g.size()-1;
+        }
+
+        cout << ans << endl;
+
 
     }
 };
