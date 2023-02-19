@@ -59,44 +59,13 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,K;
-        cin >> N >> K;
-
-        vec(ll) A(N+2);
-        rep1(i,N) cin >> A[i];
-        vec(ll) d(N+1);
-        rep(i,N+1) d[i] = A[i+1]-A[i];
-
-
-        vvec(ll) cum(K);
-        vec(ll) tmp(K);
-        rep(i,N+1){
-            ll m = i%K;
-            tmp[m]+=d[i];
-            rep(j,K) cum[j].push_back(tmp[j]);
+        string s;
+        cin >> s;
+        for(char si:s){
+            if(si=='0') cout << 1;
+            else cout << 0;
         }
-
-        ll Q;
-        cin >> Q;
-        while(Q--){
-            ll l,r;
-            cin >> l >> r;
-
-            vec(ll) trgt(K);
-            trgt[(l-1)%K] -= A[l-1];
-            trgt[r%K] += A[r+1];
-
-            bool isok=true;
-            rep(i,K){
-                trgt[i] -= cum[i][r];
-                if(l>1) trgt[i] += cum[i][l-2];
-                if(trgt[i]!=0) isok=false;
-            }
-
-            if(isok) yn;
-
-        }
-
+        cout << endl;
 
     }
 };

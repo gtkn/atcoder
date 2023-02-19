@@ -59,43 +59,44 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,K;
-        cin >> N >> K;
+        ll N,M;
+        cin >> N >> M;
 
-        vec(ll) A(N+2);
-        rep1(i,N) cin >> A[i];
-        vec(ll) d(N+1);
-        rep(i,N+1) d[i] = A[i+1]-A[i];
-
-
-        vvec(ll) cum(K);
-        vec(ll) tmp(K);
-        rep(i,N+1){
-            ll m = i%K;
-            tmp[m]+=d[i];
-            rep(j,K) cum[j].push_back(tmp[j]);
+        vec(ll) C(N);
+        rep(i,N) cin >> C[i];
+        vvec(ll) g(N);
+        rep(_,M){
+            ll u,v;
+            cin >> u >> v;
+            u--;v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
         }
 
-        ll Q;
-        cin >> Q;
-        while(Q--){
-            ll l,r;
-            cin >> l >> r;
+        if(C[0]==C[N-1]) dame;
 
-            vec(ll) trgt(K);
-            trgt[(l-1)%K] -= A[l-1];
-            trgt[r%K] += A[r+1];
 
-            bool isok=true;
-            rep(i,K){
-                trgt[i] -= cum[i][r];
-                if(l>1) trgt[i] += cum[i][l-2];
-                if(trgt[i]!=0) isok=false;
-            }
+        vvec(ll) dp(N,vec(ll)(N,llINF));
+        queue<Pll> q;
+        auto qpush = [&](ll a,ll b, ll cost){
+            if(C[a]==C[b]) return;
+            if(chmin(dp[a][b],cost)) q.emplace(a,b);
+        };
+        qpush(0,N-1,0);
 
-            if(isok) yn;
+        while(!q.empty()){
+            Pll q0 = q.front();
+            q.pop();
 
+            ll a0,b0;
+            a0 = q0.first; b0 = q0.second;
+            ll c0 = dp[a0][b0];
+
+            for(ll ato:g[a0])for(ll bto:g[b0]) qpush(ato,bto,c0+1);
         }
+
+        if(dp[N-1][0]>=llINF) dame;
+        cout << dp[N-1][0] << endl;
 
 
     }
@@ -105,7 +106,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

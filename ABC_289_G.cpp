@@ -59,43 +59,57 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,K;
-        cin >> N >> K;
+        ll N,M;
+        cin >> N >> M;
+        vec(ll) B(N),C(M);
+        rep(i,N) cin >> B[i];
+        rep(i,M) cin >> C[i];
 
-        vec(ll) A(N+2);
-        rep1(i,N) cin >> A[i];
-        vec(ll) d(N+1);
-        rep(i,N+1) d[i] = A[i+1]-A[i];
+        sort(all(B), greater<ll>());
 
+        vector<tuple<ll,ll,ll>> v = {{0,1,B[0]}};
 
-        vvec(ll) cum(K);
-        vec(ll) tmp(K);
-        rep(i,N+1){
-            ll m = i%K;
-            tmp[m]+=d[i];
-            rep(j,K) cum[j].push_back(tmp[j]);
-        }
+        rep(i,N){
+            if(i==0) continue;
+            ll x_now,a_now,b_now;
+            x_now = 0;
+            a_now = i+1;
+            b_now = a_now*B[i];
+            while(!v.empty()){
+                auto [x_pre,a_pre,b_pre]{v.back()};
+                
+                ll da,db;
+                da = a_now-a_pre;
+                db = b_pre-b_now;
+                
+                assert(da>0);
+                
+                if(db>=0){
+                    x_now = db/da;
+                    if(db%da>0) x_now++;
+                }else{
+                    x_now = db/da;
+                }
 
-        ll Q;
-        cin >> Q;
-        while(Q--){
-            ll l,r;
-            cin >> l >> r;
+                if(x_pre*a_pre+b_pre <= x_pre*a_now+b_now) v.pop_back();
+                else break;
 
-            vec(ll) trgt(K);
-            trgt[(l-1)%K] -= A[l-1];
-            trgt[r%K] += A[r+1];
-
-            bool isok=true;
-            rep(i,K){
-                trgt[i] -= cum[i][r];
-                if(l>1) trgt[i] += cum[i][l-2];
-                if(trgt[i]!=0) isok=false;
             }
-
-            if(isok) yn;
-
+            v.emplace_back(x_now,a_now,b_now);
         }
+
+        // for(auto vi:v){
+        //     cout << get<0>(vi) << " " << get<1>(vi) << " " << get<2>(vi) << " " << endl;
+        // }
+
+        for(ll ci:C){
+            auto it = lower_bound(all(v),make_tuple(ci+1,0,0));
+            it--;
+            auto [x,a,b](*it);
+            cout << a*ci+b << " ";
+            // cout << ":" << ci << " , " << x <<" , " << a << " , " << b << endl;
+        }
+        cout << endl;
 
 
     }

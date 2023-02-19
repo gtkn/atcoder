@@ -59,43 +59,33 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N,K;
-        cin >> N >> K;
+        ll N,M;
+        cin >> N >> M;
 
-        vec(ll) A(N+2);
-        rep1(i,N) cin >> A[i];
-        vec(ll) d(N+1);
-        rep(i,N+1) d[i] = A[i+1]-A[i];
-
-
-        vvec(ll) cum(K);
-        vec(ll) tmp(K);
-        rep(i,N+1){
-            ll m = i%K;
-            tmp[m]+=d[i];
-            rep(j,K) cum[j].push_back(tmp[j]);
-        }
-
-        ll Q;
-        cin >> Q;
-        while(Q--){
-            ll l,r;
-            cin >> l >> r;
-
-            vec(ll) trgt(K);
-            trgt[(l-1)%K] -= A[l-1];
-            trgt[r%K] += A[r+1];
-
-            bool isok=true;
-            rep(i,K){
-                trgt[i] -= cum[i][r];
-                if(l>1) trgt[i] += cum[i][l-2];
-                if(trgt[i]!=0) isok=false;
+        vvec(bool) vv(M,vec(bool)(N+1));
+        rep(i,M){
+            ll ci; cin >> ci;
+            rep(_,ci){
+                ll a; cin >> a;
+                vv[i][a]=true;
             }
-
-            if(isok) yn;
-
         }
+
+        ll ans = 0;
+        rep(ptn,(1<<M)){
+            vec(ll) chk(N+1);
+            rep(i,M){
+                if(!bit(ptn,i)) continue;
+                rep1(j,N) chk[j] |= vv[i][j];
+            }
+            bool isok=true;
+            rep1(j,N) if(!chk[j]) isok=false;
+            if(isok) ans++;
+        }
+
+        cout << ans << endl;
+
+
 
 
     }
