@@ -3,10 +3,13 @@ githubtoken.txt
 in.dat
 out.dat
 acgpp.sh
+gpp17.sh
 tmp.cpp
 a.out
 PAST*
 botu_*
+sample_*
+AHC_*
 .vscode
 
 /atcoder/
