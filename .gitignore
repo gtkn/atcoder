@@ -2,10 +2,12 @@
 githubtoken.txt
 in.dat
 out.dat
-acgpp.sh
-gpp17.sh
+*.sh
 tmp.cpp
 a.out
+result.txt
+*.ipynb
+
 PAST*
 botu_*
 sample_*

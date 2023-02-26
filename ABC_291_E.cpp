@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,25 +42,73 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
+        vvec(ll) g(N);
+        vec(ll) v(N);
+        
+
+        dsu d(N);
+
+        rep(_,M){
+            ll x,y;
+            cin >> x >> y;
+            x--;y--;
+            d.merge(x,y);
+            g[x].push_back(y);
+            v[y]++;
+        }
+
+
+        if(d.groups().size()>1){
+            cout << "No" << endl;
+            return;
+        }
+
+
+        vec(ll) ans(N);
+        ll st = -1;
+
+        rep(i,N){
+            if(v[i]>0) continue;
+            if(st!=-1){
+                cout << "No" << endl;
+                return;
+            }
+            st = i;
+        }
+
+
+        queue<ll> q;
+        q.push(st);
+        ll cnt = 1;
+
+        while(!q.empty()){
+            ll q0 = q.front(); q.pop();
+
+            assert(v[q0]==0);
+            ans[q0] = cnt++;
+
+            for(ll to:g[q0]){
+                v[to]--;
+                if(v[to]==0) q.push(to);
+                if(q.size()>1){
+                    cout << "No" << endl;
+                    return;
+                }
+            }
+        }
+
+
+        cout << "Yes" << endl;
+        rep(i,N) cout << ans[i] << " "; cout << endl;
+
+
 
 
 

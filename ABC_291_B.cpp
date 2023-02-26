@@ -61,6 +61,16 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) X(5*N);
+        rep(i,5*N) cin >> X[i];
+        sort(all(X));
+
+        double ans = 0;
+        for(ll i=N; i<4*N; i++) ans += X[i];
+        ans /= 3*N;
+        printf("%.6f \r\n", ans);
+
+
 
 
 

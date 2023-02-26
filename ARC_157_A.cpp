@@ -59,8 +59,12 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,A,B,C,D;
+        cin >> N >>A >> B >> C >> D ;
+
+        if(B==0 && C==0){
+            if(A==0 || D==0) yn;
+        }else if(abs(B-C)<2) yn;
 
 
 

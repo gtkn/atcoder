@@ -61,8 +61,27 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        string S;
+        cin >> S;
 
+        set<Pll> s;
+        ll x=0,y=0;
+        s.emplace(0,0);
 
+        string ans = "No";
+        for(char si:S){
+
+            if(si=='R') x++;
+            if(si=='L') x--;
+            if(si=='U') y++;
+            if(si=='D') y--;
+
+            if(sfind(s, make_pair(x,y))) ans = "Yes";
+            s.emplace(x,y);
+            
+        }
+
+        cout << ans << endl;
 
     }
 };

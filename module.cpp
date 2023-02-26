@@ -27,6 +27,17 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 構造体と比較演算子のオーバーロード
+struct masu{
+    ll x,y,c;
+    masu(ll x=0, ll y=0, ll c=0):x(x),y(y),c(c){}
+};
+bool operator< (const masu &a, const masu &b){ // これでpriority_queueで使える
+    return a.c < b.c;
+};
+bool operator> (const masu &a, const masu &b){ // greaterの時はこっちも
+    return a.c > b.c;
+};
 
 
 // Convex Hull Trick (max) // snuke

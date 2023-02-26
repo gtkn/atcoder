@@ -59,8 +59,14 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        string S;
+        cin >> S;
+
+        rep(i,S.size()){
+            if(S[i]>='a' && S[i]<='z') continue;
+            cout << i+1 << endl;
+            break;
+        }
 
 
 

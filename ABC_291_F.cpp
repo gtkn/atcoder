@@ -59,9 +59,47 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
+        vvec(bool) vv(N,vec(bool)(M+1));
+
+        rep(i,N){
+            string S;
+            cin >> S;
+            rep(j,M) vv[i][j+1] = (S[j]=='1');
+        }
+
+
+        vec(ll) dpf(N,llINF);
+        dpf[0]=0;
+        rep(i,N){
+            rep1(j,M) if(vv[i][j]) chmin(dpf[i+j], dpf[i]+1);
+        }
+
+        vec(ll) dpr(N,llINF);
+        dpr[N-1]=0;
+        repr(i,N){
+            rep1(j,M) if(vv[i][j]) chmin(dpr[i], dpr[i+j]+1);
+        }
+
+
+        for(ll k=1; k<=N-2; k++){
+            ll ans = llINF;
+            for(ll l=k-1; l>=max(0LL,k-M); l--){
+                rep1(j,M){
+                    if(!vv[l][j]) continue;
+                    ll r = l+j;
+                    if(r<=k) continue;
+
+                    chmin(ans, dpf[l] + 1 + dpr[r]);
+                }
+            }
+            if(ans==llINF) ans = -1;
+            cout << ans << " ";
+
+        }
+        cout << endl;
 
 
     }
