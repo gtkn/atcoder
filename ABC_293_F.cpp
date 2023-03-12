@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -43,47 +43,18 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+
+
+
     void solve(){
         ll N;
         cin >> N;
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
 
-        
-        
-        vec(ll) v(N);
-        
-        rep(k,5){
-            vec(ll) AA(2*N),BB(N);
-            rep(i,N) AA[i] = !bit(A[i],k);
-            rep(i,N) AA[N+i] = AA[i];
-            rep(i,N) BB[i] = !bit(B[N-1-i],k);
 
-            vec(ll) cmb = convolution(AA,BB);
-            ll tmp = (1<<k);
-            rep(i,N) v[i] += (N - cmb[N-1+i])*tmp;
-        }
 
-        ll ans = 0;
-        for(ll vi:v) chmax(ans,vi);
 
-        cout << ans << endl;
 
     }
 };
@@ -92,7 +63,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

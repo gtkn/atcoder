@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -59,31 +59,19 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
+        ll N,Q;
+        cin >> N >> Q;
 
-        
-        
-        vec(ll) v(N);
-        
-        rep(k,5){
-            vec(ll) AA(2*N),BB(N);
-            rep(i,N) AA[i] = !bit(A[i],k);
-            rep(i,N) AA[N+i] = AA[i];
-            rep(i,N) BB[i] = !bit(B[N-1-i],k);
-
-            vec(ll) cmb = convolution(AA,BB);
-            ll tmp = (1<<k);
-            rep(i,N) v[i] += (N - cmb[N-1+i])*tmp;
+        vec(ll) v(N+1);
+        while(Q--){
+            ll t,x;
+            cin >> t >> x;
+            if(t==1) v[x]++;
+            if(t==2) v[x]+=2;
+            if(t==3) if(v[x]>=2) yn;
         }
 
-        ll ans = 0;
-        for(ll vi:v) chmax(ans,vi);
 
-        cout << ans << endl;
 
     }
 };

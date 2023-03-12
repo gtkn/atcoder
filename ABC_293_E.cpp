@@ -42,6 +42,8 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+using mint = modint;
+
 struct Solver{
     struct edge{
         ll to,c;
@@ -59,31 +61,31 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
-
+        ll A,X,M;
+        cin >> A >> X >> M;
         
-        
-        vec(ll) v(N);
-        
-        rep(k,5){
-            vec(ll) AA(2*N),BB(N);
-            rep(i,N) AA[i] = !bit(A[i],k);
-            rep(i,N) AA[N+i] = AA[i];
-            rep(i,N) BB[i] = !bit(B[N-1-i],k);
-
-            vec(ll) cmb = convolution(AA,BB);
-            ll tmp = (1<<k);
-            rep(i,N) v[i] += (N - cmb[N-1+i])*tmp;
+        if(M==1){
+            cout << 0 << endl;
+            return;
+        }
+        if(A==1){
+            cout << X << endl;
+            return;
         }
 
-        ll ans = 0;
-        for(ll vi:v) chmax(ans,vi);
+        mint::set_mod(M);
 
-        cout << ans << endl;
+        mint num = A;
+        num = num.pow(X)-1;
+        mint den = A-1;
+
+        mint ans = num/den;
+
+        cout << ans.val() << endl;
+
+
+
+
 
     }
 };

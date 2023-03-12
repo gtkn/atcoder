@@ -59,31 +59,43 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
+        ll N,M;
+        cin >> N >> M;
+        vvec(ll) g(N,vec(ll)(2,-1));
 
-        
-        
-        vec(ll) v(N);
-        
-        rep(k,5){
-            vec(ll) AA(2*N),BB(N);
-            rep(i,N) AA[i] = !bit(A[i],k);
-            rep(i,N) AA[N+i] = AA[i];
-            rep(i,N) BB[i] = !bit(B[N-1-i],k);
+        dsu uf(N);
 
-            vec(ll) cmb = convolution(AA,BB);
-            ll tmp = (1<<k);
-            rep(i,N) v[i] += (N - cmb[N-1+i])*tmp;
+        rep(_,M){
+            ll a,c;
+            char b,d;
+            cin >> a >> b >> c >> d;
+            a--; c--;
+            ll bb,dd;
+            bb = (b=='R' ? 0 : 1); 
+            dd = (d=='R' ? 0 : 1); 
+
+            // cout << a << " , " << b << bb << " , " << c << " , " << d << dd << endl;
+            g[a][bb] = c;
+            g[c][dd] = a;
+            uf.merge(a,c);            
         }
 
-        ll ans = 0;
-        for(ll vi:v) chmax(ans,vi);
+        ll X=0, Y=0;
+        for(auto grp:uf.groups()){
+            bool isc = true;
+            // cout << " --- " << endl;
+            for(ll a:grp){
+                // cout << a << " ; " << g[a][0] << " , " << g[a][1] << endl;
+                if(g[a][0]==-1 || g[a][1]==-1) isc = false;
+            }
+            if(isc) X++;
+            else Y++;
+        }
 
-        cout << ans << endl;
+        cout << X << " " << Y << endl;
+
+
+
 
     }
 };

@@ -59,31 +59,33 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
+        ll N,M;
+        cin >> N >> M;
 
-        
-        
-        vec(ll) v(N);
-        
-        rep(k,5){
-            vec(ll) AA(2*N),BB(N);
-            rep(i,N) AA[i] = !bit(A[i],k);
-            rep(i,N) AA[N+i] = AA[i];
-            rep(i,N) BB[i] = !bit(B[N-1-i],k);
-
-            vec(ll) cmb = convolution(AA,BB);
-            ll tmp = (1<<k);
-            rep(i,N) v[i] += (N - cmb[N-1+i])*tmp;
+        vec(ll) cnt(N);
+        dsu d(N);
+        rep(_,M){
+            ll u,v;
+            cin >> u >> v;
+            u--; v--;
+            cnt[u]++;
+            cnt[v]++;
+            d.merge(u,v);
         }
 
-        ll ans = 0;
-        for(ll vi:v) chmax(ans,vi);
+
+        string ans = "Yes";
+        for(auto gi:d.groups()){
+            ll nn = gi.size();
+            ll mm = 0;
+            for(ll i:gi) mm+=cnt[i];
+            mm/=2;
+            if(nn!=mm) ans = "No";
+        }
 
         cout << ans << endl;
+
+
 
     }
 };

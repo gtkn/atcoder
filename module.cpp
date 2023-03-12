@@ -27,6 +27,408 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
+
+const ll MOD = 998244353; 
+const ll PRIMITIVE_ROOT = 3; // 原始根
+
+// x^n % mod を求める関数
+ll pow_mod(ll x, ll n, ll mod) {
+    ll res = 1;
+    while (n > 0) {
+        if (n & 1) {
+            res = (res * x) % mod;
+        }
+        x = (x * x) % mod;
+        n >>= 1;
+    }
+    return res;
+}
+
+// NTTを行う関数
+void ntt(vector<ll>& a, bool inv) {
+    const int n = a.size();
+    ll g = pow_mod(PRIMITIVE_ROOT, (MOD - 1) / n, MOD);
+    if (inv) {
+        g = pow_mod(g, MOD - 2, MOD);
+    }
+    for (int i = 0, j = 1; j < n - 1; ++j) {
+        for (int k = n >> 1; k > (i ^= k); k >>= 1) {}
+        if (j < i) swap(a[i], a[j]);
+    }
+    for (int i = 1; i < n; i <<= 1) {
+        ll gn = pow_mod(g, n / i / 2, MOD);
+        for (int j = 0; j < n; j += i << 1) {
+            ll tmp = 1;
+            for (int k = 0; k < i; ++k) {
+                ll x = a[j + k];
+                ll y = (a[j + k + i] * tmp) % MOD;
+                a[j + k] = (x + y) % MOD;
+                a[j + k + i] = (x - y + MOD) % MOD;
+                tmp = (tmp * gn) % MOD;
+            }
+        }
+    }
+    if (inv) {
+        ll n_inv = pow_mod(n, MOD - 2, MOD);
+        for (int i = 0; i < n; ++i) {
+            a[i] = (a[i] * n_inv) % MOD;
+        }
+    }
+}
+
+// 2つの多項式f, gの畳み込みhを計算する関数
+vector<ll> convolution_ntt(const vector<ll>& f, const vector<ll>& g) {
+    const int n = f.size();
+    const int m = g.size();
+    int sz = 1;
+    while (sz < n + m - 1) {
+        sz <<= 1;
+    }
+    vector<ll> a(sz), b(sz);
+    for (int i = 0; i < n; ++i) {
+        a[i] = f[i];
+    }
+    for (int i = 0; i < m; ++i) {
+        b[i] = g[i];
+    }
+    ntt(a, false);
+    ntt(b, false);
+    for (int i = 0; i < sz; ++i) {
+        a[i] = (a[i] * b[i]) % MOD;
+    }
+    ntt(a, true);
+    a.resize(n + m - 1);
+    return a;
+}
+
+
+
+
+using cd = complex<double>;
+const double PI = acos(-1);
+
+void fft(vector<cd> &a, bool inv) {
+    int n = a.size();
+    for (int i = 1, j = 0; i < n; i++) {
+        int bit = n >> 1;
+        while (j >= bit) {
+            j -= bit;
+            bit >>= 1;
+        }
+        j += bit;
+        if (i < j) swap(a[i], a[j]);
+    }
+    for (int len = 2; len <= n; len <<= 1) {
+        double ang = 2 * PI / len * (inv ? -1 : 1);
+        cd wlen(cos(ang), sin(ang));
+        for (int i = 0; i < n; i += len) {
+            cd w(1);
+            for (int j = 0; j < len / 2; j++) {
+                cd u = a[i+j], v = a[i+j+len/2] * w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+    if (inv) {
+        for (int i = 0; i < n; i++) {
+            a[i] /= n;
+        }
+    }
+}
+
+vector<ll> convolution(vector<ll> a, vector<ll> b) {
+    int n = 1;
+    while (n < a.size() + b.size()) {
+        n <<= 1;
+    }
+    vector<cd> fa(n), fb(n);
+    for (int i = 0; i < a.size(); i++) {
+        fa[i] = a[i];
+    }
+    for (int i = 0; i < b.size(); i++) {
+        fb[i] = b[i];
+    }
+    fft(fa, false);
+    fft(fb, false);
+    for (int i = 0; i < n; i++) {
+        fa[i] *= fb[i];
+    }
+    fft(fa, true);
+    vector<ll> res(n);
+    for (int i = 0; i < n; i++) {
+        res[i] = round(fa[i].real());
+    }
+    return res;
+}
+
+
+
+
+
+
+
+
+const ll MOD = 998244353;
+const int gen = 3;
+const int gmax = 23;
+
+struct mymint{
+    ll _v;
+
+    mymint():_v(0){}
+
+    mymint(ll v):_v(v){
+        while(_v<0) _v+=MOD;
+        if(_v>=MOD) _v%=MOD;        
+    }
+
+    ll val() const { return _v; }
+
+    mymint& operator+=(const mymint& x){
+        _v += x._v;
+        if(_v >= MOD) _v -= MOD;
+        return *this;
+    }
+    mymint& operator-=(const mymint& x){
+        _v -= x._v;
+        if(_v < 0) _v += MOD;
+        return *this;
+    }
+    mymint& operator*=(const mymint& x){
+        _v *= x._v;
+        if(_v>=MOD) _v%=MOD;        
+        return *this;
+    }
+    mymint& operator/=(const mymint& x) { return *this = *this * x.inv(); }
+
+    friend mymint operator+(const mymint& a, const mymint& b) {
+        return mymint(a) += b;
+    }
+    friend mymint operator-(const mymint& a, const mymint& b) {
+        return mymint(a) -= b;
+    }
+    friend mymint operator*(const mymint& a, const mymint& b) {
+        return mymint(a) *= b;
+    }
+
+    mymint pow(long long n) const {
+        mymint x = *this, r = 1;
+        while (n) {
+            if (n & 1) r *= x;
+            x *= x;
+            n >>= 1;
+        }
+        return r;
+    }
+
+    mymint inv() const {
+        return pow(MOD - 2);
+    }
+
+};
+
+
+int ceil_pow2(int n) {
+    int x = 0;
+    while ((1U << x) < (unsigned int)(n)) x++;
+    return x;
+}
+
+
+void butterfly(vector<mymint>& a) {
+    int n = int(a.size());
+    int h = ceil_pow2(n);
+
+    static bool first = true;
+    static mymint sum_e[30];  
+    if (first) {
+        first = false;
+        mymint es[30], ies[30];  
+        int cnt2 = __builtin_ctz(MOD - 1);
+        mymint e = mymint(gen).pow((MOD - 1) >> cnt2);
+        mymint ie = e.inv();
+        for (int i = cnt2; i >= 2; i--) {
+            // e^(2^i) == 1
+            es[i - 2] = e;
+            ies[i - 2] = ie;
+            e *= e;
+            ie *= ie;
+        }
+        mymint now = 1;
+        for (int i = 0; i <= cnt2 - 2; i++) {
+            sum_e[i] = es[i] * now;
+            now *= ies[i];
+        }
+    }
+    for (int ph = 1; ph <= h; ph++) {
+        int w = 1 << (ph - 1), p = 1 << (h - ph);
+        mymint now = 1;
+        for (int s = 0; s < w; s++) {
+            int offset = s << (h - ph + 1);
+            for (int i = 0; i < p; i++) {
+                auto l = a[i + offset];
+                auto r = a[i + offset + p] * now;
+                a[i + offset] = l + r;
+                a[i + offset + p] = l - r;
+            }
+            now *= sum_e[__builtin_ctz(~(unsigned int)(s))];
+        }
+    }
+}
+
+void butterfly_inv(std::vector<mymint>& a) {
+    int n = int(a.size());
+    int h = ceil_pow2(n);
+
+    static bool first = true;
+    static mymint sum_ie[30];  // sum_ie[i] = es[0] * ... * es[i - 1] * ies[i]
+    if (first) {
+        first = false;
+        mymint es[30], ies[30];  // es[i]^(2^(2+i)) == 1
+        int cnt2 = __builtin_ctz(MOD - 1);
+        mymint e = mymint(gen).pow((MOD - 1) >> cnt2), ie = e.inv();
+        for (int i = cnt2; i >= 2; i--) {
+            // e^(2^i) == 1
+            es[i - 2] = e;
+            ies[i - 2] = ie;
+            e *= e;
+            ie *= ie;
+        }
+        mymint now = 1;
+        for (int i = 0; i <= cnt2 - 2; i++) {
+            sum_ie[i] = ies[i] * now;
+            now *= es[i];
+        }
+    }
+
+    for (int ph = h; ph >= 1; ph--) {
+        int w = 1 << (ph - 1), p = 1 << (h - ph);
+        mymint inow = 1;
+        for (int s = 0; s < w; s++) {
+            int offset = s << (h - ph + 1);
+            for (int i = 0; i < p; i++) {
+                auto l = a[i + offset];
+                auto r = a[i + offset + p];
+                a[i + offset] = l + r;
+                a[i + offset + p] =
+                    (unsigned long long)(MOD + l.val() - r.val()) *
+                    inow.val();
+            }
+            inow *= sum_ie[__builtin_ctz(~(unsigned int)(s))];
+        }
+    }
+}
+
+
+vector<mymint> myconvolution(vector<mymint> a, vector<mymint> b) {
+    int n = int(a.size()), m = int(b.size());
+    if (!n || !m) return {};
+    if (std::min(n, m) <= 60) {
+        if (n < m) {
+            std::swap(n, m);
+            std::swap(a, b);
+        }
+        std::vector<mymint> ans(n + m - 1);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                ans[i + j] += a[i] * b[j];
+            }
+        }
+        return ans;
+    }
+    int z = 1 << ceil_pow2(n + m - 1);
+    a.resize(z);
+    butterfly(a);
+    b.resize(z);
+    butterfly(b);
+    for (int i = 0; i < z; i++) {
+        a[i] *= b[i];
+    }
+    butterfly_inv(a);
+    a.resize(n + m - 1);
+    mymint iz = mymint(z).inv();
+    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
+    return a;
+}
+
+
+
+
+
+
+// https://trap.jp/post/1386/
+vector<complex<double>> FFT(vector<complex<double>> A){
+    const int N = A.size();
+    if(N == 1) return A;
+    vector<complex<double>> even(N / 2), odd(N / 2);
+    for(int i = 0; i < N / 2; i++){
+        even[i] = A[i * 2];
+        odd[i] = A[i * 2 + 1];
+    }
+    even = FFT(even);
+    odd = FFT(odd);
+    for(int i = 0; i < N / 2; i++){
+        odd[i] *= polar(1.0, 2 * M_PI * i / N);
+        A[i] = even[i] + odd[i];
+        A[N / 2 + i] = even[i] - odd[i];
+    }
+    return A;
+}
+
+vector<complex<double>> IFFT(vector<complex<double>> A){
+    const int N = A.size();
+    if(N == 1) return A;
+    vector<complex<double>> even(N / 2), odd(N / 2);
+    for(int i = 0; i < N / 2; i++){
+        even[i] = A[i * 2];
+        odd[i] = A[i * 2 + 1];
+    }
+    even = IFFT(even);
+    odd = IFFT(odd);
+    for(int i = 0; i < N / 2; i++){
+        odd[i] *= polar(1.0, -2 * M_PI * i / N);
+        A[i] = even[i] + odd[i];
+        A[N / 2 + i] = even[i] - odd[i];
+    }
+    return A;
+}
+
+
+
+vec(ll) convolution(vec(ll) a,vec(ll) b){
+    ll n=a.size(), m=b.size();
+    if(n==0 || m==0) return {};
+
+    ll l = 1;
+    while(l<(n+m-1)) l<<=1;
+
+    vec(complex<double>) a2(l),b2(l);
+    rep(i,n) a2[i] = a[i];
+    rep(i,m) b2[i] = b[i];
+    a2 = FFT(a2);
+    b2 = FFT(b2);
+    rep(i,l) a2[i]*=b2[i];
+    a2 = IFFT(a2);
+
+    vec(ll) res(n+m-1);
+    rep(i,n+m-1) res[i] = a2[i].real()/double(l);
+
+    return res;
+}
+
+
+// 文字列を小文字にする関数
+string to_lower(const std::string& s) {
+    string result = s;
+    transform(result.begin(), result.end(), result.begin(),
+        [](unsigned char c) { return tolower(c); });
+    return result;
+}
+
+
 // 構造体と比較演算子のオーバーロード
 struct masu{
     ll x,y,c;
