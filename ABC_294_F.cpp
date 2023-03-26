@@ -42,61 +42,60 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll pow_mod(ll x, ll n, ll mod) {
-        ll res = 1;
-        while (n > 0) {
-            if (n & 1) {
-                res = (res * x) % mod;
-            }
-            x = (x * x) % mod;
-            n >>= 1;
-        }
-        return res;
-    }
-
-
-
-
-    vvec(ll) vvpow(vvec(ll) vv, ll n, ll mod){
-        ll m = vv.size();
-        assert(m == vv[0].size());
-
-        vvec(ll) res(m,vec(ll)(m));
-        rep(i,m) res[i][i]=1;
-
-        auto f = [&](vvec(ll) a,vvec(ll) b){
-            vvec(ll) tmp(m,vec(ll)(m));
-            rep(i,m)rep(j,m)rep(k,m) tmp[i][j] = (tmp[i][j] + a[i][k]*b[k][j])%mod;
-            return tmp;
-        };
-
-
-        while(n>0){
-            if(n&1) res = f(res,vv);
-            vv = f(vv,vv);
-            n>>=1;
-        }
-
-        return res;
-    }
-
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll A,X,M;
-        cin >> A >> X >> M;
+        ll N, M ,K;
+        cin >> N >> M  >> K;
 
-        vvec(ll) vv(2,vec(ll)(2));
-        vv[0][0]=A;
-        vv[0][1]=1; vv[1][1]=1;
 
-        vv = vvpow(vv, X, M);
+        vec(ll) A(N),B(N),C(M),D(M);
+        rep(i,N) cin >> A[i] >> B[i];
+        rep(i,M) cin >> C[i] >> D[i];
 
-        ll ans = vv[0][1];
-        cout << ans << endl;
+
+        double l = 0, r=1;
+
+        rep(_,50){
+            double m = (l+r)*0.5;
+
+            vec(double) v(M);
+            rep(i,M) v[i] = m*(C[i]+D[i]) - 1.*C[i];
+            sort(all(v));
+
+            ll cnt = 0;
+            rep(i,N){
+                double th = 1.*A[i]-m*(A[i]+B[i]);
+                auto itr = upper_bound(all(v), th);
+                cnt += distance(v.begin(), itr);                
+            }
+
+            // cout << m << " : " << cnt << endl;
+            if(cnt < K ) r=m;
+            else l=m;
+        }
+
+        printf("%.8f\r\n",r*100);
+
+
+
+
+
+
     }
 };
 

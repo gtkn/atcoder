@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,7 +29,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -42,61 +42,64 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 struct Solver{
 
-    ll pow_mod(ll x, ll n, ll mod) {
-        ll res = 1;
-        while (n > 0) {
-            if (n & 1) {
-                res = (res * x) % mod;
-            }
-            x = (x * x) % mod;
-            n >>= 1;
+    //---modintで組み合わせ扱う用の構造体---
+    struct mcomb{
+        ll nmax;
+        vec(mint) fa,af;
+        mcomb(ll sz=200020){
+            nmax = sz;
+            fa.resize(nmax+1);
+            fa[0]=1;
+            rep1(i,nmax) fa[i]=fa[i-1]*i;
+            af.resize(nmax+1);
+            rep(i,nmax+1) af[i]=fa[i].inv();
         }
-        return res;
-    }
-
-
-
-
-    vvec(ll) vvpow(vvec(ll) vv, ll n, ll mod){
-        ll m = vv.size();
-        assert(m == vv[0].size());
-
-        vvec(ll) res(m,vec(ll)(m));
-        rep(i,m) res[i][i]=1;
-
-        auto f = [&](vvec(ll) a,vvec(ll) b){
-            vvec(ll) tmp(m,vec(ll)(m));
-            rep(i,m)rep(j,m)rep(k,m) tmp[i][j] = (tmp[i][j] + a[i][k]*b[k][j])%mod;
-            return tmp;
-        };
-
-
-        while(n>0){
-            if(n&1) res = f(res,vv);
-            vv = f(vv,vv);
-            n>>=1;
+        mint c(ll n, ll k){
+            if(n<k || k<0 || n>nmax) return 0;
+            return fa[n]*af[k]*af[n-k];
         }
-
-        return res;
-    }
-
-
+    };
  
     void solve(){
-        ll A,X,M;
-        cin >> A >> X >> M;
+        ll N,M,K;
+        cin >> N >> M>> K;
 
-        vvec(ll) vv(2,vec(ll)(2));
-        vv[0][0]=A;
-        vv[0][1]=1; vv[1][1]=1;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
 
-        vv = vvpow(vv, X, M);
+        sort(all(A));
+        ll zn = 0;
+        queue<ll> q;
+        rep(i,N){
+            if(A[i]==0) zn++;
+            else q.push(A[i]); 
+        }
 
-        ll ans = vv[0][1];
-        cout << ans << endl;
+
+        mcomb mc(2010);
+
+        mint ans = 0;
+        ll ln=0;//,rn=q.size();
+        rep1(x, M){
+            while(!q.empty() && q.front()<x){
+                q.pop();
+                ln++;
+            }
+
+            ll amax = min(K-1-ln, zn);
+            if(amax<0) continue;
+
+            rep(a, amax+1) ans += mc.c(zn, a) * mint(x-1).pow(a) * mint(M-x+1).pow(zn-a);
+            // cout << x << " ;  " << ans.val() << " , " << ln << " , " << amax << endl;
+        }
+
+
+        ans *= mint(M).pow(zn).inv();
+
+        cout<<ans.val() << endl;
+
     }
 };
 

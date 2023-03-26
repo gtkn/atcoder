@@ -11,6 +11,8 @@ using namespace atcoder;
 #define vvec(T) vec(vec(T))
 using ll = long long;
 using P = pair<int,int>;
+using Pll = pair<ll,ll>;
+using tri = tuple<ll,ll,ll>;
 #define all(x) x.begin(),x.end()
 #define watch(x) cout << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
@@ -31,6 +33,40 @@ using bs = bitset<8>;
 
 const ll MOD = 998244353; 
 const ll PRIMITIVE_ROOT = 3; // 原始根
+
+
+// オイラーツアー的なことをする初期化のdfs
+// https://atcoder.jp/contests/abc294/submissions/40073643
+struct abc{
+    ll a,b,c;
+    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+};
+vvec(ll) g;
+vec(abc) edge;
+vec(Pll) edge_inout,node_inout;
+vec(ll) hen,dist;
+
+void dfs(ll now, ll eid, ll d){
+    edge_inout[eid].first = hen.size();
+    node_inout[now].first = hen.size();
+    hen.push_back(eid);
+    dist.push_back(d);
+
+    for(abc gi:g[now]){
+        if(gi.b==eid) continue;
+        dfs(gi.a, gi.b, d+gi.c);
+    }
+
+    edge_inout[eid].second = hen.size();
+    node_inout[now].second = hen.size();
+    hen.push_back(-eid);
+    dist.push_back(d - edge[eid].c);
+}
+
+
+
+
+
 
 // x^n % mod を求める関数
 ll pow_mod(ll x, ll n, ll mod) {

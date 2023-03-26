@@ -42,61 +42,57 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 struct Solver{
+    string S;
+    ll sll;
+    ll L,R;
+    ll N,M;
+    vec(ll) ten;
 
-    ll pow_mod(ll x, ll n, ll mod) {
-        ll res = 1;
-        while (n > 0) {
-            if (n & 1) {
-                res = (res * x) % mod;
-            }
-            x = (x * x) % mod;
-            n >>= 1;
-        }
-        return res;
+
+    ll cat(ll x, ll k){
+        ll r = k+1-N;
+        if(r<0) return -1;
+        x--;
+        if(S[0]=='0') x+=ten[r];
+
+        ll a = x/ten[r];
+        ll b = x%ten[r];
+
+        return a*ten[k+1] + sll*ten[r] + b;
     }
-
-
-
-
-    vvec(ll) vvpow(vvec(ll) vv, ll n, ll mod){
-        ll m = vv.size();
-        assert(m == vv[0].size());
-
-        vvec(ll) res(m,vec(ll)(m));
-        rep(i,m) res[i][i]=1;
-
-        auto f = [&](vvec(ll) a,vvec(ll) b){
-            vvec(ll) tmp(m,vec(ll)(m));
-            rep(i,m)rep(j,m)rep(k,m) tmp[i][j] = (tmp[i][j] + a[i][k]*b[k][j])%mod;
-            return tmp;
-        };
-
-
-        while(n>0){
-            if(n&1) res = f(res,vv);
-            vv = f(vv,vv);
-            n>>=1;
-        }
-
-        return res;
-    }
-
 
  
+    ll bs(ll th){        
+        ll res = 0;
+        rep(k,16){
+            ll chk = cat(1,k);
+            if(chk==-1) continue;
+            if(chk>th) continue;
+            ll l=1,r=ten[16-N];
+            while(l<=r){
+                ll m = (l+r)/2;
+                if(cat(m,k) > th ) r=m-1;
+                else l=m+1;
+            }
+            res += r;
+        }
+        return res;
+    }
+
+
     void solve(){
-        ll A,X,M;
-        cin >> A >> X >> M;
+        cin >> S;
+        cin >> L >> R;
+        N = S.size();
+        sll = stoll(S);
 
-        vvec(ll) vv(2,vec(ll)(2));
-        vv[0][0]=A;
-        vv[0][1]=1; vv[1][1]=1;
+        ten.push_back(1);
+        rep(_,18) ten.push_back(ten.back()*10);
 
-        vv = vvpow(vv, X, M);
+        cout << bs(R) - bs(L-1) << endl;
 
-        ll ans = vv[0][1];
-        cout << ans << endl;
+
     }
 };
 
@@ -104,7 +100,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

@@ -42,61 +42,55 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll pow_mod(ll x, ll n, ll mod) {
-        ll res = 1;
-        while (n > 0) {
-            if (n & 1) {
-                res = (res * x) % mod;
-            }
-            x = (x * x) % mod;
-            n >>= 1;
-        }
-        return res;
-    }
-
-
-
-
-    vvec(ll) vvpow(vvec(ll) vv, ll n, ll mod){
-        ll m = vv.size();
-        assert(m == vv[0].size());
-
-        vvec(ll) res(m,vec(ll)(m));
-        rep(i,m) res[i][i]=1;
-
-        auto f = [&](vvec(ll) a,vvec(ll) b){
-            vvec(ll) tmp(m,vec(ll)(m));
-            rep(i,m)rep(j,m)rep(k,m) tmp[i][j] = (tmp[i][j] + a[i][k]*b[k][j])%mod;
-            return tmp;
-        };
-
-
-        while(n>0){
-            if(n&1) res = f(res,vv);
-            vv = f(vv,vv);
-            n>>=1;
-        }
-
-        return res;
-    }
-
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll A,X,M;
-        cin >> A >> X >> M;
+        ll R,C;
+        cin >> R >> C;
 
-        vvec(ll) vv(2,vec(ll)(2));
-        vv[0][0]=A;
-        vv[0][1]=1; vv[1][1]=1;
+        vvec(ll) vv(R,vec(ll)(C));
 
-        vv = vvpow(vv, X, M);
+        rep(i,R){
+            string s;
+            cin >> s;
+            rep(j,C){
+                if(s[j]=='#') vv[i][j]=100;
+                else vv[i][j] = s[j]-'0';
+            }
+        }
 
-        ll ans = vv[0][1];
-        cout << ans << endl;
+        rep(i,R)rep(j,C){
+            if(vv[i][j] == 0 || vv[i][j] == 100) continue;
+            ll x = vv[i][j];
+            for(ll ii=max(0LL,i-x) ; ii <=min(R-1,i+x); ii++){
+                for(ll jj=max(0LL,j-x) ; jj <=min(C-1,j+x); jj++){
+                    if( abs(ii-i) + abs(jj-j) > x) continue;
+                    if(vv[ii][jj]==100) vv[ii][jj]=0;
+                }
+            }
+            vv[i][j]=0;
+        }
+
+        rep(i,R){
+            rep(j,C) cout << (vv[i][j]==0 ? '.' : '#');
+            cout << endl;
+        }
+
+
     }
 };
 

@@ -42,61 +42,51 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll pow_mod(ll x, ll n, ll mod) {
-        ll res = 1;
-        while (n > 0) {
-            if (n & 1) {
-                res = (res * x) % mod;
-            }
-            x = (x * x) % mod;
-            n >>= 1;
-        }
-        return res;
-    }
-
-
-
-
-    vvec(ll) vvpow(vvec(ll) vv, ll n, ll mod){
-        ll m = vv.size();
-        assert(m == vv[0].size());
-
-        vvec(ll) res(m,vec(ll)(m));
-        rep(i,m) res[i][i]=1;
-
-        auto f = [&](vvec(ll) a,vvec(ll) b){
-            vvec(ll) tmp(m,vec(ll)(m));
-            rep(i,m)rep(j,m)rep(k,m) tmp[i][j] = (tmp[i][j] + a[i][k]*b[k][j])%mod;
-            return tmp;
-        };
-
-
-        while(n>0){
-            if(n&1) res = f(res,vv);
-            vv = f(vv,vv);
-            n>>=1;
-        }
-
-        return res;
-    }
-
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll A,X,M;
-        cin >> A >> X >> M;
+        ll L,N1,N2;
+        cin >> L >> N1 >> N2;
+        vec(ll) v1(N1),l1(N1),v2(N2),l2(N2);
+        rep(i,N1) cin >> v1[i] >> l1[i];
+        rep(i,N2) cin >> v2[i] >> l2[i];
 
-        vvec(ll) vv(2,vec(ll)(2));
-        vv[0][0]=A;
-        vv[0][1]=1; vv[1][1]=1;
+        ll cnt1=0, cnt2=0;
+        ll a1=0, a2=0;
+        ll m1=0, m2=0;
 
-        vv = vvpow(vv, X, M);
+        ll ans = 0;
 
-        ll ans = vv[0][1];
+        while(cnt1<N1 || cnt2<N2){
+            if(m1<=m2){
+                if(v1[cnt1]==a2) ans += min(l1[cnt1], m2-m1);                
+                a1 = v1[cnt1];
+                m1 += l1[cnt1];
+                cnt1++;
+            }else{
+                if(v2[cnt2]==a1) ans += min(l2[cnt2], m1-m2);
+                a2 = v2[cnt2];
+                m2 += l2[cnt2];
+                cnt2++;
+            }
+        }
+
         cout << ans << endl;
+
     }
 };
 
