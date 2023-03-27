@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -43,46 +43,61 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
-
-
-
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) p(N);
+        rep1(i,N-1) cin >> p[i];
+        rep1(i,N-1) p[i]--;
+        
+        dsu uf(N);
+        vec(ll) r(N);
+        rep(i,N) r[i]=i;
 
-        ll ans = 1;
-        ll lastb = N;
-        if(N>2){
-            ans=2;
-            lastb=N-1;
-        }
-        ll bmax = sqrt(N)+10;
-        for(ll x = 2; x<=62; x++){
-            ll l=2,r=bmax;
-            while(r-l>1){
-                ll m = (l+r)/2;
-                ll tmp = N;
-                rep(_,x) tmp/=m;
-                if(1<=tmp) l=m;
-                else r=m;
+        auto get_min = [&](ll x_){
+            return r[uf.leader(x_)];
+        };
+
+
+        ll Q;
+        cin >> Q;
+
+        while(Q--){
+            ll t;
+            cin >> t;
+            if(t==1){
+                ll u,v;
+                cin >> u >> v;
+                u--; v--;
+
+                ll now = get_min(u);
+                while(now > v){
+                    ll nxt = get_min(p[now]); // 少なくとも1つ遡る
+                    r[uf.merge(now, nxt)] = nxt;
+                    now = get_min(now);
+                }
+            }else{
+                ll x;
+                cin >> x;
+                cout << get_min(x-1)+1 << endl;
             }
-            ll b = l;
-
-            bool isok=true;
-            if(b>=lastb) isok=false;
-            ll nn = N;
-            while(nn){
-                if(nn%b > 1) isok=false;
-                nn/=b;
-            }
-            if(isok) ans++;
-            chmin(lastb,b);
 
         }
-
-        cout << ans << endl;
 
     }
 };
@@ -91,7 +106,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
