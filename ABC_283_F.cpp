@@ -61,6 +61,26 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) P(N);
+        rep(i,N) cin >> P[i];
+
+        rep(i,N){
+            ll res = llINF;
+            rep1(d,N){
+                ll j = i-d;
+                if(j<0) break;
+                if(res-d<2) break;
+                chmin(res, d+abs(P[i]-P[j]));
+            }
+            rep1(d,N){
+                ll j = i+d;
+                if(j>=N) break;
+                if(res-d<2) break;
+                chmin(res, d+abs(P[i]-P[j]));
+            }
+            cout << res << " ";
+        }
+        cout << endl;
 
 
 

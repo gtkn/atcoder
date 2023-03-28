@@ -67,17 +67,85 @@ struct Solver{
 
         vvec(ll) dp(H+1,vec(ll)(4,llINF));
 
-        rep(c,4){
-            vec(ll) v0(W),v1(W);
-            if(c&1) rep(j,W) v0[j] = 1-A[0][j];
-            else rep(j,W) v0[j] = A[0][j];
-            
-            if(c&2) rep(j,W) v1[j] = 1-A[1][j];
-            else rep(j,W) v1[j] = A[1][j];
-            
+        rep(j,4) dp[0][j] = j/2;
 
+        // rep(c,4){
+        //     vec(ll) v0(W),v1(W);
+        //     ll cnt = 0;
+        //     if(c&1){
+        //         rep(j,W) v0[j] = 1-A[0][j];
+        //         cnt++;
+        //     }
+        //     else rep(j,W) v0[j] = A[0][j];
+            
+        //     if(c&2){
+        //         rep(j,W) v1[j] = 1-A[1][j];
+        //         cnt++;
+        //     }
+        //     else rep(j,W) v1[j] = A[1][j];
+            
+        //     bool isok=true;
+        //     rep(i,W){
+        //         bool tmp = true;
+        //         if(i>0) if(v0[i]==v0[i-1]) tmp=false;
+        //         if(v0[i]==v1[i]) tmp = false;
+        //         if(i<W-1) if(v0[i]==v0[i+1]) tmp=false;
+        //         if(tmp) isok=false;
+        //     }
+        //     if(isok) chmin(dp[1][c], cnt);
+        // }
+
+        auto chk = [&](vvec(ll) &vv){
+            bool res = true;
+
+            rep(jj,W){
+                bool tmp = true;
+                if(jj>0) if(vv[1][jj]==vv[1][jj-1]) tmp=false;
+                if(jj+1<W) if(vv[1][jj]==vv[1][jj+1]) tmp=false;
+                if(vv[1][jj]==vv[0][jj]) tmp=false;
+                if(vv[1][jj]==vv[2][jj]) tmp=false;
+                if(tmp) res = false;
+            }
+            return res;
+        };
+
+
+        rep(i,H)rep(j,4)rep(k,2){
+            vvec(ll) vv(3,vec(ll)(W));
+
+            if(i==0){
+                if(!(j&2)) rep(jj,W) vv[0][jj] = 1-A[i][jj];
+                else rep(jj,W) vv[0][jj] = A[i][jj];                
+            }else{
+                if(j&1) rep(jj,W) vv[0][jj] = 1-A[i-1][jj];
+                else rep(jj,W) vv[0][jj] = A[i-1][jj];
+            }
+
+            if(j&2) rep(jj,W) vv[1][jj] = 1-A[i][jj];
+            else rep(jj,W) vv[1][jj] = A[i][jj];
+
+            if(i==H-1){
+                if(!(j&2)) rep(jj,W) vv[2][jj] = 1-A[i][jj];
+                else rep(jj,W) vv[2][jj] = A[i][jj];
+            }else{
+                if(k&1) rep(jj,W) vv[2][jj] = 1-A[i+1][jj];
+                else rep(jj,W) vv[2][jj] = A[i+1][jj];
+            }
+
+            if(chk(vv)) chmin(dp[i+1][ 2*k + j/2 ], dp[i][j]+k);
         }
 
+        // rep(i,H+1){
+        //     rep(j,4) cout << dp[i][j] << " "; cout << endl;
+        // }
+
+
+
+        ll ans = llINF;
+        rep(j,4) chmin(ans, dp[H][j]);
+
+        if(ans==llINF) ans = -1;
+        cout << ans << endl;
 
 
 
