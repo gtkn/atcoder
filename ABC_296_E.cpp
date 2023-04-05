@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,6 +61,22 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+
+        scc_graph scc(N+1);
+        vec(ll) A(N+1);
+        rep1(i,N){
+            cin >> A[i];
+            scc.add_edge(i,A[i]);
+        }
+        A[0]=-1;
+
+        ll ans = 0;
+        for(auto v:scc.scc()){
+            if(v.size()>1) ans += v.size();
+            if(A[v[0]]==v[0]) ans++;
+        }
+
+        cout << ans << endl;
 
 
 

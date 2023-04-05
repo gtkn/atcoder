@@ -29,6 +29,44 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// slope trickを扱う構造体
+// https://maspypy.com/slope-trick-1-%e8%a7%a3%e8%aa%ac%e7%b7%a8
+    struct slope_trick{
+        ll C, fmin;
+        priority_queue<ll> L;
+        priority_queue<ll,vector<ll>,greater<ll>> R;
+
+        slope_trick(){
+            C=0; fmin=0;
+            L.push(-llINF);
+            R.push(llINF);
+        }
+
+        // LeRUの方
+        void addr(ll a){
+            fmin += max(L.top() - a, 0LL);
+
+            L.push(a);
+            R.push(L.top());
+            L.pop();
+        }
+
+        void addl(ll a){
+            fmin += max(a-R.top(), 0LL);
+
+            R.push(a);
+            L.push(R.top());
+            R.pop();
+        }
+
+        void addc(ll b){
+            C += b;
+        }
+
+
+    };
+
+
 
 
 const ll MOD = 998244353; 

@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -60,9 +59,17 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll A,B;
+        cin >>  A >> B;
 
+        ll ans = 0;
+        rep(_,2){
+            if(A<B) swap(A,B);
+            ans += A;
+            A--;
+        }
+
+        cout << ans << endl;
 
 
     }

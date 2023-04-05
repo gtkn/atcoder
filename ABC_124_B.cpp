@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -63,7 +62,16 @@ struct Solver{
         ll N;
         cin >> N;
 
+        ll ans = 0;
+        ll hmax = 0;
+        rep(_,N){
+            ll H;
+            cin >> H;
+            if(H>=hmax) ans++;
+            chmax(hmax,H);
+        }
 
+        cout << ans << endl;
 
     }
 };

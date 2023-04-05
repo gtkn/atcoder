@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -60,9 +59,33 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,X;
+        cin >> N >> X;
 
+        if(X<0) X = -X;
+
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        sort(all(A));
+
+        ll l=0,r=0;
+
+        while(l<N){
+            assert(l<=r);
+
+            ll gap = A[r]-A[l];
+
+            if(gap==X){
+                cout << "Yes" << endl;
+                return;
+            }else{
+                if(gap>X) l++;
+                else r++;
+            }
+        }
+
+        cout << "No" << endl;
 
 
     }

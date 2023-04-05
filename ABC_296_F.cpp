@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -43,25 +42,58 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
  
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
+
+        vec(ll) A(N),B(N);
+
+        rep(i,N) cin >> A[i];
+        rep(i,N) cin >> B[i];
+
+        vec(ll) cnt(N+1);
+
+        bool db = false;
+
+        rep(i,N) cnt[A[i]]++;
+        rep1(i,N) if(cnt[i]>=2) db=true;
+        rep(i,N) cnt[B[i]]--;
+
+        rep1(i,N){
+            if(cnt[i]!=0){
+                cout << "No" << endl;
+                return;
+            }
+        }
+
+        if(db){
+            cout << "Yes" << endl;
+            return;
+        }
+
+
+        fenwick_tree<ll> fa(N+10),fb(N+10);
+
+        ll ta=0,tb=0;
+        for(ll x:A){
+            ta += fa.sum(x+1,N+1);
+            fa.add(x,1);
+        }
+        for(ll x:B){
+            tb += fb.sum(x,N+1);
+            fb.add(x,1);
+        }
+
+        // cout << ta << " , " << tb << endl;
+
+        if((ta&1) == (tb&1)) yn;
+
 
 
 

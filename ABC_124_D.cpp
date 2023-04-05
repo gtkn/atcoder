@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -60,10 +59,44 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N , K;
+        cin >> N >> K;
+        string S;
+        cin >> S;
 
+        vec(ll) v;
+        if(S[0]=='0') v.push_back(0);
 
+        ll cnt = 0;
+        rep(i,N){
+            if(i>0 && S[i]!=S[i-1]){
+                v.push_back(cnt);
+                cnt=1;
+            }else cnt++;
+        }
+        v.push_back(cnt);
+
+        ll M = v.size();
+
+        ll ans = 0;
+        ll tot = 0;
+
+        ll l=0, r=0;
+
+        for(ll a=0; a<M; a+=2){
+            ll b = min(a+2*K+1,M);
+            while(l<a){
+                tot -= v[l];
+                l++;
+            }
+            while(r<b){
+                tot += v[r];
+                r++;
+            }
+            chmax(ans,tot);
+        }
+
+        cout << ans << endl;
 
     }
 };

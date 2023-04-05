@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -44,26 +43,49 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
+    ll N;
+    vvec(ll) g;
+    vec(ll) ans;
+    vec(ll) dp;
+    vec(ll) a;
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    
+    void dfs(ll now, ll frm){
+        auto itr = lower_bound(all(dp), a[now]);
+        ll memo = *itr;
+        *itr = a[now];
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+        ans[now] = distance(dp.begin(), lower_bound(all(dp),llINF)) - 1;
+
+        for(ll nxt:g[now]) if(nxt!=frm) dfs(nxt,now);
+
+        *itr = memo;
+    }
+
+
+
+
     void solve(){
-        ll N;
         cin >> N;
 
+        g.resize(N);
+        ans.resize(N);
+        dp = vec(ll)(N+2,llINF);
+        dp[0]=0;
+        a.resize(N);
+        rep(i,N) cin >> a[i];
 
+        rep(_,N-1){
+            ll u,v;
+            cin >> u >> v;
+            u--; v--;
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+
+        dfs(0,0);
+
+        rep(i,N) cout << ans[i] << endl;
 
     }
 };

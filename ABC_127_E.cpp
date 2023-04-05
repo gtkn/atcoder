@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -26,10 +26,9 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
-//using mint = modint1000000007;
+using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -44,26 +43,35 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
+    //---modintで組み合わせ扱う用の構造体---
+    struct mcomb{
+        ll nmax;
+        vec(mint) fa,af;
+        mcomb(ll sz=200020){
+            nmax = sz;
+            fa.resize(nmax+1);
+            fa[0]=1;
+            rep1(i,nmax) fa[i]=fa[i-1]*i;
+            af.resize(nmax+1);
+            rep(i,nmax+1) af[i]=fa[i].inv();
+        }
+        mint c(ll n, ll k){
+            if(n<k || k<0 || n>nmax) return 0;
+            return fa[n]*af[k]*af[n-k];
+        }
     };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M,K;
+        cin >> N >> M >> K;
 
+        mcomb mc(N*M+10);
 
+        mint ans = 0;
+        rep(d,N) ans += mc.c(N*M-2, K-2) * (N-d) * M * M * d;
+        rep(d,M) ans += mc.c(N*M-2, K-2) * (M-d) * N * N * d;
+        
+        cout << ans.val() << endl;
 
     }
 };

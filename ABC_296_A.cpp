@@ -26,8 +26,7 @@ using namespace std;
 using ll = long long;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-//using tri = tuple<ll,ll,ll>;
-using tri = array<ll,3>;
+using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,6 +61,13 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        string S;
+        cin >> S;
+
+        string ans = "Yes";
+        rep(i,N-1) if(S[i]==S[i+1]) ans = "No";
+
+        cout << ans << endl;
 
 
 
