@@ -24,9 +24,10 @@ using namespace std;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -43,44 +44,30 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll N;
-    vvec(ll) g;
-    vvec(ll) dp;
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
-    ll dfs(ll state, ll now){
-        if(dp[state][now]!=0) return dp[state][now];
-
-        bool win = false;
-        for(ll nxt:g[now]){
-            if(bit(state,nxt)) continue;
-            if(dfs( (state | (1<<nxt)) ,nxt) == -1) win=true;
-        }
-
-        dp[state][now] = (win ? 1 : -1);
-        return dp[state][now];
-    }
-
-
-
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        cin >> N;
-        g.resize(N+1);
-        dp = vvec(ll)(1<<N, vec(ll)(N+1));
+        vec(ll) v(5);
+        ll k;
+        rep(i,5) cin >> v[i];
+        cin >> k;
 
-        vec(string) S(N);
-        rep(i,N) cin >> S[i];
-        rep(i,N)rep(j,N){
-            if(i==j) continue;
-            if(S[i].back() == S[j].front()) g[i].push_back(j);
-        }
-        rep(i,N) g[N].push_back(i);
+        if(v[4]-v[0]>k) cout << ":(" << endl;
+        else cout << "Yay!" << endl;
 
-
-        string ans = "Second";
-        if( dfs( 0, N ) == 1) ans = "First";
-
-        cout << ans << endl;
 
 
     }

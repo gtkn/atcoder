@@ -50,6 +50,31 @@ ll ee(){return llINF;}
 
 struct Solver{
 
+
+    vec(ll) f(vec(ll) a, ll th, ll k){
+        a.push_back(0);
+        ll n = a.size();
+        vec(ll) rv(n);
+        rep(i,n) rv[a[i]] = i;
+
+        vec(ll) res;
+        segtree<ll,op,ee> seg(a);
+
+        ll l=0;
+        while(l<n){
+            ll r = max(l,th)+k+1;
+            chmin(r,n);
+            ll x = seg.prod(l,r);
+            res.push_back(x);
+
+            k -= max(0LL, rv[x] - max(l,th) );
+            l = rv[x]+1;
+        }
+        res.pop_back();
+
+        return res;
+    }
+
  
     void solve(){
         ll N,K;
@@ -64,84 +89,83 @@ struct Solver{
             return;
         }
 
-
-        vec(ll) v;
-        rep(i,N) v.emplace_back(P[i]);
-        rep(i,N) v.emplace_back(P[i]);
-
-        vec(ll) res1,res2;
-
-        segtree<ll,op,ee> seg(v);
-
-        ll a0 = llINF;
-        ll k0 = 0;
-        rep1(i,K) if(chmin(a0, v[N-i])) k0=i;
+        vec(ll) R(N+1);
+        R[0]=-1;
+        rep(i,N) R[P[i]] = i;
+        vec(ll) tmp = P;
+        rep(i,N) tmp.push_back(P[i]);
 
 
-        ll l,r;
-        l = N-k0;
-        ll rr = l+N;
+        // 回転無し
+        vec(ll) res1 = f(P,0,K);
 
-        res1.push_back(v[l]);
-        r = l+K+1;
-        l++;
+        // ll kk = K;
+        segtree<ll,op,ee> seg1(P);
 
-        while(k0<K && l<r ){
-            ll x = seg.prod(l,r);
-            res1.push_back(x);
-            while(v[l]!=x && l<r){
-                if(l>=N) k0++;
-                l++;
-            }
-            if(l>=N && r<rr) r++;
-            l++;
+
+        // vec(ll) res1;
+        // ll l=0, r=kk+1;
+        // while(kk>0){
+        //     ll x = seg1.prod(l, r);
+        //     res1.push_back(x);
+        //     kk -= (R[x]-l);
+        //     l = R[x]+1;
+        //     r++;
+        //     chmin(r,N);
+        // }
+        // while(l<N) res1.push_back(P[l++]);
+
+
+        // 回転あり
+
+        ll x = llINF, rot = 0;
+        rep1(i,K){
+            if(chmin(x,P[N-i])) rot = N-i;
         }
 
-        while(l<rr){
-            res1.push_back(v[l]);
-            l++;
-        }
-        while(k0<K){
-            res1.pop_back();
-            k0++;
-        }
-
-        //for(ll x:tmp) cout <<x  << " ";cout << endl;
+        rotate(P.begin(), P.begin()+rot, P.end());
+        vec(ll) res2 = f(P, N-rot, K-(N-rot));
 
 
-        //--
-        l=N;
-        r=N+K+1;
-        rr=2*N;
+        // ll st = seg1.prod(N-K,N);
+        // vec(ll) res2 = {st};
 
+        // kk = K-(N-R[st]);
+        // segtree<ll,op,ee> seg2(tmp);
 
-        k0=0;
-        while(k0<K && l<r ){
-            ll x = seg.prod(l,r);
-            res2.push_back(x);
-            while(v[l]!=x && l<r){
-                if(l>=N) k0++;
-                l++;
-            }
-            if(l>=N && r<rr) r++;
-            l++;
-        }
+        // l = R[st]+1;
+        // r = N+kk+1;
+        // while(kk>0){
+        //     ll x = seg2.prod(l, r);
+        //     res2.push_back(x);
+        //     if(R[x]<R[st]){
+        //         kk -= R[x]+N - max(N, l);
+        //         l = R[x]+N+1;
+        //         r = min(l+kk+1,2*N);
+        //     }else{
+        //         l = R[x]+1;
+        //     }
+        // }
+        // while(l<R[st]+N) res2.push_back(tmp[l++]);
 
-        while(l<rr){
-            res2.push_back(v[l]);
-            l++;
-        }
-        while(k0<K){
-            res2.pop_back();
-            k0++;
-        }
-
-        //for(ll x:res2) cout <<x  << " ";cout << endl;
 
         vec(ll) ans = min(res1,res2);
+        // rep(i,  min(res1.size(), res2.size())){
+        //     if(res1[i]==res2[i]) continue;
+        //     if(res1[i]<res2[i]) ans=res1;
+        //     if(res1[i]>res2[i]) ans=res2;
+        //     break;
+        // }
+
+        // if(ans.empty()){
+        //     if(res1.size()<res2.size()) ans=res1;
+        //     else ans=res2;
+        // }
 
 
-        for(ll x:ans) cout << x <<" ";cout<<endl;
+        // for(ll ai:res1) cout << ai << " "; cout<<endl;
+        // for(ll ai:res2) cout << ai << " "; cout<<endl;
+        for(ll ai:ans) cout << ai << " "; cout<<endl;
 
 
     }
