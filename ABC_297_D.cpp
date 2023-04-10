@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -24,12 +24,13 @@ using namespace atcoder;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-using mint = modint998244353;
+//using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -43,40 +44,37 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-
-    //---modintで組み合わせ扱う用の構造体---
-    struct mcomb{
-        ll nmax;
-        vec(mint) fa,af;
-        mcomb(ll sz=200020){
-            nmax = sz;
-            fa.resize(nmax+1);
-            fa[0]=1;
-            rep1(i,nmax) fa[i]=fa[i-1]*i;
-            af.resize(nmax+1);
-            rep(i,nmax+1) af[i]=fa[i].inv();
-        }
-        mint c(ll n, ll k){
-            if(n<k || k<0 || n>nmax) return 0;
-            return fa[n]*af[k]*af[n-k];
-        }
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
     };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
+
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
  
     void solve(){
+        ll A,B;
+        cin >> A >> B;
 
-        ll T;
-        cin >> T;
+        ll ans = 0;
+        while(A!=B){
+            if(A<B) swap(A,B);
 
-        mcomb mc(3000010);
+            ll d = A-B;
+            ll x = (d + B-1)/B;
+            A -= B*x;
 
-        rep(_,T){
-            ll N;
-            cin >> N;
-        
-            mint ans = mc.c(2*N-3, N-1) + mc.c(2*N-4,N-1)*N;
-            cout << ans.val() << endl;
-
+            ans += x;
         }
+
+        cout << ans << endl;
 
 
 
