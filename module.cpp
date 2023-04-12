@@ -29,6 +29,24 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// アリストテレスのふるいで素数を列挙
+    vec(ll) eratosthenes(ll n){
+        vec(bool) isok(n+1,true);
+        isok[0]=false; isok[1]=false;
+        rep1(i,n){
+            if(!isok[i]) continue;
+            ll a=i*2;
+            while(a<=n){
+                isok[a]=false;
+                a+=i;
+            }
+        }
+        vec(ll) res;
+        rep1(i,n) if(isok[i]) res.push_back(i);
+
+        return res;
+    }
+
 // slope trickを扱う構造体
 // https://maspypy.com/slope-trick-1-%e8%a7%a3%e8%aa%ac%e7%b7%a8
     struct slope_trick{
@@ -79,9 +97,9 @@ struct abc{
     ll a,b,c;
     abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
 };
-vvec(ll) g;
-vec(abc) edge;
-vec(Pll) edge_inout,node_inout;
+vvec(abc) g; // resize(N), {to,idx,weight}
+vec(abc) edge; // resize(N), eid>0となるように, {u,v,weight}
+vec(Pll) edge_inout,node_inout; // resize(N)
 vec(ll) hen,dist;
 
 void dfs(ll now, ll eid, ll d){
@@ -101,6 +119,11 @@ void dfs(ll now, ll eid, ll d){
     dist.push_back(d - edge[eid].c);
 }
 
+    // g.resize(N);
+    // edge.resize(N);
+    // edge_inout.resize(N);
+    // node_inout.resize(N);
+    // dfs(0,0,0);
 
 
 
