@@ -29,6 +29,30 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// トポロジカルソート
+    vec(ll) topological_sort(vvec(ll) &g, vec(ll) &incnt, ll vnum){
+        vec(ll) res;
+
+        queue<ll> q;
+        rep(i,vnum) if(incnt[i]==0) q.push(i);
+
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+
+            for(ll nxt:g[now]){
+                incnt[nxt]--;
+                if(incnt[nxt]==0) q.push(nxt);
+            }
+
+            res.push_back(now);
+        }
+
+        return res;
+
+    }
+
+
 // アリストテレスのふるいで素数を列挙
     vec(ll) eratosthenes(ll n){
         vec(bool) isok(n+1,true);
