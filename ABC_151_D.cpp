@@ -24,8 +24,6 @@ using namespace std;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using ld = long double;
-
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
 //using tri = tuple<ll,ll,ll>;
@@ -46,26 +44,53 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
     vec(int) dh = {1,0,-1,0};
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll H,W;
+        cin >> H >> W;
+
+        vvec(bool) vv(H,vec(bool)(W));
+        rep(i,H){
+            string s;
+            cin >> s;
+            rep(j,W) vv[i][j] = (s[j]=='.');
+        }
 
 
+
+        ll ans = 0;
+        rep(h0,H)rep(w0,W){
+            vvec(ll) dp(H,vec(ll)(W,llINF));
+
+            queue<Pll> q;
+            auto qpush = [&](ll h,ll w,ll c){
+                if(h<0 || h>=H || w<0 || w>=W) return;
+                if(!vv[h][w]) return;
+                if(chmin(dp[h][w],c)){
+                    q.emplace(h,w);
+                    chmax(ans,c);
+                }
+            };
+
+            qpush(h0,w0,0);
+            while(!q.empty()){
+                Pll q0 = q.front();
+                q.pop();
+                ll cc = dp[q0.first][q0.second]+1;
+                rep(di,4) qpush(q0.first+dh[di], q0.second+dw[di],cc);
+            }
+
+            // cout << "----" << h0 <<" ," <<w0 << endl;
+            // rep(i,H){
+            //     rep(j,W) cout << (dp[i][j]==llINF? 0 : dp[i][j]) << " "; cout << endl;
+            // }
+
+        }
+
+        cout << ans << endl;
 
     }
 };

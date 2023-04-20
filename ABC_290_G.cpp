@@ -46,25 +46,34 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll D,K,X;
+        cin >> D >> K >> X;
 
+        vec(ll) v(D+2);
+        rep1(i,D+1) v[i] = v[i-1]*K + 1;
+
+        ll ans = llINF;
+        rep1(h,D+1){
+            ll diff = v[h]-X;
+            if(diff<0) continue;
+
+            ll tmp = 0;
+            if(h<=D) tmp=1;
+
+            rep1r(i,h){
+                if(v[i]>diff) continue;
+
+                ll n = diff/v[i];
+                diff -= n*v[i];
+                tmp += n;
+            }
+
+
+            chmin(ans,tmp);
+        }
+
+        cout << ans << endl;
 
 
     }
@@ -74,7 +83,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

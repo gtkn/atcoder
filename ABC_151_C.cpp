@@ -24,8 +24,6 @@ using namespace std;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using ld = long double;
-
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
 //using tri = tuple<ll,ll,ll>;
@@ -62,8 +60,29 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
+        vec(ll) pcnt(N+1), ac(N+1);
+
+        ll a=0,b=0;
+        rep(_,M){
+            ll p;
+            string s;
+            cin >> p >> s;
+            if(s=="AC"){
+                if(ac[p]==0){
+                    b += pcnt[p];
+                    ac[p]=1;
+                    a++;
+                }
+            }else{
+                if(ac[p]==0){
+                    pcnt[p]++;
+                }
+            }
+        }
+
+        cout << a << " " << b << endl;
 
 
 

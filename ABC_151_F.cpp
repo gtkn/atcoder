@@ -28,6 +28,7 @@ using ld = long double;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
+using Pdd = pair<double,double>;
 //using tri = tuple<ll,ll,ll>;
 using tri = array<ll,3>;
 
@@ -46,26 +47,64 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
+    ll N;
+    vec(ll) X,Y;
+    double th = 1e-8;
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    double get_dist(Pdd a,Pdd b){
+        double dx = a.first-b.first;
+        double dy = a.second-b.second;
+        return sqrt(dx*dx+dy*dy);
+    }
+
+
+    double f(Pdd xy){
+        double res = 0;
+        rep(i,N) chmax(res, get_dist(xy,{X[i],Y[i]}));
+        return res;
+    }
+
+    double tsy(double x){
+        double l=0,r=1000;
+        while(r-l>th){
+            double y1,y2;
+            y1 = (2*l+r)/3.;
+            y2 = (l+2*r)/3.;
+
+            if(f({x,y1}) < f({x,y2})) r = y2;
+            else l=y1;
+            if(l>r) swap(l,r);
+        }
+
+        return f({x,l});
+    }
+
+
+    double tsx(){
+        double l=0,r=1000;
+        while(r-l>th){
+            double x1,x2;
+            x1 = (2*l+r)/3.;
+            x2 = (l+2*r)/3.;
+
+            if( tsy(x1) < tsy(x2) ) r=x2;
+            else l=x1;
+        }
+
+        return tsy(l);
+    }
+
+
     void solve(){
-        ll N;
         cin >> N;
+        X.resize(N);
+        Y.resize(N);
+        rep(i,N) cin >> X[i] >> Y[i];
 
+        double ans = tsx();
 
+        printf("%.8f\r\n",ans);
 
     }
 };

@@ -29,6 +29,10 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 平面走査 -> ABC_296_G
+
+
+
 // トポロジカルソート
     vec(ll) topological_sort(vvec(ll) &g, vec(ll) &incnt, ll vnum){
         vec(ll) res;
