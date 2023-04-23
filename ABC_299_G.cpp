@@ -1,0 +1,112 @@
+//title
+#include <bits/stdc++.h>
+using namespace std;
+#include <atcoder/all>
+using namespace atcoder;
+#define rep(i,n) for (ll i = 0; i < (n); ++i)
+#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
+#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#define bit(n,k) ((n>>k)&1) //nのk bit目
+
+#define vec(T) vector<T>
+#define vvec(T) vector<vec(T)>
+#define vvvec(T) vector<vvec(T)>
+#define vvvvec(T) vector<vvvec(T)>
+
+//typedef vector<mint>vi;
+//typedef vector<vi>vvi;
+//typedef vector<vvi>vvvi;
+//typedef vector<vvvi>vvvvi;
+
+#define all(x) x.begin(),x.end()
+#define watch(x) cout << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
+
+using ll = long long;
+using ld = long double;
+
+using Pii = pair<int,int>;
+using Pll = pair<ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
+
+//using mint = modint1000000007;
+//using mint = modint998244353;
+
+
+template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
+template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+const ll llINF = 1LL << 60;
+const int iINF = 1e9;
+
+#define dame { puts("-1"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
+//------------------------------------------------
+
+Pll op(Pll a,Pll b){
+    if(a.first<b.first) return a;
+    if(a.first>b.first) return b;
+    if(a.second<b.second) return a;
+    return b;
+}
+Pll ee(){return {llINF,llINF};}
+
+struct Solver{
+    void solve(){
+        ll N,M;
+        cin >> N >> M;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        vec(ll) memo(M+1,-1);
+        rep(i,N) chmax(memo[A[i]],i);
+
+        vec(Pll) v;
+        rep1(i,M) v.emplace_back(memo[i],i);
+
+        sort(all(v));
+
+        vec(Pll) aa(N);
+        rep(i,N) aa[i]={A[i],i};
+        segtree<Pll,op,ee> seg(aa); 
+
+        vec(bool) used(M+1);
+        ll l=0;
+        vec(ll) ans;
+
+        vvec(ll) vv(M+1);
+        rep(i,N) vv[A[i]].push_back(i);
+
+        for(Pll vi:v){
+            if(used[vi.second]) continue;
+            // cout << vi.first << "---------" << vi.second << endl;
+
+            Pll ai;
+            do{
+                ai = seg.prod(l, vi.first+1);
+                ans.push_back(ai.first);
+                l=ai.second;
+                for(ll ii:vv[ai.first]) seg.set(ii,ee());
+                used[ai.first]=true;
+
+                // cout << ai.first <<", " << ai.second << endl;
+            }while(ai.first!=vi.second);
+        }
+
+        for(ll ai:ans) cout << ai << " "; cout << endl;
+    }
+};
+
+
+
+int main(){
+    int testcasenum=1;
+    //cin >> testcasenum;
+    rep1(ti,testcasenum){
+        Solver solver;
+        solver.solve();
+    }
+    return 0;
+}
