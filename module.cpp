@@ -1026,13 +1026,34 @@ T op(T a, T b){// A[i]はa<b
 T e(){return T({0,0,0});}
  
 
-//---区間max,区間addのlazy_segtreeのテンプレート---
-ll op(ll a, ll b){ return max(a,b);}
-ll ee(){return 0;}
-ll mapping(ll f, ll x){return f+x;}
-ll composition(ll f,ll g){return f+g;}
-ll id(){return 0;}
-//lazy_segtree<ll, op, e, ll, mapping, composition, id> ls(N+1);
+
+
+//---prod:和, apply:一括変更 のlazy_segtreeのテンプレート---
+struct S{ll sz,val;};
+struct F{ll k;};
+
+S op(S a,S b){return S{a.sz+b.sz, a.val+b.val};}
+S ee(){return S{0,0};}
+
+S mapping(F f, S x){
+    if(f.k>=0) return S{ x.sz, x.sz*f.k};
+    return x;
+}
+F composition(F f,F g){
+    if(f.k>=0) return f;
+    return g;
+}
+F id(){return F{-1};}
+
+
+
+//---prod:区間max, apply:区間addのlazy_segtreeのテンプレート---
+// ll op(ll a, ll b){ return max(a,b);}
+// ll ee(){return 0;}
+// ll mapping(ll f, ll x){return f+x;}
+// ll composition(ll f,ll g){return f+g;}
+// ll id(){return 0;}
+//lazy_segtree<ll, op, ee, ll, mapping, composition, id> ls(N+1);
 
 
 
