@@ -62,11 +62,18 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll A,B;
-        cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
+        ll N;
+        cin >> N;
+
+        ll ans=0;
+        if(N%2==0){
+            ll nn = N/2;
+            for(ll fv=5; fv<=nn; fv*=5) ans += nn/fv;
+        }
 
         cout << ans << endl;
+
+
 
 
 

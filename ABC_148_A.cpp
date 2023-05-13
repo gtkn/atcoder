@@ -64,9 +64,10 @@ struct Solver{
     void solve(){
         ll A,B;
         cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
-
-        cout << ans << endl;
+        vec(bool) v(4);
+        v[A]=true;
+        v[B]=true;
+        rep1(i,3) if(!v[i]) cout << i << endl;
 
 
 

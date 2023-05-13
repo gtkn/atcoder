@@ -62,12 +62,32 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll A,B;
-        cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
+        string S,T;
+        cin >> S >> T;
 
-        cout << ans << endl;
+        map<char,ll> ms,mt;
+        for(char c:S) ms[c]++;
+        for(char c:T) mt[c]++;
 
+        set<char> a;
+        for(char c:"atcoder") a.insert(c);
+
+        for(char c='a'; c<='z'; c++){
+            if(ms[c]==mt[c]) continue;
+            
+            if(sfind(a,c)){
+
+                ll d = abs(ms[c]-mt[c]);
+                if(ms[c]<mt[c]) ms['@'] -= d;
+                else mt['@'] -= d;                
+            }else{
+                cout << "No" << endl;
+                return;
+            }
+        }
+
+        // cout << ms['@'] << " ," << mt['@'] << endl;
+        if(ms['@']==mt['@'] && ms['@']>=0) yn;
 
 
     }

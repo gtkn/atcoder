@@ -62,11 +62,24 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll A,B;
-        cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
+        ll N;
+        cin >> N;
+        string S;
+        cin >> S;
+        ll t=0,a=0;
+        rep(i,N){
+            if(S[i]=='T') t++;
+            else a++;
+        }
 
-        cout << ans << endl;
+        if(t>a){
+            cout << "T" << endl;
+        }else if(a>t){
+            cout << "A" << endl;
+        }else{
+            if(S[N-1]=='T') cout << "A" << endl;
+            else cout << "T" << endl;
+        }
 
 
 

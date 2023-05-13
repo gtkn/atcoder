@@ -46,27 +46,42 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll A,B;
-        cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
+        string S;
+        cin >> S;
+        ll N;
+        cin >> N;
 
-        cout << ans << endl;
+        reverse(all(S));
+
+        ll nn = S.size();
+        vec(ll) vq;
+        rep(i,nn) if(S[i]=='?') vq.push_back(i);
+
+        vec(ll) vs(nn);
+        rep(i,nn) if(S[i]=='1') vs[i]=1;
+
+        auto f = [&](){
+            ll res = 0, t=1;
+            rep(i,nn){
+                res += t*vs[i];
+                t<<=1;
+            }
+            return res;
+        };
+
+        if(f()>N) dame;
+
+        while(!vq.empty()){
+            ll x = vq.back();
+            vq.pop_back();
+            vs[x]=1;
+            if(f()>N) vs[x]=0;
+        }
+
+        cout << f() << endl;
 
 
 

@@ -62,12 +62,12 @@ struct Solver{
     vec(int) dw = {0,1,0,-1};
  
     void solve(){
-        ll A,B;
-        cin >> A >> B;
-        ll ans = A*B/__gcd(A,B);
-
-        cout << ans << endl;
-
+        ll N;
+        cin >> N;
+        string S,T;
+        cin >> S >> T;
+        rep(i,N) cout << S[i]<<T[i];
+        cout << endl;
 
 
     }
