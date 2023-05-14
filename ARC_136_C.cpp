@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -24,9 +24,12 @@ using namespace atcoder;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using ld = long double;
+
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -37,62 +40,46 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
+#define dame { puts("-1"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll nn = 5050;
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
-    //---転倒数-fenwicktree--
-    ll inversions(vector<ll>& A){
-        ll ans=0;
-        fenwick_tree<int> ft(nn);
-        for(auto ai:A){
-            ans += ft.sum(ai,nn);
-            ft.add(ai,1);
-        }
-        return ans;
-    }
-
+ 
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
-
-
-        vec(ll) A(N),B(N);
+        vec(ll) A(N);
         rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
 
-        vec(ll) cnt(nn);
-        bool f = false;
-        rep(i,N) cnt[A[i]]++;
-        rep(i,nn) if(cnt[i]>=2) f=true;
-        rep(i,N) cnt[B[i]]--;
+        ll M=0;
+        rep(i,N) chmax(M,A[i]);
+        ll D=0;
+        rep(i,N) D += abs(A[(i+1)%N]-A[i]);
+        D/=2;
 
-        rep(i,nn){
-            if(cnt[i]!=0){
-                // cout << i << " : " << cnt[i] << endl;
-                cout << "No" << endl;
-                return;
-            }
-        }
+        cout << max(M,D) << endl;
 
-
-        ll aa = inversions(A);
-        ll bb = inversions(B);
-
-        // cout << aa << " , " << bb << endl;
-
-        string ans = "Yes";
-        if(abs(aa-bb)&1) ans="No";
-        if(f) ans = "Yes";
-
-        cout << ans << endl;
 
 
     }
 };
+
 
 
 int main(){

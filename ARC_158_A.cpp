@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -24,9 +24,12 @@ using namespace atcoder;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using ld = long double;
+
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -37,67 +40,66 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
+#define dame { puts("-1"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
 //------------------------------------------------
 
 struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
 
-    ll nn = 5050;
-
-    //---転倒数-fenwicktree--
-    ll inversions(vector<ll>& A){
-        ll ans=0;
-        fenwick_tree<int> ft(nn);
-        for(auto ai:A){
-            ans += ft.sum(ai,nn);
-            ft.add(ai,1);
-        }
-        return ans;
-    }
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
 
  
+ 
+    vec(int) dh = {1,0,-1,0};
+    vec(int) dw = {0,1,0,-1};
+ 
     void solve(){
-        ll N;
-        cin >> N;
+        vec(ll) x(3);
+        rep(i,3) cin >> x[i];
+        sort(all(x));
+
+        if(x[0]%2 != x[1]%2) dame;
+        if(x[0]%2 != x[2]%2) dame;
+
+        rep(i,3) x[i]/=2;
+
+        ll ans = 0;
+        ll a,b;
+        a = x[1]-x[0];
+        b = x[2]-x[1];
 
 
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
-
-        vec(ll) cnt(nn);
-        bool f = false;
-        rep(i,N) cnt[A[i]]++;
-        rep(i,nn) if(cnt[i]>=2) f=true;
-        rep(i,N) cnt[B[i]]--;
-
-        rep(i,nn){
-            if(cnt[i]!=0){
-                // cout << i << " : " << cnt[i] << endl;
-                cout << "No" << endl;
-                return;
-            }
+        if(a<b){
+            x[0]+=a;
+            x[2]-=a;
+            ans+=a;
+        }else{
+            x[0]+=b;
+            x[2]-=b;
+            ans+=b;
         }
 
-
-        ll aa = inversions(A);
-        ll bb = inversions(B);
-
-        // cout << aa << " , " << bb << endl;
-
-        string ans = "Yes";
-        if(abs(aa-bb)&1) ans="No";
-        if(f) ans = "Yes";
+        if( (x[2]-x[0])%3 !=0  ) dame;
+        ans += (x[2]-x[0])/3 * 2;
 
         cout << ans << endl;
-
 
     }
 };
 
 
+
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

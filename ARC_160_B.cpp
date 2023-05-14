@@ -24,12 +24,15 @@ using namespace atcoder;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using ld = long double;
+
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -37,67 +40,57 @@ template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; }
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
+#define dame { puts("-1"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
 //------------------------------------------------
 
 struct Solver{
-
-    ll nn = 5050;
-
-    //---転倒数-fenwicktree--
-    ll inversions(vector<ll>& A){
-        ll ans=0;
-        fenwick_tree<int> ft(nn);
-        for(auto ai:A){
-            ans += ft.sum(ai,nn);
-            ft.add(ai,1);
-        }
-        return ans;
-    }
-
  
     void solve(){
         ll N;
         cin >> N;
 
+        mint ans = 0;
 
-        vec(ll) A(N),B(N);
-        rep(i,N) cin >> A[i];
-        rep(i,N) cin >> B[i];
-
-        vec(ll) cnt(nn);
-        bool f = false;
-        rep(i,N) cnt[A[i]]++;
-        rep(i,nn) if(cnt[i]>=2) f=true;
-        rep(i,N) cnt[B[i]]--;
-
-        rep(i,nn){
-            if(cnt[i]!=0){
-                // cout << i << " : " << cnt[i] << endl;
-                cout << "No" << endl;
-                return;
-            }
+        ll nn = 100000;
+        
+        for(ll x=1; x*x<=N; x++){
+            // cout << x << endl;
+            ans += 1;
         }
 
 
-        ll aa = inversions(A);
-        ll bb = inversions(B);
+        vec(ll) cnt(nn);
 
-        // cout << aa << " , " << bb << endl;
+        for(ll x=1; x*x<=N; x++){
+            ll ymax = N/x;
+            cnt[x] += max(0LL, ymax-x);
 
-        string ans = "Yes";
-        if(abs(aa-bb)&1) ans="No";
-        if(f) ans = "Yes";
+            if(ymax>=x) ymax--;
+            ans += ymax*3;
+        }
+        // cout << ans.val() << endl;
 
-        cout << ans << endl;
+        vec(ll) cum(nn);
+        repr(i,nn-1) cum[i] = cum[i+1]+cnt[i];
+
+
+        for(ll x=1; x*x<=N; x++){
+            ans += cum[x+1]*6;
+        }
+
+        cout << ans.val() << endl;
 
 
     }
 };
 
 
+
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
