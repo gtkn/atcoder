@@ -28,6 +28,21 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 区間をvec(Pll)で持ってその区間の幅の和を取るやつ
+// sort(all(v));
+// ll st=-llINF,gl=-llINF;
+// v.emplace_back(llINF,llINF);
+// for(Pll w:v){
+//     ans += gl-st;
+//     st = max(w.first,gl);
+//     gl = max(st,w.second);
+// }
+
+
+// ll min
+ll llmin = numeric_limits<ll>::min();
+
+
 
 // 順列列挙
 // vector<int> v = {1,2,3}; //全部を列挙するときは、はじめ昇順ソートしておく
