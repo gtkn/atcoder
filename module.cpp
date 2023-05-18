@@ -28,6 +28,18 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+// noshi基底 xorの吐き出し https://twitter.com/noshi91/status/1200702280128856064
+// vec(ll) A;
+// set<ll> s;
+// for(ll ai:A){
+//     for(ll si:s){
+//         chmin(ai, ai^si);
+//     }
+//     if(ai>0) s.insert(ai);
+// }
+
+
 // 区間をvec(Pll)で持ってその区間の幅の和を取るやつ
 // sort(all(v));
 // ll st=-llINF,gl=-llINF;
