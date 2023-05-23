@@ -29,6 +29,96 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// ロールバック付きUnionFind
+// https://atcoder.jp/contests/abc302/tasks/abc302_h
+//---Rollback Union Find---
+struct RollbackUnionFind{
+
+    // 更新履歴を記録するための構造体
+    struct Update{
+        ll& a; ll x;
+        Update(ll& a):a(a),x(a){}        
+    };
+
+    // [x]がリーダーのグループサイズ、要素の親idx、要素から親までのランクの配列、グループが持つ辺の数
+    vector<ll> gsize,parent,rank,edges;
+    // 操作履歴
+    using Hist = vector<Update>;
+    vector<Hist> history;
+
+
+    //コンストラクタ　各配列を初期化
+    RollbackUnionFind(ll N){
+        gsize = vector<ll>(N,1);
+        parent = vector<ll>(N,-1);
+        rank = vector<ll>(N);
+        edges = vector<ll>(N);
+    }
+
+    //親を求める
+    ll findparent(ll x){
+        if(parent[x]<0) return x;
+        else return findparent(parent[x]);//縮約無し
+    }
+
+    //その要素の属するグループのサイズを得る
+    ll getgsize(ll x){
+        return gsize[findparent(x)];
+    }
+
+    //その要素の属するグループの辺の数を得る
+    ll getedgesize(ll x){
+        return edges[findparent(x)];
+    }
+
+
+    // 2要素x,yの属するグループを合併
+    void unite(ll x, ll y){
+        x = findparent(x);
+        y = findparent(y);
+        history.push_back(Hist());
+        Hist& h = history.back();
+
+        if(x==y){
+            h.push_back(edges[x]); // 更新前に記録
+            edges[x]++;
+        }else{
+            if(rank[x] < rank[y]) swap(x,y);
+
+            h.push_back(gsize[x]);
+            h.push_back(parent[y]);
+            h.push_back(gsize[y]);
+            h.push_back(edges[x]);
+            gsize[x] += gsize[y];
+            parent[y] = x;
+            gsize[y] = 0;
+            edges[x] += edges[y]+1;
+
+            if(rank[x]==rank[y]){
+                h.push_back(rank[x]);
+                rank[x]++;
+            }
+        }        
+        return;
+    }
+
+    // 2要素x,yが同じ集合に属するかどうか
+    bool same(ll x, ll y){
+        return findparent(x) == findparent(y);
+    }
+
+
+    // unite操作を1回戻す
+    void rollback(){
+        for(auto [a,x] : history.back()) a=x;
+        history.pop_back();
+    }
+
+
+};
+
+
+
 // noshi基底 xorの吐き出し https://twitter.com/noshi91/status/1200702280128856064
 // vec(ll) A;
 // set<ll> s;
