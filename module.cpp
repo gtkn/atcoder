@@ -29,6 +29,22 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 重心分解
+// https://atcoder.jp/contests/abc291/submissions/41669040
+auto getCent = [&](auto getCent, ll sz, ll now, ll frm) ->Pll{
+    ll tmax = sz-t[now];
+    Pll res = {sz,-1}; // nowの部分木の中で、隣接する部分木のサイズの最大値が一番小さい時の、サイズとその頂点
+    for(ll nxt:g[now]){
+        if(nxt==frm) continue;
+        if(used[nxt]) continue;
+        chmin(res, getCent(getCent, sz, nxt, now));
+        chmax(tmax, t[nxt]);
+    }
+    chmin(res, Pll(tmax,now));
+    return res;
+};
+
+
 // ロールバック付きUnionFind
 // https://atcoder.jp/contests/abc302/tasks/abc302_h
 //---Rollback Union Find---
