@@ -1,0 +1,112 @@
+//title
+#include <bits/stdc++.h>
+using namespace std;
+//#include <atcoder/all>
+//using namespace atcoder;
+#define rep(i,n) for (ll i = 0; i < (n); ++i)
+#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
+#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#define bit(n,k) ((n>>k)&1) //nのk bit目
+
+#define vec(T) vector<T>
+#define vvec(T) vector<vec(T)>
+#define vvvec(T) vector<vvec(T)>
+#define vvvvec(T) vector<vvvec(T)>
+
+//typedef vector<mint>vi;
+//typedef vector<vi>vvi;
+//typedef vector<vvi>vvvi;
+//typedef vector<vvvi>vvvvi;
+
+#define all(x) x.begin(),x.end()
+#define watch(x) cout << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
+
+using ll = long long;
+using ld = long double;
+
+using Pii = pair<int,int>;
+using Pll = pair<ll,ll>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
+
+//using mint = modint1000000007;
+//using mint = modint998244353;
+
+
+template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
+template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+const ll llINF = 1LL << 60;
+const int iINF = 1e9;
+
+#define dame { puts("-1"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
+//------------------------------------------------
+
+struct Solver{
+
+    void solve(){
+        ll N;
+        cin >> N;
+
+        vec(bool) v;
+        ll _N = N;
+        while(_N){
+            v.push_back(_N&1);
+            _N>>=1;
+        }
+
+        ll nn = v.size();
+        reverse(all(v));
+
+        vvvec(ll) dp(nn+1,vvec(ll)(4,vec(ll)(2,-llINF)));
+        dp[0][0][0] = 0;
+
+        rep(i,nn)rep(j,4){
+            // k=0 mitei
+            if(dp[i][j][0]>=0){
+                if(v[i]){
+                    chmax(dp[i+1][j][1],  (dp[i][j][0]<<1) + 0);
+                    if(j<3) chmax(dp[i+1][j+1][0],  (dp[i][j][0]<<1) + 1);
+                }else{
+                    chmax(dp[i+1][j][0],  (dp[i][j][0]<<1) + 0);
+                }
+            }
+
+            // k=1
+            if(dp[i][j][1]>=0){
+                chmax(dp[i+1][j][1], (dp[i][j][1]<<1) + 0);
+                if(j<3) chmax(dp[i+1][j+1][1], (dp[i][j][1]<<1) + 1);
+            }
+        }
+
+        // rep(i,nn) cout << v[i] << " "; cout << endl;
+
+        // rep(i,nn+1){
+        //     cout << "---" << i << endl;
+        //     rep(j,4) cout << dp[i][j][0] << " "; cout << endl;
+        //     rep(j,4) cout << dp[i][j][1] << " "; cout << endl;
+        // }
+
+        ll ans = -1;
+        chmax(ans, dp[nn][3][0]);
+        chmax(ans, dp[nn][3][1]);
+        cout << ans << endl; 
+
+
+    }
+};
+
+
+
+int main(){
+    int testcasenum=1;
+    cin >> testcasenum;
+    rep1(ti,testcasenum){
+        Solver solver;
+        solver.solve();
+    }
+    return 0;
+}
