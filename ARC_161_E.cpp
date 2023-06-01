@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -47,24 +47,40 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
+
+        vvec(ll) g(N);
+        rep(_,N*3/2){
+            ll a,b;
+            cin >> a >> b;
+            --a; --b;
+            g[a].push_back(b);
+            g[b].push_back(a);
+        }
+
+        while(1){
+            vec(bool) v(N);
+            rep(i,N) v[i] = (rand()&1);
+
+            // false:black
+
+            two_sat ts(N);
+
+            rep(i,N){
+                rep(j,3){
+                    ts.add_clause( g[i][j], !v[i], g[i][(j+1)%3] , !v[i]);
+                }
+            }
+
+            if(!ts.satisfiable()){
+                for(ll vi:v) cout << (vi? 'W' : 'B');
+                cout << endl;
+                return;
+            }
+        }
 
 
 
@@ -75,7 +91,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
