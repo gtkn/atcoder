@@ -1106,6 +1106,24 @@ bool operator>(const State& a, const State& b){
         return res;
     }
 
+    // lxlの2次元正方行列のn乗
+    vvec(mint) vvpow(vvec(mint) vv, ll n){
+        ll l = vv.size();
+        assert(vv[0].size()==l);
+
+        vvec(mint) res(l,vec(mint)(l));
+        rep(i,l) res[i][i]=1;
+
+        while(n){
+            if(n&1) res = vvxvv(vv, res);
+            vv = vvxvv(vv,vv);
+            n >>= 1;
+        }
+        return res;
+
+    };
+
+
 
 
 // multisetで1つだけ消す
