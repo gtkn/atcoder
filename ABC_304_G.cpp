@@ -47,25 +47,84 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
+    pair<vec(ll),vec(ll)> split(vec(ll)& a,ll k){
+        vec(ll) a0,a1;
+        for(ll ai:a){
+            if(bit(ai,k)) a1.push_back(ai);
+            else a0.push_back(ai);
+        }
+        return {a0,a1};
+    }
+
+    ll fab(ll x,ll k, vec(ll) a,vec(ll) b){
+        if(a.empty()) return 0;
+        if(b.empty()) return 0;
+        if(k==0) return min(a.size(),b.size());
+        --k;
+
+        auto [a0,a1] = split(a,k);
+        auto [b0,b1] = split(b,k);
+
+        if(bit(x,k)){
+            return fab(x,k,a0,b1) + fab(x,k,a1,b0);
+        }else{
+            ll d0 = a0.size()-b1.size();
+            ll d1 = b0.size()-a1.size();
+
+            ll res = min(a0.size(), b1.size());
+            res += min(a1.size(), b0.size());
+
+            if(d0<0 && d1<0){
+                ll r = fab(x,k,a1,b1);
+                res += min(r, min(-d0,-d1));
+            }else if(d0>0 && d1>0){
+                ll r = fab(x,k,a0,b0);
+                res += min(r, min(d0,d1));
+            }
+            return res;
+        }
+
+    }
+
+
+    ll faa(ll x,ll k, vec(ll) a){
+        if(a.empty()) return 0;
+        if(k==0) return a.size()/2;
+        --k;
+
+        auto [a0,a1] = split(a,k);
+
+        if(bit(x,k)){
+            return fab(x,k,a0,a1);
+        }else{
+            if(a0.size() < a1.size()) swap(a0,a1);
+            ll r = faa(x,k,a0);
+            chmin(r, (ll)(a0.size()-a1.size())/2);
+            return a1.size() + r;
+        }
+    }
  
     void solve(){
         ll N;
         cin >> N;
 
+        vec(ll) A(2*N);
+        rep(i,2*N) cin >> A[i];
+
+        ll l=0, r=1<<30;
+        ll th = N-N/2;
+        while(r-l>1){
+            ll mid = (l+r)/2;
+
+            ll nn = faa(mid,30,A);
+            // cout << mid << " " << nn << "/" << th << endl;
+            if(nn>=th) l=mid;
+            else r=mid;
+        }
+
+        cout << l << endl;
 
 
     }
