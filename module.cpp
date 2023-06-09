@@ -28,6 +28,53 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// Trie木
+// https://atcoder.jp/contests/abc268/submissions/34763568
+    struct TrieTree{
+        vector<map<char,ll>> g;
+        vector<ll> cnt;
+
+        TrieTree(): g(1),cnt(1){}
+
+        ll add(const string& s){
+            ll now = 0;
+            for(char c:s){
+                if(!g[now].count(c)){
+                    g[now][c] = g.size();
+                    g.push_back({});
+                    cnt.push_back(0);
+                }
+                now = g[now][c];
+            }
+            cnt[now]++;
+            return now;
+        }
+
+
+
+        vector<ll> A,B;
+
+        ll dfs(ll now, ll num){
+            num += cnt[now];
+            A[now] = num;
+
+            for(auto mi:g[now]){
+                B[now] += dfs(mi.second, num);
+            }
+
+            return B[now]+cnt[now];
+        }
+
+
+        void calc_AB(){
+            A = vector<ll>(g.size());
+            B = vector<ll>(g.size());
+            dfs(0, 0);
+        }
+
+    };
+
+
 
 // 重心分解
 // https://atcoder.jp/contests/abc291/submissions/41669040
