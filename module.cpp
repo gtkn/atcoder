@@ -28,6 +28,61 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+
+
+// セグメント木クラス
+class SegmentTree {
+private:
+    int n;              // 元の配列の要素数
+    vector<int> tree;   // セグメント木のノードを格納する配列
+
+public:
+    // コンストラクタ
+    SegmentTree(const vector<int>& nums) {
+        n = nums.size();
+        tree.resize(4 * n);  // ノード数は元の配列の要素数の4倍に設定（十分なサイズを確保）
+        build(nums, 1, 0, n);  // セグメント木の構築
+    }
+
+    // セグメント木の構築
+    void build(const vector<int>& nums, int node, int start, int end) {
+        if (start + 1 == end) {
+            // 葉ノードの場合
+            tree[node] = nums[start];
+        } else {
+            // 内部ノードの場合
+            int mid = (start + end) / 2;
+            build(nums, node * 2, start, mid);         // 左の子ノードを構築
+            build(nums, node * 2 + 1, mid, end);       // 右の子ノードを構築
+            tree[node] = tree[node * 2] + tree[node * 2 + 1];   // 子ノードの値を合算
+        }
+    }
+
+    // 区間の和を取得
+    int query(int left, int right) {
+        return query(1, 0, n, left, right);
+    }
+
+    // 再帰的に区間の和を取得
+    int query(int node, int start, int end, int left, int right) {
+        if (right <= start || end <= left) {
+            // クエリ範囲とノード範囲が交差しない場合は0を返す（影響なし）
+            return 0;
+        }
+        if (left <= start && end <= right) {
+            // ノード範囲がクエリ範囲に完全に含まれる場合はノードの値を返す
+            return tree[node];
+        }
+        // それ以外の場合は左右の子ノードの値を再帰的に合算
+        int mid = (start + end) / 2;
+        int leftSum = query(node * 2, start, mid, left, right);
+        int rightSum = query(node * 2 + 1, mid, end, left, right);
+        return leftSum + rightSum;
+    }
+};
+
+
 // Trie木
 // https://atcoder.jp/contests/abc268/submissions/34763568
     struct TrieTree{
