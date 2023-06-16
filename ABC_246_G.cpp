@@ -29,20 +29,13 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+
     void solve(){
         ll N;
         cin >> N;
         vec(ll) A(N);
         rep1(i,N-1) cin >> A[i];
+        A[0]=-1;
 
         vvec(ll) g(N);
         rep(_,N-1){
@@ -53,33 +46,28 @@ struct Solver{
             g[v].push_back(u);
         }
 
-        vec(ll) dp(N,-1);
-        queue<ll> q;
-        q.push(0);
-        dp[0]=0;
-        while(!q.empty()){
-            ll now=q.front();
-            q.pop();
-            for(ll to:g[now]){
-                if(dp[to]>=0) continue;
-                dp[to]=dp[now]+1;
-                q.push(to);
-            }
+
+
+        ll ok=0, ng=1e9+7;
+        while(ng-ok>1){
+            ll mid = (ok+ng)/2;
+
+            auto dfs = [&](auto dfs,ll now,ll frm)->ll{
+                ll res = 0;
+                for(ll nxt:g[now]){
+                    if(nxt==frm) continue;
+                    res += dfs(dfs, nxt, now);
+                }
+                res = max(res-1,0LL) + (A[now]>=mid);
+                return res;
+            };
+
+            if(dfs(dfs,0,0)==0) ng=mid;
+            else ok=mid;
         }
-        
-        vec(abc) v;
-        rep(i,N) v.emplace_back(A[i],dp[i],i);
-        sort(all(A),[](abc const& x, abc const& y){
-            if(x.a!=y.a) return x.a>y.a;
-            if(x.b!=y.b) return x.b<y.b;
-            return x.c < y.c;
-        });
 
-        vec(ll) B(N);
-        ll cnt=0;
+        cout << ok << endl;
 
-
-        
 
     }
 };
