@@ -47,25 +47,73 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
+    
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
+        vvec(ll) gf(N),gr(N);
+        rep(_,M){
+            ll a,b;
+            cin >> a >> b;
+            --a; --b;
+            gf[a].push_back(b);
+            gr[b].push_back(a);
+        }
+
+        vec(bool) okf(N),okr(N);
+        queue<ll> q;
+        q.push(0);
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll nxt:gf[now]){
+                if(okf[nxt]) continue;
+                okf[nxt]=true;
+                q.push(nxt);
+            }
+        }
+
+        q.push(0);
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll nxt:gr[now]){
+                if(okr[nxt]) continue;
+                okr[nxt]=true;
+                q.push(nxt);
+            }
+        }
+
+        vec(bool) ok(N);
+        rep(i,N) ok[i] = (okf[i] & okr[i]);
+
+        // rep(i,N) cout << i+1 << " : " << ok[i] << endl;
+
+        ll x = 0;
+        vec(ll) dist(N,-1);
+        q.push(0);
+        dist[0]=0;
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll nxt:gf[now]){
+                if(!ok[nxt]) continue;
+                if(dist[nxt]==-1){
+                    dist[nxt] = dist[now]+1;
+                    q.push(nxt);
+                }else{
+                    ll y = abs(dist[now]+1-dist[nxt]);
+                    if(y) x = gcd(x, y);
+                }
+            }
+        }
+
+        if(x==0) x=3;
+        while(x%2==0) x/=2;
+        while(x%5==0) x/=5;
+        if(x==1) yn;
+        
 
 
     }
@@ -75,7 +123,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
