@@ -65,6 +65,40 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        map<ll,ll> m;
+        for(ll ai:A) m[ai]++;
+
+        vec(ll) v;
+        for(auto mi:m) v.push_back(mi.second);
+
+        sort(all(v), greater<ll>());
+
+        vec(ll) sum(N+1);
+        ll tmp = 0;
+        rep1(i,N){
+            while(!v.empty() && v.back()<=i){
+                tmp += v.back();
+                v.pop_back();
+            }
+            sum[i] = tmp + i*v.size();
+        }
+
+        rep1(K,N){
+            ll l=0, r=N+1;
+            while(r-l>1){
+                ll mid = (l+r)/2;
+                if(sum[mid] >= mid*K ) l=mid;
+                else r=mid;
+            }
+            cout << l << endl;
+
+        }
+
+
+
 
 
 

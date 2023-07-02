@@ -65,6 +65,40 @@ struct Solver{
     void solve(){
         ll N;
         cin >> N;
+        
+        string S;
+        cin >> S;
+
+        char s0 = S[0];
+        vec(ll) v;
+        rep(i,N){
+            if(S[i]>s0){
+                cout << "Yes" << endl;
+                return;
+            }
+            if(S[i]==s0) v.push_back(i);
+        }
+
+        if(v.size()==1){
+            cout << "No" << endl;
+            return;
+        }
+
+        for(ll vi:v){
+            if(vi==0) continue;
+
+            string a = S.substr(0,vi);
+            string b = S.substr(vi,N-vi);
+
+            // cout << a << " " << b << endl;
+            if(a<b){
+                cout << "Yes" << endl;
+                return;
+            }
+        }
+
+        cout << "No" << endl;
+
 
 
 
@@ -75,7 +109,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();

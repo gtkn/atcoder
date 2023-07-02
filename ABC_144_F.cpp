@@ -46,6 +46,8 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+double eps = 1e-8;
+
 struct Solver{
     struct edge{
         ll to,c;
@@ -63,9 +65,56 @@ struct Solver{
     vec(ll) dw = {0,1,0,-1};
  
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
+        vec(ll) s(M),t(M);
+        rep(i,M) cin >> s[i] >> t[i];
+
+        vvec(ll) gf(N+1),gr(N+1);
+        rep(i,M){
+            gf[s[i]].push_back(t[i]);
+            gr[t[i]].push_back(s[i]);
+        }
+
+        vec(double) dpf(N+1);
+        dpf[1] = 1;
+        rep1(now,N){
+            if(gf[now].empty()) continue;
+            double p = 1./gf[now].size();
+            for(ll nxt:gf[now]) dpf[nxt] += dpf[now]*p;
+        }
+
+        vec(double) dpr(N+1);
+        dpr[N] = 0;
+        rep1r(now,N){
+            if(gf[now].empty()) continue;
+            double p = 1./gf[now].size();
+            for(ll nxt:gf[now]) dpr[now] += (dpr[nxt]+1)*p;
+        }
+
+        double ans = dpr[1];
+        // cout << ans << endl;
+
+        rep(i,M){
+            double tmp = dpr[1];
+
+            tmp -= dpf[s[i]]*dpr[s[i]];
+            ll nn = gf[s[i]].size();
+            if(nn==1) continue;
+            double p = 1./(nn-1);
+            for(ll x:gf[s[i]]){
+                if(x!=t[i]) tmp += dpf[s[i]]*p*(dpr[x]+1);
+            }
+
+            // cout << tmp << endl;
+            if(tmp>eps) chmin(ans,tmp);
+        }
+
+        // rep1(i,N) cout << dpf[i] << " "; cout << endl;
+        // rep1(i,N) cout << dpr[i] << " "; cout << endl;
+
+        printf("%.8f\r\n",ans);
 
 
     }

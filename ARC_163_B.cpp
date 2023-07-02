@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+// #include <atcoder/all>
+// using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -46,26 +46,55 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+ll op(ll a,ll b){return a+b;}
+ll ee(){return 0;}
+
+
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(ll) dh = {1,0,-1,0};
-    vec(ll) dw = {0,1,0,-1};
- 
     void solve(){
-        ll N;
-        cin >> N;
+        ll N,M;
+        cin >> N >> M;
 
+        vec(ll) A(N);
+        rep(i,N) cin >> A[i];
+
+        // map<ll,ll> acnt;
+        // for(ll i=2; i<N; i++) acnt[A[i]]++;
+
+        // set<ll> s;
+        // for(ll ai:A) s.insert(ai);
+
+        // map<ll,ll> m;
+        // ll nn = 0;
+        // for(ll si:s) m[si] = nn++;
+
+
+        ll a0=A[0],a1=A[1];
+        vec(ll) B(N-2);
+        rep(i,N-2) B[i]=A[i+2];
+        sort(all(B));
+
+        ll ans = llINF;
+        rep(i,N-2){
+            ll b0,b1;
+            b0 = B[i];
+
+            ll j = i+M-1;
+            if(j >= N-2) break;
+            b1 = B[j];
+
+            ll tmp = 0;
+            if(a0 > b0) tmp += a0-b0;
+            if(a1 < b1) tmp += b1-a1;
+
+            // cout << i << " , " << j << "!" << endl;
+            // cout << b0 << " , " << b1 << ": " << tmp << endl;
+
+            chmin(ans, tmp );
+
+        }
+
+        cout << ans << endl;
 
 
     }

@@ -47,24 +47,48 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
-
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
-
- 
- 
-    vec(ll) dh = {1,0,-1,0};
-    vec(ll) dw = {0,1,0,-1};
  
     void solve(){
         ll N;
         cin >> N;
+
+        vec(ll) ans;
+
+        auto f = [&](auto f,ll c,ll x, ll nn, ll pre){
+            // cout << c << " " << x << " "<<  nn << " " << pre << endl;
+            if(nn==1){
+                if(c%x==0){
+                    ans.push_back(c/x);
+                    return true;
+                }
+                return false;
+            }
+
+            for(ll a= max(pre+1, c/x+1 )   ;  c*nn > a*x  ; a++){
+                ans.push_back(a);
+                if( f(f, c*a, x*a-c, nn-1, a) ) return true;
+                ans.pop_back();
+            }
+
+            return false;
+        };
+
+        if(f(f,1,1,N,1)){
+            cout << "Yes" << endl;
+            for(ll ai:ans) cout << ai << " "; cout << endl;
+
+            // assert(ans.size()==N);
+            // ll p = 1;
+            // for(ll ai:ans) p*=ai;
+            // ll chk = p;
+            // for(ll ai:ans) chk -= p/ai;
+            // cout << chk << endl;
+
+
+        }else{
+            cout << "No" << endl;
+        }
+
 
 
 
@@ -75,7 +99,7 @@ struct Solver{
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         Solver solver;
         solver.solve();
