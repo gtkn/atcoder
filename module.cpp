@@ -29,6 +29,28 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 整数列をビットの行列とみなして掃き出し法
+// https://atcoder.jp/contests/abc141/submissions/43295919
+    void bit_hakidasi(vec(ll) &A){
+        ll rnk = 0;
+        ll N = A.size();
+        repr(k,60){
+            ll tmp = -1;
+            for(ll i=rnk; i<N; i++){
+                if(bit(A[i],k)){
+                    tmp = A[i];
+                    break;
+                }
+            }
+            if(tmp==-1) continue;
+
+            if(A[rnk]!=tmp) A[rnk]^=tmp;
+            for(ll i=rnk+1; i<N; i++) chmin(A[i],A[i]^A[rnk]);
+            rnk++;
+        }
+
+    }
+
 
 
 // セグメント木クラス

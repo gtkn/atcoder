@@ -47,20 +47,27 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    void bit_hakidasi(vec(ll) &A){
+        ll rnk = 0;
+        ll N = A.size();
+        repr(k,60){
+            ll tmp = -1;
+            for(ll i=rnk; i<N; i++){
+                if(bit(A[i],k)){
+                    tmp = A[i];
+                    break;
+                }
+            }
+            if(tmp==-1) continue;
 
- 
- 
-    vec(ll) dh = {1,0,-1,0};
-    vec(ll) dw = {0,1,0,-1};
+            if(A[rnk]!=tmp) A[rnk]^=tmp;
+            for(ll i=rnk+1; i<N; i++) chmin(A[i],A[i]^A[rnk]);
+            rnk++;
+        }
+
+    }
+
  
     void solve(){
         ll N;
@@ -68,41 +75,69 @@ struct Solver{
         vec(ll) A(N);
         rep(i,N) cin >> A[i];
 
-        auto f = [](auto f,vec(ll) const& v, ll k)->vec(ll){
-            // cout << k << endl;
-            vec(ll) v0,v1;
-            for(ll vi:v){
-                if(bit(vi,k)) v1.push_back(vi);
-                else v0.push_back(vi);
-            }
+        ll odd=0;
+        for(ll ai:A) odd^=ai;
+        ll evn = ~odd;
 
-            ll n0,n1;
-            n0 = v0.size();
-            n1 = v1.size();
+        rep(i,N) A[i] &= evn;
 
-            vec(ll) res;
-            // rep(i, n0) res.push_back(v0[i]);
-            if(k==0){
-                rep(i, n1/2) res.push_back(v1[i]);
-            }else{
-                if(!v1.empty()) for(ll x:f(f, v1, k-1)) res.push_back(x);
-            }
+        bit_hakidasi(A);
 
-            return res;
-        };
+        ll r=0;
+        for(ll ai:A) chmax(r,r^ai);
+        cout << r*2 + odd << endl;
+
+        // for(ll ai:A) cout << ai << " "; cout << endl;
+        // cout << b << ", " << r << endl;
 
 
-        vec(ll) red = f(f,A,60);
-        ll r=0,b=0;
-        for(ll ri:red) r^=ri;
-        for(ll ai:A) b^=ai;
-        b^=r;
+        // vec(ll) AA=A;
+        // ll r = 0;
+        // repr(k,61){
+        //     ll tmp = 0;
+        //     rep(i,N){
+        //         if(!bit(A[i],k)) continue;
+        //         if(tmp==0) swap(tmp,A[i]);
+        //         else A[i] ^= tmp;
+        //     }
+        //     if(tmp!=0) r^=tmp;
+        // }
+
+        // ll b=0;
+        // for(ll ai:A) b^=ai;
+        // b^=r;
+
+        // // for(ll ai:A) cout << ai << " "; cout << endl;
+        // // cout << b << ", " << r << endl;
+        // ll ans = b+r;
+
+        // cout << ans << endl;
 
 
-        // for(ll ri:red) cout << ri << " "; cout << endl;
-        // cout << r << " " << b << endl;
-        cout << r+b << endl;
+        // vec(ll) AA=A;
+        // repr(k,61){
+        //     ll tmp = 0;
+        //     rep(i,N){
+        //         if(!bit(A[i],k)) continue;
+        //         if(tmp==0) tmp=A[i];
+        //         else A[i] ^= tmp;
+        //     }
+        // }
 
+        // ll r=0;
+        // for(ll ai:A) chmax(r,r^ai);
+
+        // ll b=0;
+        // for(ll ai:AA) b^=ai;
+        // b^=r;
+
+        // for(ll ai:A) cout << ai << " "; cout << endl;
+        // cout << b << ", " << r << endl;
+
+
+        // ll ans = b+r;
+
+        // cout << ans << endl;
 
 
 
