@@ -864,6 +864,27 @@ struct CHT {
 };
 
 
+class Timer {
+private:
+    clock_t startTime;
+    double limitTime;
+
+public:
+    Timer(double limit) : limitTime(limit) {
+        startTime = clock();
+    }
+
+    double getElapsedTime() {
+        clock_t currentTime = clock();
+        return static_cast<double>(currentTime - startTime) / CLOCKS_PER_SEC;
+    }
+
+    bool isTimeUp() {
+        return getElapsedTime() >= limitTime;
+    }
+
+};
+
 
 struct Timer{
     ll start; // [clocks]
