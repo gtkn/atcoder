@@ -71,49 +71,47 @@ struct Solver{
         rep(i,N) cin >> B[i];
         rep(i,N) A[i]--;
 
-        vec(mint) num(N);
-        vec(bool) used(N);
-        vec(ll) done(N);
-        vec(ll) memo;
 
-        auto f = [&](auto f,ll now, ll cnt, mint tot)->void{
-            cout << now << " " << cnt << " " << tot.val() << endl;
-            if(cnt>=K) return;
-            if(used[now]){
-                if(done[now]<0) return;
-                else{
-                    ll c = cnt-done[now];
-                    ll x = (K-done[now])/c;
-                    num[now] += tot*x;
-                    done[now]=-1;
-                }
-            }else{
-                done[now]=cnt;         
-                used[now]=true;
-                memo.push_back(now);
-                tot += B[now];
-                B[now]=0;
-                num[now] += tot;
-            }
-            f(f,A[now],cnt+1,tot);
+        auto f = [](vec(ll) g, vec(mint) now)->vec(mint){
+            ll n = g.size();
+            vec(mint) res(n);
+            rep(i,n) res[g[i]] += now[i];
+            return res;
         };
 
-        vec(ll) incnt(N);
-        rep(i,N) incnt[A[i]]++;
-
-        rep(st,N){
-            if(incnt[st]>0 || used[st]) continue;
-            f(f,st,0,0);
-            for(ll x:memo) done[x]=false;
-        }
-
-        mint den = mint(K).inv();
-
-        rep(i,N) cout << (num[i]*den).val() << " "; cout << endl;
-        
+        auto f2 = [](vec(ll) g)->vec(ll){
+            ll n = g.size();
+            vec(ll) res(n);
+            rep(i,n) res[i] = g[g[i]];
+            return res;
+        };
 
 
 
+        auto db = [&](auto db, vec(ll) g, vec(mint) now, ll k)->vec(mint){
+            if(k==1) return now;
+            
+            ll n = g.size();
+
+            if(k&1){
+                vec(mint) res = db(db, g, f(g,now), k-1);
+                rep(i,n) res[i] += now[i];
+                return res;
+            }else{
+                vec(mint) tmp = f(g,now);
+                rep(i,n) tmp[i] += now[i];
+                vec(mint) res = db(db, f2(g), tmp, k/2);
+                return res;
+            }
+        };
+
+
+        vec(mint) b(N);
+        rep(i,N) b[i] = B[i];
+
+        vec(mint) ans = db(db, A,f(A,b),K);
+        rep(i,N) ans[i] /= K;
+        rep(i,N) cout << ans[i].val() <<  " "; cout << endl;
 
     }
 };
