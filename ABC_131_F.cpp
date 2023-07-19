@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -46,27 +46,62 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
+struct Solver{
+    struct edge{
+        ll to,c;
+        edge(ll to=0, ll c=0):to(to),c(c){}
+    };
+
+    struct abc{
+        ll a,b,c;
+        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+    };
+
+ 
+ 
+    vec(ll) dh = {1,0,-1,0};
+    vec(ll) dw = {0,1,0,-1};
+ 
+    void solve(){
+        ll N;
+        cin >> N;
+
+        vec(Pll) xy(N);
+        rep(i,N) cin >> xy[i].first >> xy[i].second;
+
+        set<ll> sx,sy;
+        rep(i,N){
+            sx.insert(xy[i].first);
+            sy.insert(xy[i].second);
+        }
+
+        ll nx = sx.size();
+        map<ll,ll> mx,my;
+        ll cnt = 0;
+        for(ll si:sx) mx[si] = cnt++;
+        for(ll si:sy) my[si] = cnt++;
+
+        dsu d(cnt);
+        rep(i,N){
+            d.merge(mx[xy[i].first], my[xy[i].second]);
+        }
+
+        ll ans = 0;
+        for(auto g:d.groups()){
+            ll xcnt=0,ycnt=0;
+            for(ll u:g){
+                if(u<nx) xcnt++;
+                else ycnt++;
+            }
+            ans += xcnt*ycnt;
+        }
+        ans-=N;
+        cout << ans << endl;
+
+
+
+    }
 };
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
-
-void solve(){
-    ll N;
-    cin >> N;
-
-
-
-}
 
 
 
@@ -74,7 +109,8 @@ int main(){
     int testcasenum=1;
     //cin >> testcasenum;
     rep1(ti,testcasenum){
-        solve();
+        Solver solver;
+        solver.solve();
     }
     return 0;
 }

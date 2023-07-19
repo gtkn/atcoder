@@ -29,6 +29,43 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
+// 構造体のテンプレート
+struct ExampleStruct {
+    // 整数
+    int integer_value;
+
+    // 浮動小数点数
+    double double_value;
+
+    // 文字列
+    string string_value;
+
+    // ベクター（整数のリスト）
+    vector<int> integer_list;
+
+    // コンストラクタ
+    ExampleStruct(int i, double d, const string& s, const vector<int>& vec) 
+        : integer_value(i), double_value(d), string_value(s), integer_list(vec) {}
+
+    // デフォルトコンストラクタ（初期値を指定する）
+    ExampleStruct() 
+        : integer_value(0), double_value(0.0), string_value(""), integer_list({}) {}
+
+    // メソッド（関数）
+    void printValues() {
+        cout << "Integer: " << integer_value << endl;
+        cout << "Double: " << double_value << endl;
+        cout << "String: " << string_value << endl;
+        cout << "Integer List: ";
+        for (int num : integer_list) {
+            cout << num << " ";
+        }
+        cout << endl;
+    }
+};
+
+
 // 整数列をビットの行列とみなして掃き出し法
 // https://atcoder.jp/contests/abc141/submissions/43295919
     void bit_hakidasi(vec(ll) &A){

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -46,23 +46,44 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) a(N);
+    rep(i,N) cin >> a[i];
+
+    ll nth = (N*(N+1)/2 + 1)/2;
+
+
+    auto f = [&](ll th)->bool{
+        fenwick_tree<ll> fw(2*N+1);
+        fw.add(N,1);
+
+        ll cnt = 0;
+        ll now = N;
+        for(ll ai:a){
+            if(ai>=th) now++;
+            else now--;
+            cnt += fw.sum(0,now+1);
+            fw.add(now,1);
+        }
+
+        return cnt>=nth;
+    };
+
+
+
+    ll l=0,r=1e9+7;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)) l=mid;
+        else r=mid;
+    }
+    cout << l << endl;
 
 
 
