@@ -62,8 +62,26 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+    vvec(ll) A(N,vec(ll)(M));
+    rep(i,N)rep(j,M) cin >> A[i][j];
+
+    vvec(ll) sum(N+1,vec(ll)(M+1));
+    rep1(i,N)rep1(j,M) sum[i][j] = A[i-1][j-1] + sum[i-1][j] + sum[i][j-1] - sum[i-1][j-1];
+
+    auto f = [&](ll lx,ll rx, ll ly, ll ry){
+        return sum[rx][ry] - sum[lx][ry] - sum[rx][ly] + sum[lx][ly];
+    };
+
+    vvec(Pll) vv(301);
+    rep(i,N)rep(j,M) vv[A[i][j]].emplace_back(i,j);
+
+    ll ans = 0;
+    // vec(bool) usedx(N), used
+    // rep1(x,300){
+
+    // }
 
 
 

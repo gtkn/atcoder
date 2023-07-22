@@ -65,6 +65,39 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) a(N),b(N);
+    rep(i,N) cin >> a[i];
+    rep(i,N) cin >> b[i];
+
+
+    ll ans = 0;
+    repr(k,30){
+        ll mask = (2<<k)-1;
+
+        rep(i,N) a[i] &= mask;
+        rep(i,N) b[i] &= mask;
+        sort(all(a));
+        sort(all(b));
+
+        ll tk = (1<<k);
+        ll cnt = 0;
+        for(ll ai:a){
+            ll c01 = distance( upper_bound(all(b), (1<<k) - ai -1), b.end() );
+            ll c10 = distance( upper_bound(all(b), (2<<k) - ai -1), b.end() );
+            ll c11 = distance( upper_bound(all(b), (3<<k) - ai -1), b.end() );
+            cnt += c11 + (c01-c10);
+        }
+
+        // if(k<3){
+        //     cout << "---" << k << endl;
+        //     for(ll ai:a) cout << ai << " "; cout << endl;
+        //     for(ll bi:b) cout << bi << " "; cout << endl;
+        //     cout << cnt << endl;
+        // }
+
+        if(cnt&1) ans += tk;
+    }
+    cout << ans << endl;
 
 
 }

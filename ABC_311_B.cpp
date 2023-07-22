@@ -62,10 +62,25 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,D;
+    cin >> N >> D;
 
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
 
+    ll ans = 0;
+    rep(st,D){
+        rep(d,D){
+            ll now = st+d;
+            if(now>=D) break;
+            bool isok=true;
+            rep(i,N) if(S[i][now] == 'x') isok=false;
+            if(isok) chmax(ans, d+1);
+            else break;
+        }
+    }
+
+    cout << ans << endl;
 
 }
 

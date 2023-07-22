@@ -65,6 +65,18 @@ void solve(){
     ll N;
     cin >> N;
 
+    string S;
+    cin >> S;
+
+    map<char,ll> m;
+    rep(i,N){
+        m[S[i]]++;
+        if(m['A']>0 && m['B']>0 && m['C']>0 ){
+            cout << i+1 << endl;
+            return;
+        }
+
+    }
 
 
 }

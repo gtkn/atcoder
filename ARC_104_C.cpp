@@ -64,8 +64,63 @@ vec(ll) dw = {0,1,0,-1};
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i] >> B[i];
 
+    ll nn = 2*N;
+    vec(ll) v(nn);
+    rep(i,N){
+        if(A[i]==-1) continue;
+        if(v[A[i]-1]!=0) nodame;
+        v[A[i]-1] = i+1;
+    }
+    rep(i,N){
+        if(B[i]==-1) continue;
+        if(v[B[i]-1]!=0) nodame;
+        v[B[i]-1] = -i-1;
+    }
 
+    rep(i,N){
+        if(A[i]>0 && B[i]>0 && A[i]>B[i]) nodame;
+    }
+
+    vec(bool) dp(nn+1);
+    dp[0]=true;
+
+    rep(i,nn){
+        if(!dp[i]) continue;
+
+        for(ll d=1; i+2*d<=nn; d++){
+            bool isok=true;
+            for(ll st=i; st<i+d; st++){
+                ll gl = st+d;
+                if(v[st]<0 || v[gl]>0){
+                    isok=false;
+                    continue;
+                }
+                
+                if(v[st]>0 && v[gl]<0 && v[st]!=-v[gl]){
+                    isok=false;
+                    continue;
+                }
+                if(v[st] == -v[gl]) continue;
+
+                
+                if(v[st]>0){
+                    if(B[ v[st]-1 ]!=-1) isok=false;
+                    continue;
+                }
+
+                if(v[gl]<0){
+                    if(A[ -v[gl]-1]!=-1) isok=false;
+                    continue;
+                }
+            }
+            if(isok) dp[i+2*d]=true;
+        }
+    }
+
+    if(dp[nn]) yn;
 
 }
 

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -33,7 +33,7 @@ using Pll = pair<ll,ll>;
 using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -62,8 +62,49 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+
+    vvec(bool) vv(N+1,vec(bool)(M));
+
+    rep(i,N){
+        string S;
+        cin >> S;
+        rep(j,M) vv[i][j] = (S[j]=='#');
+    }
+
+    rep1(i,N)rep(j,M){
+        if(vv[i-1][j]) vv[i][j]=true;
+        if(j>0) if(vv[i-1][j-1]) vv[i][j] = true;
+    }
+
+
+    vvec(mint) dp(N+2,vec(mint)(M+1));
+    dp[N][0] = 1;
+
+    rep(j,M){
+        vec(mint) cum(N+3);
+        rep(i,N+1){
+            cum[0] += dp[i][j];
+            cum[i+2] -= dp[i][j];
+        }
+
+        mint tmp = 0;
+        rep(i,N+1){
+            if(i>0) if(vv[i][j] && vv[i-1][j]) break;
+            tmp += cum[i];
+            dp[i][j+1] = tmp;
+        }
+        // cout << j << "!" << endl;
+    }
+
+    // rep(i,N+2){
+    //     rep(j,M+1) cout << dp[i][j].val() << " "; cout << endl;
+    // }
+
+    mint ans = 0;
+    rep(i,N+1) ans += dp[i][M];
+    cout << ans.val() << endl;
 
 
 

@@ -62,8 +62,41 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll H,W,N;
+    cin >> H >> W >> N;
+
+    vvec(ll) vv(H,vec(ll)(W));
+    rep(_,N){
+        ll a,b;
+        cin >> a >> b;
+        vv[a-1][b-1]=1;
+    } 
+
+    vvec(ll) dp(H+1,vec(ll)(W+1));
+    rep(i,H)rep(j,W) dp[i+1][j+1] = dp[i+1][j] + dp[i][j+1] - dp[i][j] + vv[i][j];
+
+    auto f = [&](ll ii,ll jj, ll nn){
+        if(ii+nn > H || jj+nn > W) return llINF;
+        return dp[ii+nn][jj+nn] - dp[ii][jj+nn] - dp[ii+nn][jj] + dp[ii][jj];
+
+    };
+
+    ll ans = 0;
+    rep(i,H)rep(j,W){
+        ll l = 0, r = min(H-i,W-j)+1;
+
+        while(r-l>1){
+            ll mid = (l+r)/2;
+            // cout << i << " , " << j << "  : " << mid << endl;
+
+            if(f(i,j,mid)==0) l=mid;
+            else r=mid;
+        }
+        ans += l;
+    }
+
+    cout << ans << endl;
+
 
 
 

@@ -62,9 +62,42 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
 
+    vvec(bool) vv(N,vec(bool)(M));
+    rep(i,N){
+        string S;
+        cin >> S;
+        rep(j,M) vv[i][j] = (S[j]=='#');
+    }
+
+    vvec(ll) used(N,vec(ll)(M));
+    vvec(bool) ok(N,vec(bool)(M));
+
+    auto f = [&](auto f, ll x0,ll y0)->void{
+        rep(k,4){
+            if( bit(used[x0][y0],k) ) continue;
+            used[x0][y0] |= (1<<k);
+
+            ll x=x0, y=y0;
+            while(1){
+                ok[x][y] = true;                
+                ll xx,yy;
+                xx = x+dh[k]; yy = y+dw[k];
+                if(vv[xx][yy]) break;
+                x = xx; y = yy;
+            }
+            f(f, x,y);
+        }
+        return;
+    };
+
+    f(f,1,1);
+
+    ll ans = 0;
+    rep(i,N)rep(j,M) if(ok[i][j]) ans++;
+    cout << ans << endl;
 
 
 }

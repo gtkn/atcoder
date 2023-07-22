@@ -62,8 +62,29 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M , Q;
+    cin >> N >> M >> Q;
+
+    vvec(ll) vv(N+2,vec(ll)(N+2));
+    rep(_,M){
+        ll l,r;
+        cin >> l >> r;
+        vv[l][r]++;
+    }
+
+
+    vvec(ll) dp(N+2,vec(ll)(N+2));
+    rep1r(i,N)rep1(j,N){
+        dp[i][j] = vv[i][j] + dp[i+1][j] + dp[i][j-1] - dp[i+1][j-1];
+    }
+    
+
+
+    while(Q--){
+        ll p,q;
+        cin >> p >> q;
+        cout << dp[p][q] << endl;
+    }
 
 
 

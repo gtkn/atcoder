@@ -65,7 +65,41 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) A(N);
+    rep(i,N) cin >> A[i];
+    rep(i,N) A[i]--;
+    
 
+    vec(bool) totused(N);
+    rep(st,N){
+        if(totused[st]) continue;
+
+        vec(bool) used(N);
+        vec(ll) v;
+        ll now = st;
+        while(!used[now]){
+            if(totused[now]) break;
+
+            used[now] = true;
+            now = A[now];
+
+            if(used[now]){
+                vec(ll) ans = {now};
+                while(v.back()!=now && !v.empty()){
+                    ans.push_back(v.back());
+                    v.pop_back();
+                }
+                cout << ans.size() << endl;
+                reverse(all(ans));
+                for(ll ai:ans) cout << ai+1 << " "; cout << endl;
+                return;
+            }
+
+            v.push_back(now);
+        }
+        for(ll vi:v) used[vi]=true;
+
+    }
 
 }
 
