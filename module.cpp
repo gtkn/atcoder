@@ -29,6 +29,36 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// カルテシアン木
+// https://atcoder.jp/contests/abc311/submissions/43899946
+// https://nyaannyaan.github.io/library/tree/cartesian-tree.hpp.html
+// return value : pair<graph, root>
+template <typename T>
+pair<vector<vector<ll>>, ll> CartesianTree(vector<T> &a) {
+  ll N = (ll)a.size();
+  vector<vector<ll>> g(N);
+  vector<ll> p(N, -1), st;
+  st.reserve(N);
+  for (int i = 0; i < N; i++) {
+    int prv = -1;
+    while (!st.empty() && a[i] < a[st.back()]) {
+      prv = st.back();
+      st.pop_back();
+    }
+    if (prv != -1) p[prv] = i;
+    if (!st.empty()) p[i] = st.back();
+    st.push_back(i);
+  }
+  int root = -1;
+  for (int i = 0; i < N; i++) {
+    if (p[i] != -1)
+      g[p[i]].push_back(i);
+    else
+      root = i;
+  }
+  return make_pair(g, root);
+}
+
 
 // 構造体のテンプレート
 struct ExampleStruct {

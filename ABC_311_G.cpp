@@ -47,19 +47,34 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
+// https://nyaannyaan.github.io/library/tree/cartesian-tree.hpp.html
+// return value : pair<graph, root>
+template <typename T>
+pair<vector<vector<ll>>, ll> CartesianTree(vector<T> &a) {
+  ll N = (ll)a.size();
+  vector<vector<ll>> g(N);
+  vector<ll> p(N, -1), st;
+  st.reserve(N);
+  for (int i = 0; i < N; i++) {
+    int prv = -1;
+    while (!st.empty() && a[i] < a[st.back()]) {
+      prv = st.back();
+      st.pop_back();
+    }
+    if (prv != -1) p[prv] = i;
+    if (!st.empty()) p[i] = st.back();
+    st.push_back(i);
+  }
+  int root = -1;
+  for (int i = 0; i < N; i++) {
+    if (p[i] != -1)
+      g[p[i]].push_back(i);
+    else
+      root = i;
+  }
+  return make_pair(g, root);
+}
 
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N,M;
@@ -74,14 +89,50 @@ void solve(){
         return sum[rx][ry] - sum[lx][ry] - sum[rx][ly] + sum[lx][ly];
     };
 
-    vvec(Pll) vv(301);
-    rep(i,N)rep(j,M) vv[A[i][j]].emplace_back(i,j);
+
+    vvvec(ll) imin(N,vvec(ll)(M,vec(ll)(M+1,llINF)));
+    rep(i,N){
+        rep1(ry,M)rep(ly,ry){
+            chmin(imin[i][ly][ry], imin[i][ly][ry-1] );
+            chmin(imin[i][ly][ry], A[i][ry-1] );
+        }
+    }
+
 
     ll ans = 0;
-    // vec(bool) usedx(N), used
-    // rep1(x,300){
 
-    // }
+    rep1(ry,M)rep(ly,ry){
+        vec(ll) B(N),C(N,llINF);
+        rep(i,N) B[i] = f(i, i+1, ly, ry);
+        rep(i,N) C[i] = imin[i][ly][ry];
+
+        auto ct = CartesianTree(C);
+        vvec(ll) g=ct.first;
+        
+        vec(ll) bcum(N+1);
+        rep1(i,N) bcum[i] = bcum[i-1] + B[i-1];
+
+        auto f2 = [&](ll lx,ll rx)->ll{
+            return bcum[rx]-bcum[lx];
+        };
+
+        auto dfs = [&](auto dfs, ll lx,ll rx,ll now)->ll{
+            ll res = f2(lx,rx) * C[now];
+
+            for(ll nxt:g[now]){
+                if(nxt<now) chmax(res, dfs(dfs, lx, now, nxt));
+                else chmax(res, dfs(dfs, now+1, rx, nxt));                
+            }
+
+            return res;
+        };
+
+        
+        chmax(ans, dfs(dfs,0,N,ct.second));
+
+    }
+
+    cout << ans << endl;
 
 
 
