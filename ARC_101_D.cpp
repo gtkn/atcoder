@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -42,69 +42,50 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
-#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
 
-double chk(ll now){
-    ll tmp = now;
-    ll sum = 0;
-    while(tmp){
-        sum+=tmp%10;
-        tmp/=10;
-    }
-    double res = 1.*now/sum;
-    // cout << now << " : " << res << endl;
-
-    return res;
-}
 
 
-ll f(ll n){
-    ll memo = n;
-    n++;
-    ll res = llINF;
-    double ns = llINF;
-
-    ll q = 0;
-    ll ten = 1;
-
-    auto update = [&](ll x){
-        if(x<=memo) return;
-        double a = chk(x);
-        if(ns > a){
-            ns = a;
-            res = x;
-        }
-        if(ns == a) chmin(res,x);
-        return;
-    };
-
-
-    while(n){
-        rep(d,10){
-            update((n+d)*ten + q);
-        }
-        n/=10;
-        q = q*10+9;
-        ten*=10;
-    }
-    update(q);
-
-    return res;
-}
 
 
 void solve(){
-    ll K;
-    cin >> K;
+    ll N;
+    cin >> N;
+    vec(ll) a(N);
+    rep(i,N) cin >> a[i];
 
-    ll now = 0;
-    while(K--){
-        now = f(now);
-        cout << now << endl;
+    ll nth = (N*(N+1)/2 + 1)/2;
+
+
+    auto f = [&](ll th)->bool{
+        fenwick_tree<ll> fw(2*N+1);
+        fw.add(N,1);
+
+        ll cnt = 0;
+        ll now = N;
+        for(ll ai:a){
+            if(ai>=th) now++;
+            else now--;
+            cnt += fw.sum(0,now+1);
+            fw.add(now,1);
+        }
+
+        return cnt>=nth;
+    };
+
+
+
+    ll l=0,r=1e9+7;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)) l=mid;
+        else r=mid;
     }
+    cout << l << endl;
+
+
 
 }
 

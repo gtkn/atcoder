@@ -4,6 +4,7 @@ in.dat
 out.dat
 *.sh
 tmp.cpp
+module.cpp
 a.out
 result.txt
 *.ipynb
