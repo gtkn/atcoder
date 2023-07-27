@@ -28,6 +28,10 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+    // sort(all(mr));
+    // mr.erase(unique(all(mr)),mr.end());
+
+
 
 // カルテシアン木
 // https://atcoder.jp/contests/abc311/submissions/43899946
