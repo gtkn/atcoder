@@ -28,8 +28,13 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// uniqueで重複削除する時
     // sort(all(mr));
     // mr.erase(unique(all(mr)),mr.end());
+
+    // ll nn = mr.size();
+    // map<ll,ll> mf;
+    // rep(i,nn) mf[ mr[i] ] = i;
 
 
 
