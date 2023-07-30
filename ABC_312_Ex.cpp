@@ -32,7 +32,7 @@ using Pll = pair<ll,ll>;
 //using tri = tuple<ll,ll,ll>;
 using tri = array<ll,3>;
 
-using mint = modint1000000007;
+//using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -48,73 +48,45 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 
-struct RollingHash {
-    const mint base = 131;
-
-    RollingHash() {}
-
-    mint calcHash(const string& s) {
-        mint hash = 0;
-        for (char c : s) {
-            hash = (hash * base + c);
-        }
-        return hash;
-    }
-
-    mint calcRepeatedHash(const string& s, ll N, ll nn) {
-        mint hs = calcHash(s);
-
-        mint ten = base.pow(nn);
-
-        while(N){
-            if(N&1) hs = hs*ten + hs;
-            N>>=1;
-            ten *= ten;
-        }
-
-        return hs;
-    }
-};
-
-
-
-bool operator>(const mint& a, const mint& b){
-    return (a.val() > b.val());
-}
-
-bool operator<(const mint& a, const mint& b){
-    return (a.val() < b.val());
-}
-
 void solve(){
     ll N;
     cin >> N;
 
 
-    RollingHash rh; // ローリングハッシュの初期化
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
 
-
-    set<mint> used;
+    map<string,set<ll>> used;
+    map<pair<string,ll>,ll> memo;
 
     rep(i,N){
-        string s;
-        cin >> s;
+        auto z = z_algorithm(S[i]);
 
-        ll l=0,r=N;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            mint tmp = rh.calcRepeatedHash(s,mid,s.size());
-            if(sfind(used,tmp)) l=mid;
-            else r=mid;
+        ll nn = S[i].size();
+        ll lmin = nn;
+        rep(j,nn){
+            ll l = nn-j;
+            if( nn%l != 0 ) continue;
+            
+            bool isok=true;
+            for(ll st = j; st>=0; st-=l){
+                if( z[st] != nn-st ) isok=false;
+            }
+            if(isok) chmin(lmin,l);
         }
 
-        used.insert(rh.calcRepeatedHash(s,r,s.size()));
-        cout << r << " ";
+        string k = S[i].substr(0,lmin);
+        
+        ll now = memo[{k,nn}];
+        used[k].insert(0);
+        while(sfind(used[k], now)) now += nn;
+
+        ll res = now/nn;
+        cout << res << " ";
+        memo[{k,nn}] = now;
+        used[k].insert(now);
     }
-
     cout << endl;
-
-
 
 }
 
