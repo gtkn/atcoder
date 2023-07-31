@@ -42,58 +42,57 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
+#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
 
-struct Solver{
- 
-    void solve(){
-        ll N;
-        cin >> N;
+struct edge{
+    ll to,c;
+    edge(ll to=0, ll c=0):to(to),c(c){}
+};
 
-        vec(ll) ans;
-
-        auto f = [&](auto f,ll c,ll x, ll nn, ll pre){
-            // cout << c << " " << x << " "<<  nn << " " << pre << endl;
-            if(nn==1){
-                if(c%x==0){
-                    ans.push_back(c/x);
-                    return true;
-                }
-                return false;
-            }
-
-            for(ll a= max(pre+1, c/x+1 )   ;  c*nn > a*x  ; a++){
-                ans.push_back(a);
-                if( f(f, c*a, x*a-c, nn-1, a) ) return true;
-                ans.pop_back();
-            }
-
-            return false;
-        };
-
-        if(f(f,1,1,N,1)){
-            cout << "Yes" << endl;
-            for(ll ai:ans) cout << ai << " "; cout << endl;
-
-            // assert(ans.size()==N);
-            // ll p = 1;
-            // for(ll ai:ans) p*=ai;
-            // ll chk = p;
-            // for(ll ai:ans) chk -= p/ai;
-            // cout << chk << endl;
+struct abc{
+    ll a,b,c;
+    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+};
 
 
-        }else{
-            cout << "No" << endl;
-        }
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
+void solve(){
+    ll N;
+    cin >> N;
 
+    if(N==2){
+        cout << "No" << endl;
+        return;
+    }
 
+    set<ll> ans;
+
+    cout << "Yes" << endl;
+
+    for(ll i=1; i<N; i++) ans.insert(i*(i+1));
+    if(!sfind(ans,N)){
+        ans.insert(N);
+        for(ll si:ans) cout << si << " "; cout << endl;
+    }else{
+        ans.erase((N*(N-1)) );
+        for(ll si:ans) cout << 2*si << " ";
+        cout << 2 << " " << 2*(N-1) << endl;
 
     }
-};
+    
+    return;
+
+
+
+
+
+
+}
 
 
 
@@ -101,8 +100,7 @@ int main(){
     int testcasenum=1;
     cin >> testcasenum;
     rep1(ti,testcasenum){
-        Solver solver;
-        solver.solve();
+        solve();
     }
     return 0;
 }
