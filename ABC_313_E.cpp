@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -33,7 +33,7 @@ using Pll = pair<ll,ll>;
 using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -47,25 +47,64 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
+using Plm = pair<ll,mint>;
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+
+vector<pair<char,ll>> RunLengthEncoding(string& S){
+    vector<pair<char,ll>> res;
+    if(S.empty()) return res;
+
+    char now = S[0];
+    ll cnt=0;
+    for(char si:S){
+        if(si!=now){
+            res.emplace_back(now,cnt);
+            now = si;
+            cnt = 0;
+        }
+        cnt++;
+    }
+    res.emplace_back(now,cnt);
+    return res;
+}
+
+
+
+
 
 void solve(){
     ll N;
     cin >> N;
     string S;
     cin >> S;
+
+    rep(i,N-1){
+        if(S[i]!='1' && S[i+1]!='1') dame;
+    }
+
+
+    auto rle = RunLengthEncoding(S);
+
+    ll pre = 0;
+    mint ans = 0;
+    while(!rle.empty()){
+        auto now = rle.back();
+        rle.pop_back();
+
+        mint n = now.second;
+        if(now.first == '1'){
+            n += (pre-1)*ans;
+            ans += n;
+        }else{
+            ans++;
+        }
+        pre = now.first-'0';
+    }
+    ans--;
+
+    cout << ans.val() << endl;
+
 
 
 
