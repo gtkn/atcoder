@@ -28,11 +28,90 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// https://atcoder.jp/contests/abc315/editorial/6994
+long long llceil(long long a,long long b){
+  if(a%b==0){return a/b;}
+ 
+  if(a>=0){return (a/b)+1;}
+  else{return -((-a)/b);}
+}
+long long llfloor(long long a,long long b){
+  if(a%b==0){return a/b;}
+ 
+  if(a>=0){return (a/b);}
+  else{return -((-a)/b)-1;}
+}
+
+map<ll,ll> compressCoordinates(vec(ll) &v){
+    // 値の集合vを受け取って座圧する
+    // res[val] = idx
+    // v[idx] = val となるように入力のvも変更する
+
+    sort(all(v));
+    v.erase(unique(all(v)),v.end());
+
+    ll nn = v.size();
+    map<ll,ll> res;
+    rep(i,nn) res[ v[i] ] = i;
+
+    return res;
+}
+
+
+vec(Pll) rangeMerge(vec(Pll) v){
+    // 半開区間[l,r)の集合vを受け取ってマージする
+    vec(Pll) res;
+    if(v.empty()) return res;
+
+    sort(all(v));
+    res.push_back(v[0]);
+    for(Pll vi:v){
+        if(res.back().first <= vi.first && vi.first < res.back().second){
+            chmax(res.back().second, vi.second);
+        }else{
+            res.push_back(vi);
+        }
+    }
+    return res;
+}
+
+
+vec(Pll) rangeMerge_cl(vec(Pll) v){
+    // 閉区間[l,r]の集合vを受け取ってマージする
+    vec(Pll) res;
+    if(v.empty()) return res;
+
+    sort(all(v));
+    res.push_back(v[0]);
+    for(Pll vi:v){
+        if(res.back().first <= vi.first && vi.first <= res.back().second){
+            chmax(res.back().second, vi.second);
+        }else{
+            res.push_back(vi);
+        }
+    }
+
+    return res;
+}
 
 
 
 
+void doubling(vvec(ll) &db, ll xx){
+    // 0列目まで埋めたダブリングの配列の残りを計算する
+    // 遷移先がない場合はxx
+    ll n,m;
+    n = db.size();
+    m = db[0].size();
 
+    rep(j,m-1)rep(i,n){
+        if(db[i][j]==xx){
+            db[i][j+1] = xx;
+        }else{
+            db[i][j+1] = db[ db[i][j] ][j];
+        }
+    }
+}
 
 
 
