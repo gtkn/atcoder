@@ -47,245 +47,135 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-map<ll,ll> compressCoordinates(vec(ll) &v){
-    // 値の集合vを受け取って座圧する
-    // res[val] = idx
-    // v[idx] = val となるように入力のvも変更する
-
-    sort(all(v));
-    v.erase(unique(all(v)),v.end());
-
-    ll nn = v.size();
-    map<ll,ll> res;
-    rep(i,nn) res[ v[i] ] = i;
-
-    return res;
-}
-
-
-vec(Pll) rangeMerge(vec(Pll) v){
-    // 半開区間[l,r)の集合vを受け取ってマージする
-    vec(Pll) res;
-    if(v.empty()) return res;
-
-    sort(all(v));
-    res.push_back(v[0]);
-    for(Pll vi:v){
-        if(res.back().first <= vi.first && vi.first < res.back().second){
-            chmax(res.back().second, vi.second);
-        }else{
-            res.push_back(vi);
-        }
-    }
-    return res;
-}
-
-
-vec(Pll) rangeMerge_cl(vec(Pll) v){
-    // 閉区間[l,r]の集合vを受け取ってマージする
-    vec(Pll) res;
-    if(v.empty()) return res;
-
-    sort(all(v));
-    res.push_back(v[0]);
-    for(Pll vi:v){
-        if(res.back().first <= vi.first && vi.first <= res.back().second){
-            chmax(res.back().second, vi.second);
-        }else{
-            res.push_back(vi);
-        }
-    }
-
-    return res;
-}
-
-
-
-
-void doubling(vvec(ll) &db, ll xx){
-    // 0列目まで埋めたダブリングの配列の残りを計算する
-    // 遷移先がない場合はxx
-    ll n,m;
-    n = db.size();
-    m = db[0].size();
-
-    rep(j,m-1)rep(i,n){
-        if(db[i][j]==xx){
-            db[i][j+1] = xx;
-        }else{
-            db[i][j+1] = db[ db[i][j] ][j];
-        }
-    }
-}
-
-
 
 void solve(){
     ll N,M,Q;
     cin >> N >> M >> Q;
-    vec(ll) A(M),B(M),C(M);
-    rep(i,M) cin >> A[i] >> B[i] >> C[i];
 
-    rep(i,M) A[i]--;
-
-    vec(ll) X(Q),Y(Q),Z(Q),W(Q);
-    rep(i,Q) cin >> X[i] >> Y[i] >> Z[i] >> W[i];
-
-    rep(i,Q) X[i]--;
-    rep(i,Q) Z[i]--;
+    vvec(Pll) es(N);
+    rep(_,M){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        a--;
+        es[a].emplace_back(b,c);
+    }
 
 
-    vec(ll) za={0};
-    rep(i,M) za.push_back(B[i]);
-    rep(i,M) za.push_back(C[i]);
-    rep(i,Q) za.push_back(Y[i]);
-    rep(i,Q) za.push_back(W[i]);
+    // merge
+    rep(i,N){
+        if(es[i].empty()) continue;
 
-    auto az = compressCoordinates(za);
-    ll nn = za.size();
+        vec(Pll) pree;
+        swap(pree, es[i]);
+        vec(Pll)& newe=es[i];
 
-
-
-
-    vvec(Pll) el(N,{{0,0}});
-    rep(i,M) el[A[i]].emplace_back(az[B[i]], az[C[i]]);
-    rep(i,N) el[i] = rangeMerge_cl(el[i]);
-
-
-
-    vec(Pll) elall = {{0,0}};
-    rep(i,M) elall.emplace_back(az[B[i]], az[C[i]]);
-    elall = rangeMerge_cl(elall);
-
-
-    // rep(i,N){
-    //     cout << "---" << i << endl;
-    //     for(Pll e:el[i]) cout << e.first << " " << e.second << " : " << za[e.first] << " " << za[e.second] << endl;
-    // }
-    // cout << "---all"  << endl;
-    // for(Pll e:elall) cout << e.first << " " << e.second << " : " << za[e.first] << " " << za[e.second] << endl;
-
-
-
-
-    vec(ll) chk(nn);
-    rep(i,nn) chk[i]=i;
-    for(Pll e:elall){
-        for(ll i=e.first; i<=e.second; i++) chk[i]=e.first;
+        sort(all(pree));
+        newe.push_back(pree[0]);
+        for(Pll e:pree){
+            if(newe.back().second >= e.first){
+                chmax(newe.back().second, e.second);
+            }else{
+                newe.push_back(e);
+            }
+        }
     }
 
 
 
-    
-    auto gotop = [&](ll a, ll b){
-        // ビルaのb階から行ける最上階を求める
-        ll res = b;
-        auto itr = upper_bound(all(el[a]), make_pair(b+1,-llINF) );
-        ll d = distance(el[a].begin(), itr)-1;
-        if(d>=0) chmax(res, el[a][d].second);
-        return res;
-    };
-
-    auto gobtm = [&](ll a, ll b){
-        // ビルaのb階から行ける最下階を求める
-        ll res = b;
-        auto itr = upper_bound(all(el[a]), make_pair(b+1,-llINF) );
-        ll d = distance(el[a].begin(), itr)-1;
-        if(d>=0) if(el[a][d].second >= b) chmin(res, el[a][d].first);
-        return res;
-    };
-
-
-    ll lnn = log2(nn)+2;
-    vvec(ll) db(nn,vec(ll)(lnn, llINF));
-
-    vec(ll) memo(nn);
-    rep(i,M) chmax(memo[ az[B[i]] ], az[C[i]]);
-    ll tmp = 0;
-    rep(i,nn){
-        chmax(tmp, memo[i]);
-        db[i][0] = max(i, tmp);
+    // 1回で行ける範囲
+    vec(Pll) ce;
+    rep(i,N) ce.insert( ce.end(), all(es[i]) );
+    {
+        vec(Pll) pree;
+        swap(pree, ce);
+        sort(all(pree));
+        ce.push_back(pree[0]);
+        for(Pll e:pree){
+            if(ce.back().second >= e.second) continue;
+            ce.push_back(e);
+        }
     }
-    doubling(db, llINF);
 
 
-    auto upk = [&](ll now,ll k){
-        ll cnt = 0;
-        while(k){
-            if(k&1) now = db[now][cnt];
-            k>>=1;
-            cnt++;
-        }
-        return now;
+    // xがceの何番目か
+    auto get = [&](ll x)->ll{
+        ll d = upper_bound(all(ce), Pll(x,llINF)) - ce.begin() - 1;
+        if(d>=0 && ce[d].second >= x) return d;
+        return -1;
     };
 
 
 
-    rep(qi,Q){
-        ll xi,yi,zi,wi;
-        xi = X[qi];
-        yi = az[Y[qi]];
-        zi = Z[qi];
-        wi = az[W[qi]];
+    ll nn = ce.size();
+    const ll D = 20;
+    vector db(D,vec(ll)(nn));
+    rep(j,nn) db[0][j] = get(ce[j].second);
+    rep(i,D-1){
+        rep(j,nn) db[i+1][j] = db[i][ db[i][j] ];
+    }
+
+
+    // ビルiでx階から行ける最上階
+    auto goUp = [&](ll i,ll x)->ll{
+        ll j = upper_bound(all(es[i]), Pll(x,llINF)) - es[i].begin() -1;
+        if(j>=0 && es[i][j].second >= x) return es[i][j].second;
+        return x;
+    };
+
+
+    // ビルiでx階から行ける最下階
+    auto goDown = [&](ll i,ll x)->ll{
+        ll j = upper_bound(all(es[i]), Pll(x,llINF)) - es[i].begin() -1;
+        if(j>=0 && es[i][j].second >= x) return es[i][j].first;
+        return x;
+    };
+
+
+    // 何個のceで行けるか
+    auto calc_cost = [&](ll y,ll w)->ll{
+        ll ei = get(y);
+        if(ei==-1) return llINF;
+        if(ce[ei].second >= w) return 1;
+        ll res = 1; // ?
+        repr(i,D){
+            ll nxt = db[i][ei];
+            if( ce[nxt].second < w ){
+                ei=nxt;
+                res += (1<<i);
+            }            
+        }
+        if(ce[db[0][ei]].second < w) return llINF;
+        return res+1;
+    };
 
 
 
+    while(Q--){
+        ll x,y,z,w;
+        cin >> x >> y >> z >> w;
+        --x; --z;
+        if(y>w){
+            swap(x,z);
+            swap(y,w);
+        }
+        ll res = w-y;
+        
+        y = goUp(x,y);
+        w = goDown(z,w);
 
-        if(yi > wi){
-            swap(xi,zi);
-            swap(yi,wi);
+        if(y>=w){
+            if(x!=z) res++;
+        }else{
+            res++;
+            res += calc_cost(y,w);
         }
 
-        ll res = abs(za[wi]-za[yi]);
-
-        yi = gotop(xi, yi);
-        wi = gobtm(zi, wi);
-
-        // cout << za[yi] << " " << za[wi] << endl;
-
-        if(yi>=wi){
-            if(xi!=zi) res++;
-            cout << res << endl;
-            continue;
-        }
-
-
-        if(chk[yi]!=chk[wi]){
-            cout << -1 << endl;
-            continue;
-        }
-
-
-        ll l=0,r=(1<<lnn);
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            if(upk(yi,mid) >= wi ) r=mid;
-            else l=mid;
-        }
-        res += r+1;
-
-
-        // // for(ll ii=0; ii<lnn && yi<wi; ii++){
-        // while(yi<wi){
-        //     auto itr = lower_bound(all(db[yi]), wi);
-        //     if(itr != db[yi].begin()) itr--;
-
-        //     ll d = distance(db[yi].begin(), itr);
-        //     res += (1<<d);
-
-        //     ll nxt = *itr;
-
-        //     // cout <<yi << " " << za[yi] << " to "<<  nxt << " " << za[nxt] << "::" << d << endl;
-
-        //     yi = nxt;
-        // }
-        // res++;
-
+        if(res>=llINF) res = -1;
         cout << res << endl;
 
     }
 
-    
+
 
 }
 
