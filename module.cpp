@@ -28,6 +28,136 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+
+// maxflow, 最大フロー, 最大流
+// https://atcoder.jp/contests/arc085/submissions/44933658
+struct MaxFlow{
+
+    struct edge{
+        ll to,cap,rev;
+        edge(ll to=0, ll cap=0,ll rev=0):to(to),cap(cap),rev(rev){}
+    };
+
+
+    struct edge_status{
+        ll from,to,cap,flow;
+        edge_status(ll from, ll to=0, ll cap=0,ll flow=0):from(from),to(to),cap(cap),flow(flow){}
+    };
+
+
+    ll n,m;
+    vvec(edge) g;
+    vec(bool) used;
+    vec(edge_status) status;
+    
+    vec(ll) level, iter;
+
+    MaxFlow(ll n=0):n(n){
+        assert(n>0);
+        g.resize(n);
+        m=0;
+        used.resize(n);
+        level.resize(n);
+        iter.resize(n);
+    }
+
+
+    void add_edge(ll u, ll v, ll cap){
+        g[u].emplace_back( v, cap, g[v].size() );
+        g[v].emplace_back( u, 0, g[u].size()-1 );
+        status.emplace_back(u,v,cap,g[u].size()-1);
+        m++;
+    }
+
+    ll dfs(ll now,ll gl, ll f){
+        if(now==gl) return f;
+        used[now]=true;
+
+        for(edge &e:g[now]){
+            if(used[e.to] || e.cap==0) continue;
+            ll d = dfs(e.to, gl, min(f, e.cap));
+            if(d>0){
+                e.cap -= d;
+                g[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+        return 0;
+    }
+
+
+    ll flow(ll st,ll gl){
+        ll res = 0, pre=-1;
+        while(res!=pre){
+            rep(i,n) used[i]=false;
+            pre = res;
+            res += dfs(st,gl,llINF);
+        }
+        return res;
+    }
+
+
+    void bfs(ll st){
+        rep(i,n) level[i]=-1;
+        queue<ll> q;
+        level[st]=0;
+        q.push(st);
+        while(!q.empty()){
+            ll now = q.front(); q.pop();
+            for(edge &e:g[now]){
+                if(e.cap==0 || level[e.to]>=0) continue;
+                level[e.to] = level[now]+1;
+                q.push(e.to);
+            }
+        }
+    }
+
+    ll dfs2(ll now,ll gl, ll f){
+        if(now==gl) return f;
+
+        for(ll &i = iter[now]; i<g[now].size(); i++){
+            edge &e = g[now][i];
+            if(e.cap==0 || level[now] >= level[e.to]) continue;
+            ll d = dfs2(e.to, gl, min(f, e.cap));
+            if(d>0){
+                e.cap -= d;
+                g[e.to][e.rev].cap += d;
+                return d;
+            }
+        }
+        return 0;
+    }
+
+
+    ll flow_dinic(ll st,ll gl){
+        ll res = 0, pre=-1;
+        while(res!=pre){
+            bfs(st);
+            if(level[gl]<0) break;
+            rep(i,n) iter[i]=0;
+            pre = res;
+            ll d;
+            while( (d=dfs2(st,gl,llINF)) ) res += d;
+        }
+        return res;
+    }
+
+
+
+    vec(edge_status) edges(){
+        vec(edge_status) res = status;
+        for(edge_status &e:res){
+            e.flow = e.cap - g[e.from][e.flow].cap;
+        }
+        return res;
+    }
+
+
+};
+
+
+
 // https://atcoder.jp/contests/abc315/editorial/6994
 long long llceil(long long a,long long b){
   if(a%b==0){return a/b;}
