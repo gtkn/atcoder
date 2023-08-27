@@ -47,8 +47,225 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+template <typename T>
+struct multivecAs1D{
+    vec(ll) dims;
+    ll dimnum;
+    ll totalsize;
+    const ll totalsize_max = 1e9+7;
+    T initval;
+    vec(T) v;
+
+
+    multivecAs1D(vec(ll) dims, T initval): dims(dims), initval(initval){
+        totalsize=1;
+        dimnum = dims.size();
+        for(ll d:dims){
+            totalsize*=d;
+            assert(totalsize < totalsize_max);
+        }
+        v = vec(T)(totalsize, initval);
+    }
+
+    ll ids2num(vec(ll) ids){
+        assert(ids.size()==dimnum);
+
+        ll num = 0;
+        rep(i,dimnum){
+            num = num*dims[i] + ids[i];
+        }
+        return num;
+    }
+
+    vec(ll) num2ids(ll num){
+        vec(ll) ids(dimnum);
+
+        repr(i,dimnum){
+            ids[i] = num%dims[i];
+            num/=dims[i];
+        }
+        return ids;
+    }
+
+
+    void setval(vec(ll) ids,T val){
+        v[ ids2num(ids) ] = val;
+    }
+
+    T getval(vec(ll) ids){
+        return v[ ids2num(ids)];
+    }
+
+    void addval(vec(ll) ids,T val){
+        v[ ids2num(ids) ] += val;
+    }
+
+
+
+};
+
+
+
+
 
 void solve(){
+    ll N, A1, A2, A3;
+    cin >> N >> A1 >> A2 >> A3;
+
+    vec(ll) dims = {61,2,2,2,A1,A2,A3};
+    mint dp[61][2][2][2][A1][A2][A3];
+    rep(i0,61)rep(i1,2)rep(i2,2)rep(i3,2)rep(i4,A1)rep(i5,A2)rep(i6,A3){
+        dp[i0][i1][i2][i3][i4][i5][i6] = 0;
+    }
+    dp[60][0][0][0][0][0][0]=1;
+
+
+    repr(i,60){
+        rep(f1,2)rep(f2,2)rep(f3,2)rep(r1,A1)rep(r2,A2)rep(r3,A3){
+            mint now = dp[i+1][f1][f2][f3][r1][r2][r3]; 
+            ll ff1,ff2,ff3, rr1,rr2,rr3;
+
+            // 0,0,0
+            mint tmp = now;
+            ff1 = (bit(N,i) | f1);
+            ff2 = (bit(N,i) | f2);
+            ff3 = (bit(N,i) | f3);
+            rr1 = r1;
+            rr2 = r2;
+            rr3 = r3;
+            dp[i][ff1][ff2][ff3][rr1][rr2][rr3] += tmp;
+
+            // 1,1,0
+            tmp = now;
+            if(f1==0 && !bit(N,i)) tmp=0;
+            if(f2==0 && !bit(N,i)) tmp=0;
+            ff1 = f1;
+            ff2 = f2;
+            ff3 = (bit(N,i) | f3);
+            rr1 = (r1+(1LL<<i))%A1;
+            rr2 = (r2+(1LL<<i))%A2;
+            rr3 = r3;
+            dp[i][ff1][ff2][ff3][rr1][rr2][rr3] += tmp;
+
+
+            // 0,1,1
+            tmp = now;
+            if(f3==0 && !bit(N,i)) tmp=0;
+            if(f2==0 && !bit(N,i)) tmp=0;
+            ff1 = (bit(N,i) | f1);
+            ff2 = f2;
+            ff3 = f3;
+            rr1 = r1;
+            rr2 = (r2+(1LL<<i))%A2;
+            rr3 = (r3+(1LL<<i))%A3;
+            dp[i][ff1][ff2][ff3][rr1][rr2][rr3] += tmp;
+
+            // 1,0,1
+            tmp = now;
+            if(f1==0 && !bit(N,i)) tmp=0;
+            if(f3==0 && !bit(N,i)) tmp=0;
+            ff1 = f1;
+            ff2 = (bit(N,i) | f2);
+            ff3 = f3;
+            rr1 = (r1+(1LL<<i))%A1;
+            rr2 = r2;
+            rr3 = (r3+(1LL<<i))%A3;
+            dp[i][ff1][ff2][ff3][rr1][rr2][rr3] += tmp;
+
+        }
+    }
+
+    mint ans = 0;
+    rep(f1,2)rep(f2,2)rep(f3,2) ans += dp[0][f1][f2][f3][0][0][0];
+    ans -= 1;
+    ans -= N/( A1*A2/(__gcd(A1,A2)) );
+    ans -= N/( A2*A3/(__gcd(A2,A3)) );
+    ans -= N/( A3*A1/(__gcd(A3,A1)) );
+    cout << ans.val() << endl;
+
+
+
+}
+
+
+
+
+void solve_2(){
+    ll N, A1, A2, A3;
+    cin >> N >> A1 >> A2 >> A3;
+
+    vec(ll) dims = {61,2,2,2,A1,A2,A3};
+    multivecAs1D dp(dims, mint(0));
+    dp.setval({60,0,0,0,0,0,0},mint(1));
+
+    repr(i,60){
+        rep(f1,2)rep(f2,2)rep(f3,2)rep(r1,A1)rep(r2,A2)rep(r3,A3){
+            mint now = dp.getval({i+1,f1,f2,f3,r1,r2,r3}); 
+            ll ff1,ff2,ff3, rr1,rr2,rr3;
+
+            // 0,0,0
+            mint tmp = now;
+            ff1 = (bit(N,i) | f1);
+            ff2 = (bit(N,i) | f2);
+            ff3 = (bit(N,i) | f3);
+            rr1 = r1;
+            rr2 = r2;
+            rr3 = r3;
+            dp.addval({i,ff1,ff2,ff3,rr1,rr2,rr3}, tmp);
+
+            // 1,1,0
+            tmp = now;
+            if(f1==0 && !bit(N,i)) tmp=0;
+            if(f2==0 && !bit(N,i)) tmp=0;
+            ff1 = f1;
+            ff2 = f2;
+            ff3 = (bit(N,i) | f3);
+            rr1 = (r1+(1LL<<i))%A1;
+            rr2 = (r2+(1LL<<i))%A2;
+            rr3 = r3;
+            dp.addval({i,ff1,ff2,ff3,rr1,rr2,rr3}, tmp);
+
+
+            // 0,1,1
+            tmp = now;
+            if(f3==0 && !bit(N,i)) tmp=0;
+            if(f2==0 && !bit(N,i)) tmp=0;
+            ff1 = (bit(N,i) | f1);
+            ff2 = f2;
+            ff3 = f3;
+            rr1 = r1;
+            rr2 = (r2+(1LL<<i))%A2;
+            rr3 = (r3+(1LL<<i))%A3;
+            dp.addval({i,ff1,ff2,ff3,rr1,rr2,rr3}, tmp);
+
+            // 1,0,1
+            tmp = now;
+            if(f1==0 && !bit(N,i)) tmp=0;
+            if(f3==0 && !bit(N,i)) tmp=0;
+            ff1 = f1;
+            ff2 = (bit(N,i) | f2);
+            ff3 = f3;
+            rr1 = (r1+(1LL<<i))%A1;
+            rr2 = r2;
+            rr3 = (r3+(1LL<<i))%A3;
+            dp.addval({i,ff1,ff2,ff3,rr1,rr2,rr3}, tmp);
+
+        }
+    }
+
+    mint ans = 0;
+    rep(f1,2)rep(f2,2)rep(f3,2) ans += dp.getval({0,f1,f2,f3,0,0,0});
+    ans -= 1;
+    ans -= N/( A1*A2/(__gcd(A1,A2)) );
+    ans -= N/( A2*A3/(__gcd(A2,A3)) );
+    ans -= N/( A3*A1/(__gcd(A3,A1)) );
+    cout << ans.val() << endl;
+
+
+
+}
+
+void solve_1(){
     ll N, A1, A2, A3;
     cin >> N >> A1 >> A2 >> A3;
 

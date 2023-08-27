@@ -48,52 +48,45 @@ const int iINF = 1e9;
 //------------------------------------------------
 
 
-
 void solve(){
-    ll N, W;
-    cin >> N >> W;
-    vec(ll) A(N);
-    rep(i,N) cin >> A[i];
+    ll N,M;
+    cin >> N >> M;
 
-    vvec(ll) vv(N);
-    rep(i,N){
-        ll k; cin >> k;
-        rep(_,k){
-            ll c; cin >> c; c--;
-            vv[i].push_back(c);
+    vvec(ll) A(N,vec(ll)(M));
+    rep(i,N)rep(j,M) cin >> A[i][j];
+
+    vvec(ll) ans(N,vec(ll)(M));
+
+    rep(k,M){
+        mf_graph<ll> g(2*N+2);
+        ll st = 2*N, gl=2*N+1;
+
+        rep(i,N) g.add_edge(st,i,1);
+        rep(i,N) g.add_edge(N+i,gl,1);
+        rep(i,N)rep(j,M) if(A[i][j]>0) g.add_edge(i, N+A[i][j]-1, 1);
+
+        ll f = g.flow(st,gl);
+        // cout << k << " " << f << endl;
+        assert(f==N);
+
+        for(auto e:g.edges()){
+            if(e.from==st || e.to==gl || e.flow==0) continue;
+            ll ii = e.from, a = e.to-N+1;
+            ans[ii][k] = a;
+            rep(j,M){
+                if(A[ii][j]==a){
+                    A[ii][j]=-1;
+                    break;
+                }
+            }
         }
     }
 
-    vec(ll) B(N);
-    rep(i,N) B[i] = A[i]-W;
-
-    ll st = N, gl=N+1;
-    mf_graph<ll> g(N+2);
-
+    cout << "Yes" << endl;
     rep(i,N){
-        if(B[i]>=0) g.add_edge(st,i,0);
-        else g.add_edge(st,i,-B[i]);
-    }
-    rep(i,N){
-        if(B[i]>=0) g.add_edge(i,gl,B[i]);
-        else g.add_edge(i,gl,0);
-    }
-    rep(i,N)for(ll j:vv[i]){
-        g.add_edge(i,j,llINF);
+        rep(j,M) cout << ans[i][j] << " "; cout << endl;
     }
 
-    ll ans = 0;
-    rep(i,N) ans += max(0LL,B[i]);
-    ans -= g.flow(st,gl);
-
-    cout << ans << endl;
-
-    // for(auto e:g.edges()){
-    //     cout << e.from <<  " " << e.to << " " << e.cap << " " << e.flow << endl;
-    // }
-    // for(auto b:g.min_cut(st)){
-    //     cout << b << endl;
-    // }
 
 }
 
