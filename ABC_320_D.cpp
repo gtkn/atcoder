@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+// #include <atcoder/all>
+// using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -62,8 +62,51 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+
+    // dsu uf(N);
+
+    vvec(tri) g(N);
+    
+    rep(_,M){
+        ll a,b,c,d;
+        cin >> a >> b >> c >> d;
+        --a;--b;
+        g[a].emplace_back(b,c,d);
+        g[b].emplace_back(a,-c,-d);
+        // uf.merge(a,b);
+    }
+
+    // if(uf.groups().size()!=1){
+    //     cout << "undecidable" << endl;
+    //     return;
+    // }
+
+    vec(Pll) ans(N);
+
+    queue<ll> q;
+    vec(bool) used(N);
+    q.push(0);
+    used[0]=true;
+
+    while(!q.empty()){
+        ll q0 = q.front();
+        q.pop();
+
+        for(auto [b,c,d]:g[q0]){
+            if(used[b]) continue;
+
+            used[b]=true;
+            ans[b] = {ans[q0].first + c, ans[q0].second + d };
+            q.push(b);
+        }
+    }
+
+    rep(i,N){
+        if(used[i]) cout << ans[i].first << " " << ans[i].second << endl;
+        else cout << "undecidable" << endl;
+    }
 
 
 

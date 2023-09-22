@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,10 +62,23 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+
+    map<string,ll> m;
+    m["tourist"] =  3858;
+    m["ksun48"] = 3679;
+    m["Benq"] =  3658;
+    m["Um_nik"] =  3648;
+    m["apiad"] =  3638;
+    m["Stonefeang"] =  3630;
+    m["ecnerwala"] =  3613;
+    m["mnbvmar"] =  3555;
+    m["newbiedmy"] =  3516;
+    m["semiexp"] =  3481;
 
 
+    string s;
+    cin >> s;
+    cout << m[s] << endl;
 
 }
 

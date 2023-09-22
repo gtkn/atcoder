@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -65,6 +65,20 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) v(N+1,-1);
+
+    rep1r(j,9){
+        if(N%j!=0) continue;
+
+        ll nj = N/j;
+        for(ll x=0; x<=N; x+=nj) v[x]=j;
+    }
+
+    rep(i,N+1){
+        if(v[i]==-1) cout << "-";
+        else cout << v[i];
+    }
+    cout << endl;
 
 
 }

@@ -62,9 +62,40 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
 
+    set<ll> ss;
+    rep(i,N) ss.insert(i);
+
+    priority_queue<tri, vector<tri>, greater<tri>> q;
+
+    rep(_,M){
+        ll t,w,s;
+        cin >> t >> w >> s;
+        q.emplace(t,w,s);
+    }
+
+    vec(ll) ans(N);
+
+    while(!q.empty()){
+        auto [t,w,s] = q.top(); q.pop();
+        
+        if(w>0){
+            if(ss.empty()) continue;
+
+            ll x = *ss.begin();
+            ans[x] += w;
+            ss.erase(x);
+
+            q.emplace(t+s,-1,x);
+
+        }else{
+            ss.insert(s);
+        }
+    }
+
+    rep(i,N) cout << ans[i] << endl;
 
 
 }

@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,10 +62,24 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    string S;
+    cin >> S;
+    ll N = S.size();
 
 
+    ll ans = 1;
+    rep(i,N){
+        rep1(j,N){
+            if(i+j>N) continue;
+            
+            bool isok = true;
+            rep(k,j) if(S[i+k] != S[i+j-1-k]) isok=false;
+            if(isok) chmax(ans, j);
+
+        }
+    }
+
+    cout << ans << endl;
 
 }
 

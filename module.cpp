@@ -29,6 +29,10 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+    // if(--N==0) cout <<"ok" << endl; // N==1のときok
+
+
+
 
 // maxflow, 最大フロー, 最大流
 // https://atcoder.jp/contests/arc085/submissions/44933658
@@ -1171,12 +1175,19 @@ struct CHT {
 
 class Timer {
 private:
+
+public:
     clock_t startTime;
     double limitTime;
 
-public:
-    Timer(double limit) : limitTime(limit) {
+
+    Timer(double limit=0.) : limitTime(limit) {
         startTime = clock();
+    }
+
+    void restart(double limit){
+        startTime = clock();
+        limitTime = limit;
     }
 
     double getElapsedTime() {
@@ -1189,6 +1200,7 @@ public:
     }
 
 };
+
 
 
 struct Timer{
@@ -1577,7 +1589,6 @@ bool operator>(const State& a, const State& b){
 
 
 // multisetで1つだけ消す
-//ms.erase(ms.find(5));
 
 
     // floor(sqrt(N))

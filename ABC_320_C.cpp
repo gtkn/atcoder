@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,8 +62,34 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll M;
+    cin >> M;
+
+    vec(string) s(3);
+    rep(i,3) cin >> s[i];
+
+    rep(i,3) s[i] = s[i]+s[i]+s[i];
+
+
+    ll ans = llINF;
+    vector<int> v = {0,1,2};
+    do{
+        rep(x,10){
+            char c = '0'+x;
+            ll now = 0;
+
+            for(ll vi:v){
+                while(now<3*M && s[vi][now]!=c){
+                    now++;
+                }
+                now++;        
+            }
+            chmin(ans,now-1);
+        }
+    }while(next_permutation(v.begin(),v.end()));
+
+    if(ans>=3*M) ans = -1;
+    cout << ans << endl;
 
 
 

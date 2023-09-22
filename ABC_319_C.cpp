@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,9 +62,60 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    vvec(ll) c(3,vec(ll)(3));
+    rep(i,3)rep(j,3) cin >> c[i][j];
 
+    // vec(ll) cv(9);
+    // rep(i,9) cin >> cv[i];
+
+
+    vec(ll) v;
+    rep(i,9) v.push_back(i);
+    ll num = 0;
+    do{
+        vvec(ll) now(3,vec(ll)(3,-1));
+        for(ll vi:v){
+            ll i,j;
+            i = vi/3; j = vi%3;
+            now[i][j] = c[i][j];
+
+            ll a,b;
+            a = now[(i+1)%3][j]; b = now[(i+2)%3][j];
+            if(a!=-1 && a==b){
+                num++;
+                break;
+            }
+
+            a = now[i][(j+1)%3]; b = now[i][(j+2)%3];
+            if(a!=-1 && a==b){
+                num++;
+                break;
+            }
+
+            if(i==j){
+                a = now[(i+1)%3][(j+1)%3]; b = now[(i+2)%3][(j+2)%3];
+                if(a!=-1 && a==b){
+                    num++;
+                    break;
+                }
+            }
+
+            if((i+j)==2){
+                a = now[(i+1)%3][(j+2)%3]; b = now[(i+2)%3][(j+1)%3];
+                if(a!=-1 && a==b){
+                    num++;
+                    break;
+                }
+            }
+        }
+    }while(next_permutation(v.begin(),v.end()));//vは次の順列になる
+
+    ll den = 1;
+    rep1(i,9) den*=i;
+
+
+    double ans = 1.*(den-num)/den;
+    printf("%.9f\r\n",ans);
 
 
 }

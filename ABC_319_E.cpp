@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,8 +62,38 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,X,Y;
+    cin >> N >> X >> Y;
+
+    vec(ll) P(N-1),T(N-1);
+    rep(i,N-1) cin >> P[i] >> T[i];
+
+
+    ll m = 1;
+    rep1(x,8) m = (m*x)/__gcd(m,x);
+    // cout << m << endl;
+
+
+    vec(ll) memo(m);
+    rep(st,m){
+        ll now = st;
+        rep(i,N-1){
+            ll a = (now+m)%P[i];
+            ll b = (P[i]-a)%P[i];
+            now += b + T[i];
+        }
+        memo[st] = now-st;
+    }
+
+
+    ll Q;
+    cin >> Q;
+    while(Q--){
+        ll qi; cin >> qi;
+        
+        ll res = qi + X + memo[ (qi+X)%m ] + Y;
+        cout << res << endl;
+    }
 
 
 

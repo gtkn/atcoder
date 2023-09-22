@@ -29,8 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
-using tri = tuple<ll,ll,ll>;
-// using tri = array<ll,3>;
+//using tri = tuple<ll,ll,ll>;
+using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -62,8 +62,39 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
+
+    vec(ll) L(N);
+    rep(i,N) cin >> L[i];
+
+
+    auto f = [&](ll w)->bool{
+        ll now = 0;
+        ll cnt = 1;
+
+        rep(i,N){
+            if(now+L[i]<=w){
+                now += L[i]+1;
+            }else{
+                cnt++;
+                now = L[i]+1;
+                if(L[i]>w) return false;
+            }
+        }
+        return (cnt <= M);
+    };
+
+
+
+    ll l=0, r=1e15;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)) r=mid;
+        else l=mid;
+    }
+
+    cout << r << endl;
 
 
 
