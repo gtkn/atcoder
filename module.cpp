@@ -28,6 +28,31 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 演算子のオーバーロード
+// bool operator<(const FarmState &a, const FarmState &b){
+//     return a.evaluated_score < b.evaluated_score;
+// }
+
+
+namespace zobrist_hash
+{
+    mt19937 mt_init_hash(0);
+
+    uint64_t v[H*W][T+1] = {};
+    void init()
+    {
+        rep(n,H*W)
+        {
+            rep(t,T+1)
+            {
+                v[n][t] = mt_init_hash();
+            }
+        }
+    }
+
+}
+
+
 
     // if(--N==0) cout <<"ok" << endl; // N==1のときok
 
@@ -1173,6 +1198,11 @@ struct CHT {
 };
 
 
+
+
+
+
+
 class Timer {
 private:
 
@@ -1195,11 +1225,18 @@ public:
         return static_cast<double>(currentTime - startTime) / CLOCKS_PER_SEC;
     }
 
+    double getProgressRate() {
+        return getElapsedTime()/limitTime;
+    }
+
+
+
     bool isTimeUp() {
         return getElapsedTime() >= limitTime;
     }
 
 };
+
 
 
 
