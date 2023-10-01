@@ -28,6 +28,56 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+
+// 形式的冪級数的なやつ
+// https://atcoder.jp/contests/abc321/submissions/46137975
+struct FPS{
+    ll K;
+    vec(mint) coeffs;
+
+    FPS(vec(mint) v):coeffs(v){
+        K = v.size();
+    }
+
+    void add(const vec(mint)& v){
+        rep(i,v.size()) coeffs[i] += v[i];
+    }
+
+    void add(ll idx, mint d){
+        assert(idx>=0 && idx<K);
+        coeffs[idx]+=d;
+    }
+
+
+    void mul(const vec(mint)& v){
+        coeffs = convolution(coeffs, v);
+        coeffs.resize(K);
+    };
+
+    void mul(ll d){ // これは内容による
+        for(ll i=K; i>=d; i--){
+            coeffs[i] += coeffs[i-d];
+        }
+    };
+
+    void div(ll d){ // これは内容による
+        for(ll i=d; i<=K; i++){
+            coeffs[i] -= coeffs[i-d];
+        }
+    }
+
+    void show(ll th){
+        rep(i,th) cout << i<< ":" << coeffs[i].val() <<", "; cout << endl;
+    }
+
+
+};
+
+
+
+
+
 // 演算子のオーバーロード
 // bool operator<(const FarmState &a, const FarmState &b){
 //     return a.evaluated_score < b.evaluated_score;
@@ -863,7 +913,7 @@ void fft(vector<cd> &a, bool inv) {
     }
 }
 
-vector<ll> convolution(vector<ll> a, vector<ll> b) {
+vector<ll> myconvolution2(vector<ll> a, vector<ll> b) {
     int n = 1;
     while (n < a.size() + b.size()) {
         n <<= 1;
@@ -1122,7 +1172,7 @@ vector<complex<double>> IFFT(vector<complex<double>> A){
 
 
 
-vec(ll) convolution(vec(ll) a,vec(ll) b){
+vec(ll) myconvolution3(vec(ll) a,vec(ll) b){
     ll n=a.size(), m=b.size();
     if(n==0 || m==0) return {};
 
@@ -1727,6 +1777,14 @@ F id(){return F{-1};}
 
 
 
+// 遅延セグメント木の要素の構造体を定義して頑張るやつ
+// https://atcoder.jp/contests/abc322/submissions/46138680
+
+
+
+
+
+
 //---転倒数-fenwicktree--
 ll inversions(vector<int> A){
   int N = A.size();
@@ -1846,43 +1904,43 @@ struct UnionFind{
 
 
 
-//---snuke mint---
-// auto mod int
-// https://youtu.be/L8grWxBlIZ4?t=9858
-// https://youtu.be/ERZuLAxZffQ?t=4807 : optimize
-// https://youtu.be/8uowVvQ_-Mo?t=1329 : division
-const int mod = 1000000007;
-struct mint {
-  ll x; // typedef long long ll;
-  mint(ll x=0):x((x%mod+mod)%mod){} //ll = x; x = x%mod+mod)%mod; と同じらしい
-  mint operator-() const { return mint(-x);}
-  mint& operator+=(const mint a) {
-    if ((x += a.x) >= mod) x -= mod;
-    return *this;
-  }
-  mint& operator-=(const mint a) {
-    if ((x += mod-a.x) >= mod) x -= mod;
-    return *this;
-  }
-  mint& operator*=(const mint a) { (x *= a.x) %= mod; return *this;}
-  mint operator+(const mint a) const { return mint(*this) += a;}
-  mint operator-(const mint a) const { return mint(*this) -= a;}
-  mint operator*(const mint a) const { return mint(*this) *= a;}
-  mint pow(ll t) const {
-    if (!t) return 1;
-    mint a = pow(t>>1);
-    a *= a;
-    if (t&1) a *= *this;
-    return a;
-  }
+// //---snuke mint---
+// // auto mod int
+// // https://youtu.be/L8grWxBlIZ4?t=9858
+// // https://youtu.be/ERZuLAxZffQ?t=4807 : optimize
+// // https://youtu.be/8uowVvQ_-Mo?t=1329 : division
+// const int mod = 1000000007;
+// struct mint {
+//   ll x; // typedef long long ll;
+//   mint(ll x=0):x((x%mod+mod)%mod){} //ll = x; x = x%mod+mod)%mod; と同じらしい
+//   mint operator-() const { return mint(-x);}
+//   mint& operator+=(const mint a) {
+//     if ((x += a.x) >= mod) x -= mod;
+//     return *this;
+//   }
+//   mint& operator-=(const mint a) {
+//     if ((x += mod-a.x) >= mod) x -= mod;
+//     return *this;
+//   }
+//   mint& operator*=(const mint a) { (x *= a.x) %= mod; return *this;}
+//   mint operator+(const mint a) const { return mint(*this) += a;}
+//   mint operator-(const mint a) const { return mint(*this) -= a;}
+//   mint operator*(const mint a) const { return mint(*this) *= a;}
+//   mint pow(ll t) const {
+//     if (!t) return 1;
+//     mint a = pow(t>>1);
+//     a *= a;
+//     if (t&1) a *= *this;
+//     return a;
+//   }
  
-  // for prime mod
-  mint inv() const { return pow(mod-2);}
-  mint& operator/=(const mint a) { return *this *= a.inv();}
-  mint operator/(const mint a) const { return mint(*this) /= a;}
-};
-istream& operator>>(istream& is, mint& a) { return is >> a.x;}
-ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
+//   // for prime mod
+//   mint inv() const { return pow(mod-2);}
+//   mint& operator/=(const mint a) { return *this *= a.inv();}
+//   mint operator/(const mint a) const { return mint(*this) /= a;}
+// };
+// istream& operator>>(istream& is, mint& a) { return is >> a.x;}
+// ostream& operator<<(ostream& os, const mint& a) { return os << a.x;}
  
 
 

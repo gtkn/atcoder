@@ -76,12 +76,86 @@ void solve(){
 }
 
 
+struct FPS{
+    ll K;
+    vec(mint) coeffs;
+
+    FPS(vec(mint) v):coeffs(v){
+        K = v.size();
+    }
+
+    void add(const vec(mint)& v){
+        rep(i,v.size()) coeffs[i] += v[i];
+    }
+
+    void add(ll idx, mint d){
+        assert(idx>=0 && idx<K);
+        coeffs[idx]+=d;
+    }
+
+
+    void mul(const vec(mint)& v){
+        coeffs = convolution(coeffs, v);
+        coeffs.resize(K);
+    };
+
+    void mul(ll d){ // これは内容による
+        for(ll i=K; i>=d; i--){
+            coeffs[i] += coeffs[i-d];
+        }
+    };
+
+    void div(ll d){ // これは内容による
+        for(ll i=d; i<=K; i++){
+            coeffs[i] -= coeffs[i-d];
+        }
+    }
+
+    void show(ll th){
+        rep(i,th) cout << i<< ":" << coeffs[i].val() <<", "; cout << endl;
+    }
+
+
+};
+
+
+void solve_FPS(){
+    ll Q, K;
+    cin >> Q >> K;
+
+    vec(mint) v(5001);
+    v[0] = 1;
+    FPS fps(v);
+
+    while(Q--){
+        char c;
+        ll x;
+        cin >> c >> x;
+
+        if(c=='+'){
+            fps.mul(x);
+        }else{
+            fps.div(x);
+        }
+
+        cout << fps.coeffs[K].val() << endl;
+        // fps.show(12);
+
+    }
+
+
+
+}
+
+
+
 
 int main(){
     int testcasenum=1;
     //cin >> testcasenum;
     rep1(ti,testcasenum){
-        solve();
+        // solve();
+        solve_FPS();
     }
     return 0;
 }
