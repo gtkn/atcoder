@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -32,7 +32,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
-using mint = modint1000000007;
+//using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -47,28 +47,37 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
+
+//---素因数分解------
+map<ll, ll > prime_factor(ll n) {
+    map<ll, ll > pf;
+    for(ll f=2; f*f<=n; ++f){
+        while(n%f == 0){
+            pf[f]++;
+            n /= f;
+        }
+    }
+    if(n!=1) pf[n] = 1;
+    return pf;
+}
+
+
 void solve(){
-    ll n, k;
-    cin >> n >> k;
-
-    vvvec(mint) dp(n+1,vvec(mint)(n+1,vec(mint)(k+1)));
-    dp[0][0][0]=1;
-
-    rep(a,n)rep(b,n)rep(c,k+1){
-
-        ll cc = c + 2*(b+1);
-        if(cc<=k) dp[a+1][b+1][cc] += dp[a][b][c];
-        
-        cc = c + 2*b;
-        if(cc<=k) dp[a+1][b][cc] += dp[a][b][c]*(2*b+1);
+    ll N;
+    cin >> N;
 
 
-        cc = c + 2*(b-1);
-        if(cc<=k && b>0) dp[a+1][b-1][cc] += dp[a][b][c]*b*b;
+    map<ll,ll> m = prime_factor(N);
 
+    if(m.size()==1) nodame;
+    ll tot = 0;
+    for(auto mi:m){
+        ll tmp = 1;
+        rep(_,mi.second) tmp*=mi.first;
+        tot+=tmp;
     }
 
-    cout << dp[n][0][k].val() << endl;
+    if(tot<=N) yn;
 
 
 }
@@ -77,7 +86,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

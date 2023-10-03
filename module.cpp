@@ -30,6 +30,10 @@ using bs = bitset<8>;
 
 
 
+// 箱根DP
+// https://atcoder.jp/contests/abc134/submissions/46187082
+
+
 // 形式的冪級数的なやつ
 // https://atcoder.jp/contests/abc321/submissions/46137975
 struct FPS{
