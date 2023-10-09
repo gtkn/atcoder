@@ -28,7 +28,98 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 掃き出し法?
+// 一般的な型に対応するためのテンプレート
+template <typename T>
+struct Matrix {
+    vector<vector<T>> data;
 
+    Matrix(int rows, int cols) : data(rows, vector<T>(cols)) {}
+
+    int rows() const { return data.size(); }
+    int cols() const { return data[0].size(); }
+};
+
+template <typename T>
+struct Vector {
+    vector<T> data;
+
+    Vector(int size) : data(size) {}
+
+    int size() const { return data.size(); }
+};
+
+// 行列の表示
+template <typename T>
+void printMatrix(const Matrix<T>& mat) {
+    int rows = mat.rows();
+    int cols = mat.cols();
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << mat.data[i][j] << "\t";
+        }
+        cout << endl;
+    }
+}
+
+// 連立方程式の解を計算する関数（テンプレート化）
+template <typename T>
+Vector<T> solveLinearEquations(const Matrix<T>& A, const Vector<T>& b) {
+    int N = A.rows();
+    Matrix<T> augmentedMatrix(N, N + 1);
+
+    // 係数行列と右辺ベクトルを合併
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            augmentedMatrix.data[i][j] = A.data[i][j];
+        }
+        augmentedMatrix.data[i][N] = b.data[i];
+    }
+
+    // ガウシアン消去法
+    for (int i = 0; i < N; ++i) {
+        // ピボット選択
+        int pivotRow = i;
+        for (int j = i + 1; j < N; ++j) {
+            if (abs(augmentedMatrix.data[j][i]) > abs(augmentedMatrix.data[pivotRow][i])) {
+                pivotRow = j;
+            }
+        }
+        swap(augmentedMatrix.data[i], augmentedMatrix.data[pivotRow]);
+
+        // ピボット要素を1にする
+        T pivot = augmentedMatrix.data[i][i];
+        for (int j = i; j <= N; ++j) {
+            augmentedMatrix.data[i][j] /= pivot;
+        }
+
+        // 他の行から現在の行を引く
+        for (int k = 0; k < N; ++k) {
+            if (k != i) {
+                T factor = augmentedMatrix.data[k][i];
+                for (int j = i; j <= N; ++j) {
+                    augmentedMatrix.data[k][j] -= factor * augmentedMatrix.data[i][j];
+                }
+            }
+        }
+    }
+
+    // 解を取得
+    Vector<T> solution(N);
+    for (int i = 0; i < N; ++i) {
+        solution.data[i] = augmentedMatrix.data[i][N];
+    }
+
+    return solution;
+}
+
+
+
+
+
+
+// 木の数、プリューファーコード
+// https://atcoder.jp/contests/abc303/tasks/abc303_h
 
 // 箱根DP
 // https://atcoder.jp/contests/abc134/submissions/46187082
