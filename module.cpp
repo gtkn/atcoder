@@ -346,6 +346,47 @@ long long llfloor(long long a,long long b){
   else{return -((-a)/b)-1;}
 }
 
+
+
+// 座標圧縮の構造体
+// まだ試してない
+template <typename T>
+struct CoordinateCompressor {
+    set<ll> values;
+
+    CoordinateCompressor():{}
+
+    CoordinateCompressor(set<T> v):values(v){}
+
+    CoordinateCompressor(vector<T> v):{
+        for(auto vi:v) values.insert(vi);
+    }
+    
+    void add(T x){
+        values.insert(x);
+    }
+
+    ll get(T x){
+        if(!values.count(x)) return -1;
+        return distance(values.begin(),values.lower_bound(x));
+    }
+
+    ll getSize(){
+        return values.size();
+    }
+
+    vector<T> uncompress(){
+        vector<T> res;
+        for(auto vi:values) res.push_back(vi);
+        return res;
+    }
+    
+};
+
+
+
+
+
 map<ll,ll> compressCoordinates(vec(ll) &v){
     // 値の集合vを受け取って座圧する
     // res[val] = idx
