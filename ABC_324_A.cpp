@@ -42,29 +42,25 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
-#define sayno { puts("No"); return;}
-#define sayyes { puts("Yes"); return;}
+#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N;
     cin >> N;
+
+    ll a;
+    cin >> a;
+
+    rep(_,N-1){
+        ll b; cin >> b;
+        if(a!=b) nodame;
+    }
+
+    cout << "Yes" << endl;
 
 
 

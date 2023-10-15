@@ -48,23 +48,70 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
-
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
+
+    vec(ll) a(N);
+    rep(i,N) cin >> a[i];
+
+    vvec(ll) g(N);
+    rep(_,M){
+        ll x,y;
+        cin >> x >> y;
+        g[x].push_back(y);
+        g[y].push_back(x);
+    }
+
+
+    vec(ll) rem;
+    vec(bool) used(N);
+    ll cnt = 0, ans = 0;
+
+    rep(st,N){
+        if(used[st]) continue;
+
+        queue<ll> q;
+        q.push(st);
+        vec(ll) v;
+
+        while(!q.empty()){
+            ll now = q.front(); q.pop();
+            if(used[now]) continue;
+
+            v.push_back(a[now]);
+            used[now] = true;
+
+            for(ll nxt:g[now] ) q.push(nxt);
+        }
+
+        sort(all(v), greater<ll>());
+        cnt++;
+        ans+=v.back();
+        // cout << cnt << " , " << v.back() << " " << endl;
+
+        v.pop_back();
+        rem.insert(rem.end(), all(v));
+    }
+
+    // for(ll ri:rem) cout << ri << " "; cout << endl;
+
+    if(cnt==1){
+        cout << 0 << endl;
+        return;
+    }
+
+    ll th = 2*(cnt-1) - cnt;
+    if(rem.size() < th){
+        cout << "Impossible" << endl;
+        return;
+    }
+
+    sort(all(rem));
+    rep(i,th) ans += rem[i];
+
+    cout << ans << endl;
+
 
 
 

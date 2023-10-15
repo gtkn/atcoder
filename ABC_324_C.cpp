@@ -42,8 +42,7 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
-#define sayno { puts("No"); return;}
-#define sayyes { puts("Yes"); return;}
+#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
@@ -65,6 +64,45 @@ vec(ll) dw = {0,1,0,-1};
 void solve(){
     ll N;
     cin >> N;
+
+    string T;
+    cin >> T;
+    ll tn = T.size();
+
+    string R = T;
+    reverse(all(R));
+
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
+
+
+    set<ll> ans;
+
+    rep(i,N){
+        ll sn = S[i].size();
+        // if(abs(sn-tn)>1) continue;
+        if(S[i]==T) ans.insert(i);
+
+        ll pre=0, suf=0;
+        for(ll j=0; j<min(tn,sn); j++){
+            if(S[i][j]==T[j]) pre++;
+            else break;
+        }
+
+        reverse(all(S[i]));
+        for(ll j=0; j<min(tn,sn); j++){
+            if(S[i][j]==R[j]) suf++;
+            else break;
+        }
+
+        if(pre+suf >= sn && sn==tn-1) ans.insert(i);
+        if(pre+suf >= sn-1 && sn-1==tn) ans.insert(i);
+        if(pre+suf == sn-1 && sn==tn) ans.insert(i);
+
+    }
+
+    cout << ans.size() << endl;
+    for(ll ai:ans) cout << ai+1 << " "; cout << endl;
 
 
 

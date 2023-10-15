@@ -42,29 +42,62 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
-#define sayno { puts("No"); return;}
-#define sayyes { puts("Yes"); return;}
+#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
 
 struct abc{
     ll a,b,c;
     abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
+
+    double get(double x){
+        return b-x*c;
+    }
 };
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
-
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M ;
+    cin >> N >> M;
+
+    vvec(abc) g(N);
+    rep(_,M){
+        ll u,v,b,c;
+        cin >> u >> v >> b >> c;
+        g[u-1].emplace_back(v-1,b,c);
+    }
+
+    
+    
+    auto chk = [&](double x)->bool{
+
+        vec(double) dp(N,-llINF);
+        dp[0]=0;
+
+        rep(i,N){
+            for(abc &e:g[i]){
+                chmax(dp[e.a], dp[i]+e.get(x));
+            }
+        }
+        return dp[N-1]>=0;
+    };
+    
+    
+    
+    
+    double r = 1e9+10, l=0;
+    double eps = 1e-10;
+    
+    while( abs(r-l) > eps){
+        double mid = (r+l)*0.5;
+        if(chk(mid)) l=mid;
+        else r=mid;
+        if(r<l) swap(l,r);
+    }
+
+    printf("%.10f\r\n",l);
 
 
 

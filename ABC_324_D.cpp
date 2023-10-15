@@ -42,8 +42,7 @@ const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
 #define dame { puts("-1"); return;}
-#define sayno { puts("No"); return;}
-#define sayyes { puts("Yes"); return;}
+#define nodame { puts("No"); return;}
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
@@ -65,7 +64,31 @@ vec(ll) dw = {0,1,0,-1};
 void solve(){
     ll N;
     cin >> N;
+    string S;
+    cin >> S;
 
+
+    vec(ll) v(10);
+    rep(i,N) v[S[i]-'0']++;
+
+    ll ans = 0;
+    
+
+    rep(a,1e7){
+        vec(ll) cnt(10);
+        ll aa = a*a;
+        rep(_,N){
+            cnt[aa%10]++;
+            aa/=10;
+        }
+        if(aa!=0) break;
+
+        bool isok=true;
+        rep(i,10) if(v[i]!=cnt[i]) isok=false;
+        if(isok) ans++;
+    }
+
+    cout << ans << endl;
 
 
 }

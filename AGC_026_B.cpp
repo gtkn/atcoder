@@ -48,23 +48,19 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c;
-    edge(ll to=0, ll c=0):to(to),c(c){}
-};
-
-struct abc{
-    ll a,b,c;
-    abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll a,b,c,d;
+    cin >> a >> b >> c >> d;
+
+    if(b>a) sayno;
+    if(b>d) sayno;
+
+    if(b<=c) sayyes;
+
+    ll g = __gcd(b,d);
+
+    if(b-g+a%g <= c) yn;
 
 
 
@@ -74,7 +70,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }
