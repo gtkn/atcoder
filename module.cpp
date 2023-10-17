@@ -1861,6 +1861,31 @@ T op(T a, T b){// A[i]はa<b
 T e(){return T({0,0,0});}
  
 
+//--- opの順番を使う例 ---
+// https://atcoder.jp/contests/abl/submissions/46688883
+// mint ten[200020]; // 10^i
+// mint one[200020]; // 1がi個
+
+
+// struct S{
+//     ll sz;
+//     mint val;
+// };
+// struct F{ll k;};
+
+// S op(S l,S r){return S{l.sz+r.sz, l.val*ten[r.sz]+r.val};} // opは左,右の順に受け取るっぽい
+// S ee(){return S{0,0};}
+
+// S mapping(F f, S x){
+//     if(f.k>=0) return S{ x.sz, one[x.sz]*f.k};
+//     return x;
+// }
+// F composition(F f,F g){
+//     if(f.k>=0) return f;
+//     return g;
+// }
+// F id(){return F{-1};}
+
 
 
 //---prod:和, apply:一括変更 のlazy_segtreeのテンプレート---

@@ -9,6 +9,8 @@ a.out
 result.txt
 *.ipynb
 
+Pipfile*
+
 PAST*
 botu_*
 sample_*
