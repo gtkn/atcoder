@@ -28,6 +28,37 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+// 木の直径を求める
+ll calcTreeDiameter(const vvec(ll)& g){
+    ll n = g.size();
+
+
+    ll st = 0, gl=0;
+    vec(ll) dist(n,llINF);
+    rep(_,2){
+        swap(st,gl);
+
+        // stから一番遠いところをglにする
+        rep(i,n) dist[i]=llINF;
+        dist[st]=0;
+        queue<ll> q;
+        q.push(st);
+        dist[st]=0;
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll nxt:g[now]) if(chmin(dist[nxt], dist[now]+1)) q.push(nxt);
+        }
+        ll dmax = 0;
+        rep(i,n) if(chmax(dmax,dist[i])) gl = i;
+    }
+
+    return dist[gl];
+}
+
+
+
 // 掃き出し法?
 // 一般的な型に対応するためのテンプレート
 template <typename T>
