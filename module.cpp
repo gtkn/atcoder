@@ -29,6 +29,10 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// bitが1の数
+// __builtin_popcount(10)
+
+
 // 木の直径を求める
 ll calcTreeDiameter(const vvec(ll)& g){
     ll n = g.size();
