@@ -19,6 +19,7 @@ using tri = tuple<ll,ll,ll>;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+inline ll mod(ll a, ll m) {return (a % m + m) % m;}
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
@@ -27,6 +28,39 @@ using mint = modint998244353;
 using bs = bitset<8>;
 
 //==================================================================================
+
+
+// 拡張 Euclid の互除法
+// ap + bq = gcd(a, b) となる (p, q) を求め、d = gcd(a, b) をリターン
+// p,qを参照渡しする版
+ll extGcd(ll a,ll b, ll &p, ll &q){
+    if(b==0){
+        p=1; q=0;
+        return a;
+    }
+
+    ll d = extGcd(b, a%b, q, p);
+    q -= a/b * p;
+    return d;
+}
+
+// 中国剰余定理, CRS
+// リターン値を (r, m) とすると解は x ≡ r (mod. m)
+// 解なしの場合は (0, -1) をリターン
+// https://qiita.com/drken/items/ae02240cd1f8edfc86fd#%E4%BA%8C%E5%85%83%E3%81%AE%E5%A0%B4%E5%90%88
+Pll ChineseRem(ll b1, ll m1, ll b2, ll m2) {
+  ll p, q;
+  ll d = extGcd(m1, m2, p, q); // p is inv of m1/d (mod. m2/d)
+  if ((b2 - b1) % d != 0) return make_pair(0, -1);
+
+  ll m = m1 * (m2/d); // lcm of (m1, m2)
+  ll tmp = (b2 - b1) / d * p % (m2/d);
+  ll r = mod(b1 + m1 * tmp, m);
+  return make_pair(r, m);
+}
+
+
+
 
 
 // bitが1の数

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -32,7 +32,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
-//using mint = modint1000000007;
+using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -42,7 +42,7 @@ inline ll mod(ll a, ll m) {return (a % m + m) % m;}
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return;}
+#define dame { puts("0"); return;}
 #define sayno { puts("No"); return;}
 #define sayyes { puts("Yes"); return;}
 #define yn {puts("Yes");}else{puts("No");}
@@ -61,6 +61,44 @@ vec(ll) dw = {0,1,0,-1};
 void solve(){
     ll N;
     cin >> N;
+
+    string S;
+    cin >> S;
+
+
+
+    ll nn = 2*N;
+
+    if(S[0]=='W') dame;
+    if(S[nn-1]=='W') dame;
+    ll wcnt = 0;
+    
+    vec(bool) isl(nn);
+    rep(i,nn){
+        if(i==0) isl[0] = true;
+        else{
+            if(S[i-1]==S[i]) isl[i]=!isl[i-1];
+            else isl[i]=isl[i-1];
+        }
+    }
+
+    mint ans = 1;
+    rep1(i,N) ans*=i;
+
+    ll lcnt = 0;
+    rep(i,nn){
+        // cout << i << " : " << isl[i] << endl;
+        if(isl[i]) lcnt++;
+        else{
+            ans *= lcnt;
+            lcnt--;
+        }
+    }
+
+    if(lcnt!=0) dame;
+
+
+    cout << ans.val() << endl;
 
 
 

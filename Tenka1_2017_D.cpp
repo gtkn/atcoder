@@ -24,6 +24,7 @@ using namespace std;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
+using ull = unsigned long long;
 using ld = long double;
 using l3 = __int128;
 
@@ -59,8 +60,38 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,K;
+    cin >> N >> K;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i] >> B[i];
+
+
+    ll ans = 0;
+    rep(i,N){
+        // cout << i << " " << ll((~K)&A[i]) << endl;
+        if( ((~K)&A[i]) == 0) ans += B[i];
+    }
+
+    // cout << ans << endl;
+    ll mask = (1<<30)-1;
+    rep(b,30){
+        mask<<=1;
+        // repr(j,40) cout << bit(mask,j); cout << endl;
+
+        if(!bit(K,b)) continue;
+        ll mk = ~(K&mask);
+        ll tmp = 0;
+        rep(i,N){
+            if( (mk&(A[i]&mask)) !=0 ) continue;
+            if(bit(A[i],b)) continue;
+            tmp += B[i];
+        }
+        chmax(ans,tmp);
+        // cout << tmp << " , " << mask << endl;
+        if(mk==0) break;
+    }
+
+    cout << ans << endl;
 
 
 
