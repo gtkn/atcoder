@@ -24,9 +24,13 @@ using namespace std;
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
-using P = pair<int,int>;
+using ld = long double;
+using l3 = __int128;
+
+using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
+// using tri = array<ll,3>;
 
 //using mint = modint1000000007;
 //using mint = modint998244353;
@@ -34,61 +38,108 @@ using tri = tuple<ll,ll,ll>;
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+inline ll mod(ll a, ll m) {return (a % m + m) % m;}
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
+#define dame { puts("-1"); return;}
+#define sayno { puts("No"); return;}
+#define sayyes { puts("Yes"); return;}
+#define yn {puts("Yes");}else{puts("No");}
+
 //------------------------------------------------
 
-struct Solver{
-    struct edge{
-        ll to,c;
-        edge(ll to=0, ll c=0):to(to),c(c){}
-    };
+void solve(){
+    string a,b;
+    cin >> a >> b;
 
-    struct abc{
-        ll a,b,c;
-        abc(ll a=0, ll b=0, ll c=0):a(a),b(b),c(c){}
-    };
+    vec(ll) acnt(10),bcnt(10);
+    for(char c:a) acnt[c-'0']++;
+    for(char c:b) bcnt[c-'0']++;
 
- 
- 
-    vec(int) dh = {1,0,-1,0};
-    vec(int) dw = {0,1,0,-1};
- 
-    void solve(){
-        string a,b;
-        cin >> a >> b;
-        map<ll,ll> ma,mb;
-        for(char ci:a) ma[ci-'0']++;
-        for(char ci:b) mb[ci-'0']++;
 
-        vvec(Pll) vv(20);
-        rep1(i,9)rep1(j,9) vv[i+j].emplace_back(i,j);
+    vvec(ll) ans(2);
+    for(char c:a) ans[0].push_back(c-'0');
+    for(char c:b) ans[1].push_back(c-'0');
+    ll totmin=llINF;
 
-        map<ll,ll> ma1,mb1;
-        ma1 = ma;
-        mb1 = mb;
-        for(Pll x:vv[9]){
-            while(ma1[x.first]>0 && mb1[x.second]>0){
-                ma1[x.first]--;
-                mb1[x.second]--;
+    auto f =[](vec(ll) va,vec(ll) vb, ll a0){
+        vvec(ll) res = vvec(ll)(2);
+        if(va[a0]==0) return res;
+
+        for(ll bi=10-a0; bi<=9; bi++){
+            if(vb[bi]==0) continue;
+            res[0].push_back(a0);
+            res[1].push_back(bi);
+            va[a0]--;
+            vb[bi]--;
+            break;
+        }
+        if(res[0].empty()) return res;
+
+        rep1(ai,9)rep1(bi,9){
+            if(ai+bi<9) continue;
+            while(va[ai]>0 && vb[bi]>0){
+                res[0].push_back(ai);
+                res[1].push_back(bi);
+                va[ai]--;
+                vb[bi]--;
             }
         }
 
-        
+        rep1r(x,9) rep(_,va[x]) res[0].push_back(x);
+        rep1r(x,9) rep(_,vb[x]) res[1].push_back(x);
 
+        return res;
+    };
 
+    auto f2 = [](vvec(ll) vv){
+        if(vv[0].empty()) return llINF;
+
+        ll n = max(vv[0].size(), vv[1].size());
+        rep(i,2) vv[i].resize(n);
+        // rep(i,2) while(vv[i].size()<n) vv[i].push_back(0);
+
+        ll res = 0;
+        ll isup = 0;
+        rep(i,n){
+            // cout << i << " ; " << vv[0][i] << " " << vv[1][i] << endl;
+            ll wa = vv[0][i]+vv[1][i]+isup;
+            res += wa%10;
+            isup = wa/10;
+        }
+        return res;
+    };
+
+    rep1(a0,9){
+        vvec(ll) tmp = f(acnt,bcnt,a0);
+        if(chmin(totmin,f2(tmp))) ans = tmp;
+
+        // cout << a0 << "---" << f2(tmp) << endl;
+        // rep(i,2){
+        //     reverse(all(tmp[i]));
+        //     for(ll x:tmp[i]) cout << x; cout << endl;
+        // }
 
     }
-};
+
+    rep(i,2){
+        reverse(all(ans[i]));
+        for(ll x:ans[i]) cout << x; cout << endl;
+    }
+
+
+
+
+}
+
 
 
 int main(){
     int testcasenum=1;
     //cin >> testcasenum;
     rep1(ti,testcasenum){
-        Solver solver;
-        solver.solve();
+        solve();
     }
     return 0;
 }

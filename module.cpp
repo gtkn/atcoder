@@ -29,6 +29,30 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 2乗の和とか
+    // auto sum0 = [](ll n)->mint{ // sigma(i^0)_i=1~n
+    //     return n;
+    // };
+    // auto sum1 = [](ll n)->mint{ // sigma(i^1)_i=1~n
+    //     mint res = n;
+    //     res *= (n+1);
+    //     res /= 2;
+    //     return res;
+    // };
+    // auto sum2 = [](ll n)->mint{ // sigma(i^2)_i=1~n // https://math.nakaken88.com/textbook/basic-sum-of-square-numbers/
+    //     mint res = n;
+    //     res*=(n+1);
+    //     res*=(2*n+1);
+    //     res/=6;
+    //     return res;
+    // };
+    // auto sum3 = [](ll n)->mint{ // sigma(i^3)_i=1~n // https://math.nakaken88.com/textbook/basic-sum-of-cube-numbers/
+    //     mint res = n;
+    //     res *= (n+1);
+    //     res /= 2;
+    //     return res*res;
+    // };
+
 
 // 拡張 Euclid の互除法
 // ap + bq = gcd(a, b) となる (p, q) を求め、d = gcd(a, b) をリターン
