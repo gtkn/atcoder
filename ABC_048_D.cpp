@@ -60,8 +60,11 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    string s;
+    cin >> s;
+    ll n = s.size();
+
+    if( (s[0]==s[n-1]) ^ (n&1) ) sayfs;
 
 
 

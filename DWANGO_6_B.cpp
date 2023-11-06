@@ -73,21 +73,32 @@ void solve(){
     fa[0] = 1;
     rep1(i,N) fa[i] = fa[i-1]*i;
     rep(i,N+1) af[i] = fa[i].inv();
-    
 
-    auto comb = [&](ll n,ll k){
-        return fa[n]*af[k]*af[n-k];
-    };
 
-    mint ans = 0;
-    mint w = 0;
+    mint a = 0, ans = 0;
     rep(i,nn){
-        w += comb(nn,i+1)*fa[i]*fa[nn-i];
-        cout << i <<" : " << ans.val() << ", " << w.val() << endl;
-        ans += d[i]*w;
+        a += mint(i+1).inv()*fa[nn];
+        ans += a*d[i];
+        // cout << i << " : " << ans.val() << ", " << a.val() << endl;
     }
 
+    // ans *= fa[nn];
     cout << ans.val() << endl;
+
+
+    // auto comb = [&](ll n,ll k){
+    //     return fa[n]*af[k]*af[n-k];
+    // };
+
+    // mint ans = 0;
+    // mint w = 0;
+    // rep(i,nn){
+    //     w += comb(nn,i+1)*fa[i]*fa[nn-i];
+    //     cout << i <<" : " << ans.val() << ", " << w.val() << endl;
+    //     ans += d[i]*w;
+    // }
+
+    // cout << ans.val() << endl;
 
 
 

@@ -42,7 +42,7 @@ inline ll mod(ll a, ll m) {return (a % m + m) % m;}
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return;}
+#define dame { puts("0"); return;}
 #define sayno { puts("No"); return;}
 #define sayyes { puts("Yes"); return;}
 #define sayyn {puts("Yes");}else{puts("No");}
@@ -60,9 +60,36 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll i,o,t,j,l,s,z;
+    cin >> i>>o>>t>>j>>l>>s>>z;
 
+    // if(t>0 || s>0 || z>0) dame;
+    // if(i&1){
+    //     if( !j&1 || !l&1 ) dame;
+    // }else{
+    //     if(j&1) dame;
+    //     if(l&1) dame;
+    // }
+
+    ll ans = o;
+    vec(ll) v={i,j,l};
+    sort(all(v));
+    i=v[0]; j=v[1]; l=v[2];
+    ll jr = j-i;
+    ll lr = l-i;
+
+
+    if(jr&1 && lr&1){
+        if(i==0) ans += (j/2)*2 + (l/2)*2;
+        else ans += (i+j+l-1);
+    }else if(jr&1 || lr&1){
+        ans += (i+j+l-1);
+    }else{
+        ans += (i+j+l);
+    }
+
+
+    cout << ans << endl;
 
 
 }
