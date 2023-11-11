@@ -60,8 +60,50 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
+
+    vvec(Pll) g(N);
+    rep(_,M){
+        ll a,b,c;
+        cin >> a >> b >> c;
+        a--; b--;
+        g[a].emplace_back(b,c);
+        // g[b].emplace_back(a,c);
+    }
+
+    
+    vec(bool) used(N),cand(N);
+    cand[N-1]=true;
+
+    auto f = [&](auto f,ll now)->bool{
+        if(used[now]) return cand[now];
+        used[now] = true;
+
+        for(auto [nxt,_]: g[now]) if(f(f,nxt)) cand[now] = true;
+        return cand[now];
+    };
+    f(f,0);
+
+
+
+
+    vec(ll) dp(N,-llINF);
+    dp[0]=0;
+
+    rep(i,N){
+        bool chk = false;
+        rep(now,N) for(auto [nxt,c]: g[now]){
+            // if(dp[now]==-llINF)continue;
+            if(chmax(dp[nxt], dp[now]+c)) if(cand[nxt]) chk=true;
+        }
+        if(i==N-1 && chk){
+            cout << "inf" << endl;
+            return;
+        }
+    }    
+    cout << dp[N-1] << endl;
+
 
 
 
@@ -77,8 +119,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

@@ -60,8 +60,16 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,X;
+    cin >> N >> X;
+
+    ll ans = 0;
+    rep(i,N){
+        ll s; cin >> s;
+        if(s<=X) ans+=s;
+    }
+
+    cout << ans << endl;
 
 
 
@@ -77,8 +85,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

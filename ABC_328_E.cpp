@@ -60,8 +60,58 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M,K;
+    cin >> N >> M >> K;
+
+    
+    vvec(edge) g(N);
+    vec(ll) W(M);
+    rep(i,M){
+        ll u,v,w;
+        cin >> u >> v >> w;
+        u--; v--;
+        g[u].emplace_back(v,w,i);
+        g[v].emplace_back(u,w,i);
+        W[i]=w;
+    }
+
+
+    auto f = [&](const ll b){
+        if(__builtin_popcount(b)!=N-1) return ll(-1);
+        vec(bool) used(N);
+        queue<ll> q;
+        q.push(0);
+        while(!q.empty()){
+            ll now = q.front(); q.pop();
+            if(used[now]) continue;
+            used[now]=true;
+            for(edge e:g[now]){
+                if( bit(b,e.idx) ) q.push(e.to);
+            }
+        }
+
+        ll res = 0;
+        rep(i,M) if(bit(b,i)) res += W[i];
+        bool isok = true;
+        rep(i,N) if(!used[i]) isok=false;
+
+        // cout <<  b << "; " << res << " , " << isok << endl;
+
+        if(!isok) res = -1;
+
+        return res;
+
+    };
+
+    ll ans = llINF;
+    rep(pt,(1<<M)){
+        
+        ll tmp = f(pt);
+        // cout << pt <<" , " << tmp << ", "<< tmp%K << endl;
+        if(tmp>0) chmin(ans, tmp%K);
+    }
+
+    cout << ans << endl;
 
 
 
@@ -77,8 +127,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

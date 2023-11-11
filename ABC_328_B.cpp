@@ -63,6 +63,33 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) D(N+1);
+    rep1(i,N) cin >> D[i];
+
+    ll ans = 0;
+
+    auto f = [](ll x){
+        ll res = -1;
+        set<ll> s;
+        while(x){
+            s.insert(x%10);
+            x/=10;
+        }
+        if(s.size()==1) res = *s.begin();
+        return res;
+    };
+
+
+    vec(ll) v(110);
+    rep(i,110) v[i] = f(i);
+
+    rep1(i,N)rep1(j,D[i]){
+        if(v[i]==v[j] && v[i]>=0 && v[j]>=0) ans++;
+    }
+
+    cout << ans << endl;
+
+
 
 
 }
@@ -77,8 +104,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

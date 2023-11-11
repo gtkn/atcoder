@@ -50,18 +50,55 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
 vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll H, W,K;
+    cin >> H >> W >> K;
+
+
+    ll ans = llINF;
+
+    auto f = [&](ll h, ll w){
+        ll res = llINF;
+        chmin(res, (h+K-1)/K);
+        chmin(res, (w+K-1)/K);
+        chmin(res, (H-1-h+K-1)/K);
+        chmin(res, (W-1-w+K-1)/K);
+        return res;
+    };
+
+    vec(string) A(H);
+    rep(i,H) cin >> A[i];
+
+
+    vvec(ll) dp(H,vec(ll)(W,llINF));
+    queue<Pll> q;
+    ll sx,sy;
+    rep(i,H)rep(j,W){
+        if(A[i][j]=='S'){
+            sx=i; sy=j;
+            dp[i][j]=0;
+            q.emplace(i,j);
+        }
+    }
+
+    while(!q.empty()){
+        auto [h0,w0] = q.front();
+        q.pop();
+        rep(i,4){
+            ll h1,w1;
+            h1 = h0+dh[i]; w1 = w0+dw[i];
+            if(h1<0 || h1>=H || w1<0 || w1>=W) continue;
+            if(A[h1][w1]=='#') continue;
+            if(chmin(dp[h1][w1], dp[h0][w0]+1)) q.emplace(h1,w1);
+        }
+    }
+
+    rep(i,H)rep(j,W) if(dp[i][j]<=K) chmin(ans, f(i,j)+1);
+
+    cout << ans << endl;
 
 
 
@@ -77,8 +114,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -33,7 +33,7 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -50,18 +50,18 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
-
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,K;
+    cin >> N >> K;
+    vec(ll) P(N);
+    rep(i,N) cin >> P[i];
+
+    mint ans = 1;
+    for(ll i=K; i<N; i++){
+        if(P[i]==(i-K+1)) ans *= (N-i);
+    }
+
+    cout << ans.val() << endl;
 
 
 
@@ -77,8 +77,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

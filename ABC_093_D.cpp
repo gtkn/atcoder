@@ -60,8 +60,27 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll Q;
+    cin >> Q;
+    
+    while(Q--){
+        ll a,b;
+        cin >> a >> b;
+
+        if(a>b) swap(a,b);
+
+        ll n = a*b;
+        ll k = sqrt(n-1)+10;
+        while(k*k > n-1) k--;
+        
+        ll res = 2*k;
+
+        if(k*k+k >= n) res--;
+        if(a<=k) res--;
+
+        cout << res << endl;
+
+    }
 
 
 
@@ -77,8 +96,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

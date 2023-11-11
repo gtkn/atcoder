@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -60,8 +60,50 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,Q;
+    cin >> N >> Q;
+    
+    dsu uf(N);
+    vec(ll) x(N);
+
+    vvec(ll) g(N);
+
+    vec(ll) ans;
+
+
+    auto f = [&](auto f,ll now,ll frm,ll diff)->void{
+        x[now] += diff;
+        for(ll nxt:g[now]) if(nxt!=frm) f(f, nxt, now, diff);
+    };
+
+
+
+    rep1(ii,Q){
+        ll a,b,d;
+        cin >> a >> b >> d;
+        a--; b--;
+
+        if(uf.same(a,b)){
+            if(x[a]-x[b]==d) ans.push_back(ii);
+        }else{
+            if(uf.size(a) > uf.size(b)){
+                swap(a,b);
+                d = -d;
+            }
+            ll t = d - x[a]+x[b];
+
+            f(f,a,a,t);
+
+            uf.merge(a,b);
+            g[a].push_back(b);
+            g[b].push_back(a);
+            ans.push_back(ii);
+        }
+    }
+
+    for(ll ai:ans) cout << ai << " "; cout << endl;
+
+
 
 
 
@@ -77,8 +119,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

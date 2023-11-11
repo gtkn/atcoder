@@ -60,8 +60,24 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    string S;
+    cin >> S;
+
+    vec(char) v;
+    ll n = 0;
+
+    for(char c:S){
+        v.push_back(c);
+        n++;
+        if(c=='C' && n>=3){
+            if(v[n-3]=='A' && v[n-2]=='B' && v[n-1]=='C' ){
+                rep(_,3) v.pop_back();
+                n-=3;
+            }
+        }
+    } 
+
+    for(char c:v) cout << c; cout << endl;
 
 
 
@@ -77,8 +93,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

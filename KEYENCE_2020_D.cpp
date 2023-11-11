@@ -50,18 +50,47 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i];
+    rep(i,N) cin >> B[i];
+
+    ll nn = (1<<N);
+    vvec(ll) dp(nn,vec(ll)(55,llINF));
+    dp[0][0]=0;
+
+    rep(now,nn)rep(t,51){
+        ll cnt = 0;
+        ll j = __builtin_popcount(now);
+        repr(i,N){
+            if(bit(now,i)){
+                cnt++;
+                continue;
+            }
+            ll x = A[i];
+            if( abs(i-j)&1 ) x = B[i];
+
+            if(x<t) continue;
+
+            chmin(dp[ now|(1<<i) ][x], dp[now][t] + cnt);
+        }
+    }
+
+    // rep(i,nn){
+    //     rep(j,51) cout << (dp[i][j]==llINF? -1 : dp[i][j]) << " "; cout << endl;
+    // }
+
+
+    ll ans = llINF;
+    rep1(t,50) chmin(ans, dp[nn-1][t]);
+    if(ans>=llINF) ans = -1;
+    cout << ans << endl;
+
+    
+
 
 
 
@@ -77,8 +106,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

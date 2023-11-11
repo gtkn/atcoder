@@ -62,7 +62,46 @@ vec(ll) dw = {0,1,0,-1};
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i] >> B[i];
 
+    bool isok = true;
+    rep(i,N) if(A[i]!=B[i]) isok = false;
+    if(isok){
+        cout << 0 << endl;
+        return;
+    }
+
+
+    ll ans = 0;
+    vec(ll) bb;
+    ll rem = 0;
+
+    rep(i,N){
+        if(A[i]<=B[i]){
+            ans += A[i];
+            rem += B[i]-A[i];
+        }else{
+            ans += A[i]-B[i]-1;
+            rem -= A[i]-B[i]-1;
+            bb.push_back(B[i]);
+        }
+    }
+
+    // cout << ans << " " << rem << endl;
+    // for(ll bi:bb) cout << bi <<", "; cout << endl;
+
+
+    sort(all(bb));
+    rep(_,rem-1){
+        ans++;
+        ans+=bb.back();
+        bb.pop_back();
+    }
+    if(rem>0) ans++;
+
+
+    cout << ans << endl;
 
 
 }
@@ -77,8 +116,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-

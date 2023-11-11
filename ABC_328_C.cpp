@@ -60,8 +60,24 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,Q;
+    cin >> N >> Q;
+
+    string S;
+    cin >> S;
+
+    vec(ll) v(N);
+    rep(i,N-1) if(S[i]==S[i+1]) v[i]=1;
+
+    vec(ll) cum(N+1);
+    rep(i,N) cum[i+1] = cum[i] + v[i];
+
+    while(Q--){
+        ll l,r;
+        cin >> l >> r;
+        cout << cum[r-1]-cum[l-1] << endl;
+    }
+
 
 
 
@@ -77,8 +93,3 @@ int main(){
     }
     return 0;
 }
-
-
-
-
-
