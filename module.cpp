@@ -720,6 +720,7 @@ public:
 
 // Trie木
 // https://atcoder.jp/contests/abc268/submissions/34763568
+// https://atcoder.jp/contests/abc268/submissions/42098901
     struct TrieTree{
         vector<map<char,ll>> g;
         vector<ll> cnt;
@@ -742,7 +743,7 @@ public:
 
 
 
-        vector<ll> A,B;
+        vector<ll> A,B; // 先祖の数、子孫の数、どちらも自分を含む
 
         ll dfs(ll now, ll num){
             num += cnt[now];
@@ -755,7 +756,7 @@ public:
             return B[now]+cnt[now];
         }
 
-
+        // addした後にこれで初期化
         void calc_AB(){
             A = vector<ll>(g.size());
             B = vector<ll>(g.size());
@@ -763,6 +764,39 @@ public:
         }
 
     };
+
+
+
+// https://atcoder.jp/contests/agc047/submissions/47601347
+// 機能は問題に応じて追加するべし
+struct TrieTree{
+    vvec(ll) g; // 子への辺
+    vector<ll> cnt; // そのノードに該当する文字列が追加された数
+    ll al = 26; // アルファベットの数
+    ll maxsize; // ノード数の最大
+    ll gcnt = 1; // すでに使ったノードの数
+
+    TrieTree(ll maxsize):maxsize(maxsize){
+        g = vvec(ll)(maxsize,vec(ll)(al));
+        cnt = vec(ll)(maxsize);
+    }
+
+    vec(ll) add(const string& s){
+        vec(ll) path;
+        ll now = 0;
+        for(char c:s){
+            ll x = c-'a';
+            path.push_back(now);
+            if(g[now][x]==0) g[now][x] = gcnt++;
+            now = g[now][x];
+        }
+        cnt[now]++;
+        return path;
+    }
+
+
+};
+
 
 
 
