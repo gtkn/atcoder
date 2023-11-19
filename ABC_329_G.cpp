@@ -42,7 +42,7 @@ inline ll mod(ll a, ll m) {return (a % m + m) % m;}
 const ll llINF = 1LL << 60;
 const int iINF = 1e9;
 
-#define dame { puts("-1"); return;}
+#define dame { puts("0"); return;}
 #define sayno { puts("No"); return;}
 #define sayyes { puts("Yes"); return;}
 #define sayyn {puts("Yes");}else{puts("No");}
@@ -129,113 +129,142 @@ void solve(){
     LCA lca(g);
 
     vec(ll) S(M),T(M);
-    rep(i,M) cin >> S[i];
-    rep(i,M) cin >> T[i];
+    rep(i,M) cin >> S[i] >> T[i];
     rep(i,M) S[i]--;
     rep(i,M) T[i]--;
-    // rep(i,M) A[i] = lca.get_lca(S[i],T[i]);
-    vvec(ll) memo(N);
-    rep(i,M) memo[ lca.get_lca(S[i],T[i]) ].push_back(i);
-
-    vec(ll) B(N);
-    rep(i,M) B[S[i]]++;
 
 
+    vec(ll) go01(N);
+
+    rep(i,M){
+        ll a = lca.get_lca(S[i],T[i]);
+
+        // cout << S[i] << " " << T[i] << " ; " << a <<","<<g[a][0]<<", " << lca.get_lca(S[i],g[a][0]) << endl;  
+
+        if(a==S[i] || a==T[i]) continue;
+
+        if(lca.get_lca(S[i],g[a][0]) == g[a][0]){
+            go01[a] |= 1;
+        }else{
+            go01[a] |= 2;
+        }
+    }
+
+    // rep(i,N) cout << i << " ;go  " << go01[i] << endl;
 
 
-    auto f = [&](auto f,ll now, ll &k)->mint{
-        bool go0=false,go1=false;
-        ll a0=0,a1=0;
+    rep(i,N) if(go01[i]==3) dame;
 
-        // cout << "now " << now << endl;
+    vvec(ll) bin(N,vec(ll)(3)), bout(N,vec(ll)(3));
+    rep(i,M){
+        ll s=S[i], t=T[i];
+        ll a = lca.get_lca(s,t);
+
+        if(a==s){
+            if( lca.get_lca(g[a][0], t) == g[a][0] ){
+                bin[s][0]++;
+                bout[t][2]++;
+            }else{
+                bin[s][1]++;
+                bout[t][2]++;
+            }
+        }else if(a==t){
+            if( lca.get_lca(g[a][0], s) == g[a][0]){
+                bin[s][2]++;
+                bout[t][0]++;
+            }else{
+                bin[s][2]++;
+                bout[t][1]++;
+            }
+        }else{
+            bin[s][2]++;
+            bout[t][2]++;
+        }
+    }
+
+    // rep(i,N){
+    //     cout << "---" << i << endl;
+    //     rep(j,3) cout << bin[i][j] << " "; cout << endl;
+    //     rep(j,3) cout << bout[i][j] << " "; cout << endl;
+    // }
+
+
+
+    vvec(mint) dp(N,vec(mint)(K+1,1));
+    vvec(ll) bcnt(N,vec(ll)(K+1,-1));
+    vvec(bool) used(N,vec(bool)(K+1));
+
+
+    auto f = [&](auto f,ll now,ll k)->pair<mint,ll>{
+        if(k>K || k<0) return {0,-1};
+        if(used[now][k]) return {dp[now][k],bcnt[now][k]};
+        used[now][k]=true;
+
+        ll kk = k - bout[now][2];
+        ll kmemo = kk;
+        mint res = 0;
 
 
         if(g[now].size()==0){
-            k += B[now];
-            mint res = 1;
-            if(k>K) res=0;
-            return res;
+            res=1;
         }
+        if(g[now].size()==1){
+            kk += bin[now][0];
+            pair<mint,ll> fres = f(f,g[now][0],kk);
+            res = fres.first;
+            kk = fres.second;
+            kk -= bout[now][0];
+        }
+        if(g[now].size()==2){
+            vec(mint) rv(2);
+            vec(ll) kv(2,-1);
 
+            rep(i,2){
+                vec(ll) pt = {i,1-i};
+                if(go01[now]==1 && pt[0]!=0) continue;
+                if(go01[now]==2 && pt[0]!=1) continue;
 
-        for(ll b:memo[now]){
-            bool t0 = false;
-            if( lca.get_lca(T[b], g[now][0] ) == g[now][0] ){
-                if(S[b]==now){
-                    a0++;
-                }else{
-                    go1=true;
+                kk = kmemo;
+                mint tmp = 1;
+
+                for(ll x:pt){
+                    kk += bin[now][x];
+                    pair<mint,ll> fres = f(f,g[now][x],kk);
+                    tmp *= fres.first;
+                    kk = fres.second;
+                    kk -= bout[now][x];
                 }
-            }else{
-                if(T[b]!=now){
-                //     pass;                    
-                // }else{
-                    if(S[b]==now){
-                        a1++;
-                    }else{
-                        go0=true;
-                    }
+                rv[i] = tmp; kv[i]=kk;
+            }
+            kk = 0; res = 0;
+            rep(i,2){
+                if(kv[i]>=0){
+                    kk = kv[i];
+                    res += rv[i];
                 }
             }
         }
 
+        kk += bin[now][2];
 
-        if(g[now].size()==1){
-            k += a0;
-            mint res = f(f,g[now][0],k);
-            k += B[now]-a0;
-            return res;
+        if(kk>K){
+            dp[now][k] = 0;
+            bcnt[now][k] = -1;
+        }else{
+            dp[now][k] = res;
+            bcnt[now][k] = kk;
         }
 
+        // cout <<"out : "<< now << " " << k << " ; " << dp[now][k].val() <<"  ," << bcnt[now][k] << endl;
 
-        if(go0 && go1) return mint(0);
+        return {dp[now][k],bcnt[now][k]};
 
-        mint res0=1,res1=1;
-        ll k0=k, k1=k;
-
-        {
-            // 0->1
-            k0 += a0;
-            res0 = f(f,g[now][0],k0);
-            k0 += a1;
-            res0 *= f(f,g[now][1],k0);
-            k0 += B[now]-a0-a1;
-            if(k0>K) res0 = 0;
-
-        }
-        {
-            // 1->0
-            k1 += a1;
-            res1 = f(f,g[now][1],k1);
-            k1 += a0;
-            res1 *= f(f,g[now][0],k1);
-            k1 += B[now]-a0-a1;
-            if(k1>K) res1 = 0;
-        }
-
-        if(go0){
-            k = k0;
-            return res0;
-        }
-        if(go1){
-            k = k1;
-            return res1;
-        }
-
-        assert(k0==k1);
-        k = k0;
-
-        if(res0==mint(0)) return res1;
-        if(res1==mint(0)) return res0;
-        return res0*res1;
     };
 
 
-    ll _k = 0;
-    mint ans = f(f,0,_k);
+    auto [ans, _] = f(f,0,0);
 
     cout << ans.val() << endl;
-
 
 
 }

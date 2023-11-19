@@ -56,22 +56,16 @@ void solve(){
 
     vec(ll) A(N);
     rep(i,N) cin >> A[i];
-    // sort(all(A),greater<ll>());
     reverse(all(A));
 
-    vec(ll) rem(N+2);
-    rem[N-1]=A[N-1]; rem[N-2]=A[N-2];
-    for(ll i=N-3; i>=0; i--) rem[i] = rem[i+2] + A[i];
 
     vec(ll) cum(N+1);
-    rep(i,N) cum[i+1] = cum[i]+1;
+    rep(i,N) cum[i+1] = cum[i] + A[i];
 
-
-    auto f = [&](ll idx, ll x){
-        ll jdx = (idx-1)/2;
-        return abs(A[idx]-x) < abs(A[jdx]-x);
-    };
-
+    vec(ll) rem(N+1);
+    rep(i,N) if(i%2==0) rem[i]=A[i];
+    repr(i,N) rem[i] += rem[i+1];
+    
 
     while(Q--){
         ll X; cin >> X;
@@ -79,20 +73,12 @@ void solve(){
         ll l = 0, r=N;
         while(r-l>1){
             ll mid = (l+r)/2;
-            if(f(mid,X)) r=mid;
+            ll tt = mid/2;
+            if( abs(A[mid]-X) <= abs(A[tt]-X) ) l=mid;
             else r=mid;
         }
 
-        cout << X << "---" << l << endl;
-
-        ll res = cum[ (l-1)/2 + 1];
-        if(l%2==0){
-            res += A[l/2];
-            res += rem[l+2];
-        }else{
-            res += rem[l+1];
-        }
-
+        ll res = cum[ l/2 + 1 ] + rem[l+1];
         cout << res << endl;
 
     }
