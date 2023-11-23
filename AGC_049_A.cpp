@@ -50,76 +50,38 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
-
-
-ll cum[10][10][10][10][10][10];
 
 void solve(){
     ll N;
     cin >> N;
 
-    vec(ll) A(N);
-    rep(i,N) cin >> A[i];
-
-    rep(i0,10)rep(i1,10)rep(i2,10)rep(i3,10)rep(i4,10)rep(i5,10) cum[i0][i1][i2][i3][i4][i5] = 0;
-
-    for(ll ai:A){
-        ll tmp = ai;
-        vec(ll) v(6);
-        rep(i,6){
-            v[i] = tmp%10;
-            tmp/=10;
-        }
-        cum[v[0]][v[1]][v[2]][v[3]][v[4]][v[5]]++;
+    vvec(ll) g(N);
+    rep(i,N){
+        string S; cin >> S;
+        rep(j,N) if(S[j]=='1') g[j].push_back(i);
     }
 
-    rep(i0,10)rep(i1,10)rep(i2,10)rep(i3,10)rep(i4,10)rep(i5,10){
-        rep(b,(1<<6)){
-            if(b==0) continue;
-            ll pm = -1;
-            if(__builtin_popcount(b)&1) pm = 1;
-            vec(ll) v = {i0,i1,i2,i3,i4,i5};
-            rep(i,6){
-                if(bit(b,i)) v[i]--;
-                if(v[i]<0){
-                    pm=0;
-                    v[i]=0;
-                }
-            }
-            cum[i0][i1][i2][i3][i4][i5] += pm*cum[v[0]][v[1]][v[2]][v[3]][v[4]][v[5]];
+
+    double ans = 0;
+    rep(st,N){
+        vec(bool) used(N);
+        queue<ll> q;
+        q.push(st);
+
+        while(!q.empty()){
+            ll now = q.front(); q.pop();
+            if(used[now]) continue;
+            used[now]=true;
+            for(ll nxt:g[now]) q.push(nxt);
         }
-    }
 
-    ll ans = 0;
-    for(ll ai:A){
-        ll tmp = ai;
-        vec(ll) v(6);
-        rep(i,6){
-            v[i] = 9-tmp%10;
-            tmp/=10;
-        }
-        ans += cum[v[0]][v[1]][v[2]][v[3]][v[4]][v[5]];
-
-        bool chk = true;
-        for(ll vi:v) if(vi<5) chk=false;
-        if(chk) ans--;        
-
-        // cout << ai << " ; " << cum[v[0]][v[1]][v[2]][v[3]][v[4]][v[5]] << " , " << chk << endl;
-        // for(ll vi:v) cout << vi <<" "; cout << endl; 
+        ll cnt = 0;
+        rep(i,N) if(used[i]) cnt++;
+        ans += 1./cnt;
 
     }
 
-    ans/=2;
-    cout << ans << endl;
-
+    printf("%.10f\r\n",ans);
 
 }
 
