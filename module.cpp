@@ -29,6 +29,17 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+// iで立っているビットの中でjを探索するやつ
+// https://qiita.com/Euglenese/items/260f9ddf513f772d7e42
+// for(int j = i; j > 0; j = (j - 1) & i){
+//     ans += A[j];
+// }
+// ans += A[0];
+
+
+
+
 // 2乗の和とか
     // auto sum0 = [](ll n)->mint{ // sigma(i^0)_i=1~n
     //     return n;
