@@ -30,6 +30,44 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// // https://atcoder.jp/contests/abc331/submissions/48162113
+// // 複数個のModでやるローリングハッシュ
+// mt19937_64 rng(time(0));
+// constexpr ll BN = 5;
+// ll mods[BN] = {998244353, 1000000007, 1000000009, 1000000021, 1000000033};
+// ll base[BN];
+
+// struct Hash{
+//     ll h1,h2,pw;
+// };
+// using S = array<Hash, BN>;
+
+// S op(S lhs,S rhs){
+//     S res;
+//     rep(i,BN){
+//         res[i].h1 = ( lhs[i].h1 * rhs[i].pw  + rhs[i].h1 )%mods[i];
+//         res[i].h2 = ( rhs[i].h2 * lhs[i].pw  + lhs[i].h2 )%mods[i];
+//         res[i].pw = ( lhs[i].pw * rhs[i].pw )%mods[i];
+//     }
+//     return res;
+// }
+// S ee(){
+//     S res;
+//     rep(i,BN) res[i] = {0,0,1};
+//     return res;
+// }
+// S gen(char c){
+//     S res;
+//     rep(i,BN){
+//         res[i].h1 = res[i].h2 = c; // そのままでOK
+//         res[i].pw = base[i];
+//     }
+//     return res;
+// }
+
+
+
+
 // iで立っているビットの中でjを探索するやつ
 // https://qiita.com/Euglenese/items/260f9ddf513f772d7e42
 // for(int j = i; j > 0; j = (j - 1) & i){
@@ -574,6 +612,7 @@ void doubling(vvec(ll) &db, ll xx){
 
 // ローリングハッシュ
 // 文字列を数値列と見て、区間を "b進数MOD M" で表す
+// あり本332
 
 
 // uniqueで重複削除する時
