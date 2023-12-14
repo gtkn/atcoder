@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -63,8 +63,53 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
+
+    ll nm = N+M;
+    vec(ll) p(nm);
+    rep(i,nm) cin >> p[i];
+    rep(i,nm) p[i]--;
+
+    ll ans = 0;
+    vec(bool) used(nm);
+
+    ll ncnt=0, mcnt=0;
+    rep(st,nm){
+        if(used[st]) continue;
+        vec(ll) v;
+        ll now = st;
+        while(!used[now]){
+            used[now] = true;
+            v.push_back( p[now] );
+            now = p[now];
+        }
+
+        bool nf=false, mf=false;
+        for(ll vi:v){
+            if(vi<N) nf=true;
+            else mf=true;
+        }
+
+        // for(ll vi:v) cerr << vi << " "; cerr << endl;
+        // cerr << nf << ", " << mf << endl;
+
+        assert(nf|mf);
+        if(v.size()==1) continue;
+
+        ans += v.size();
+        if(nf&&mf) ans--;
+        else{
+            ans++;
+            if(nf) ncnt++;
+            if(mf) mcnt++;
+        }
+
+    }
+    
+    ans -= 2*min(ncnt,mcnt);
+
+    cout << ans << endl;
 
 
 
