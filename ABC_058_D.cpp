@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -32,7 +32,7 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
-//using mint = modint1000000007;
+using mint = modint1000000007;
 //using mint = modint998244353;
 
 
@@ -50,37 +50,20 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-
 void solve(){
-    ll N,K;
-    cin >> N >> K;
+    ll n,m;
+    cin >> n >> m ;
 
-    auto f = [](ll n, ll k){
-        assert(!(n&1));
+    vec(ll) x(n), y(m);
+    rep(i,n) cin >> x[i];
+    rep(i,m) cin >> y[i];
 
-        ll nn = n/2-1, kk = k/2;
-        ll res = k;
-        if((nn&kk) == kk){
-            if(k&1) res--;
-            else res++;
-        }
-        return res;
-    };
+    mint a=0,b=0;
+    rep(i,n-1) a += mint(x[i+1]-x[i])*(i+1)*(n-1-i);
+    rep(i,m-1) b += mint(y[i+1]-y[i])*(i+1)*(m-1-i);
 
-    K--;
-
-
-    if(N&1){
-        if(K==0) cout << f(N-1,0)+1 << endl;
-        else{
-            K = f(N-1,K-1);
-            if(K==N-2) cout << N << endl;
-            else cout << f(N-1,K+1)+1 << endl;
-        }
-    }else{
-        cout << f(N,K)+1 << endl;
-    }
-
+    mint ans = a*b;
+    cout << ans.val() << endl;
 
 
 }
@@ -89,7 +72,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }
