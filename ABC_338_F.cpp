@@ -52,65 +52,59 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 
-ll dp[16][150][150][2]; // [桁][総和%M][桁和][未満]
-
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
 
+    vec(ll) U(M),V(M),W(M);
+    rep(i,M) cin >> U[i] >> V[i] >> W[i];
+
+    rep(i,M) U[i]--;
+    rep(i,M) V[i]--;
+
+    vvec(ll) cost(N,vec(ll)(N,llINF));
+    vvec(bool) isok(N,vec(bool)(N));
+    rep(i,M) cost[ U[i] ][ V[i] ] = W[i];
+    rep(i,M) isok[ U[i] ][ V[i] ] = true;
     
-    ll N_ = N;
-    vec(ll) v;
-    while(N_){
-        v.push_back(N_%10);
-        N_/=10;
-    }
-    ll l = v.size();
-    reverse(all(v));
-    // for(ll vi:v) cerr << vi << " "; cerr << nl;
 
-
-    auto f = [&](ll M)->ll{
-        rep(i,16)rep(j,150)rep(k,150)rep(a,2) dp[i][j][k][a] = 0;
-        dp[0][0][0][0] = 1;
-
-
-        rep(i,l)rep(j,M)rep(k,M+1){
-            // cerr << i << " ," << j << " , " << k << nl;
-            // N未満未確定
-            rep(x,v[i]){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][0];
-            }
-            if( k+v[i] <= M){
-                dp[i+1][ (10*j + v[i])%M ][ k+v[i] ][0] += dp[i][j][k][0];
-            }
-            
-
-            // 確定
-            rep(x,10){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][1];
-            }
+    rep(k,N)rep(i,N)rep(j,N){
+        if(isok[i][k] && isok[k][j]){
+            chmin(cost[i][j], cost[i][k]+cost[k][j] );
+            isok[i][j]=true;
         }
-        
-
-        // cerr << dp[l][0][M][0] << " , " << dp[l][0][M][1] << nl;
-        ll res = dp[l][0][M][0] + dp[l][0][M][1];
-        return res;
-    };
-
-
-    ll ans = 0;
-    rep1(m, 9*l){
-        // cerr << "---- " << m << " ----" << nl;
-        ll tmp = f(m);
-        // cerr <<  tmp << nl;
-        ans += tmp;
     }
 
-    cout << ans << endl;
+
+    // rep(i,N){
+    //     rep(j,N) cerr << cost[i][j] << " "; cerr << nl;
+    // }
+
+
+    ll nn = (1<<N);
+    vvec(ll) dp(nn,vec(ll)(N,llINF));
+    rep(i,N) dp[(1<<i)][i] = 0;
+
+    rep(hist,nn)rep(now,N){
+        if(!bit(hist,now)) continue;
+
+        rep(nxt,N){
+            if(bit(hist,nxt)) continue;
+            // if(cost[now][nxt]>=llINF) continue;
+            if(!isok[now][nxt]) continue;
+            chmin(dp[ hist | (1<<nxt) ][nxt], dp[hist][now] + cost[now][nxt] );
+        }
+    }
+
+    ll ans = llINF;
+    rep(i,N) chmin(ans, dp[nn-1][i]);
+    if(ans>=llINF) sayno;
+
+    cout << ans << nl;
+
+
+
 
 
 }

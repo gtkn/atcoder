@@ -51,65 +51,75 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+};
 
-ll dp[16][150][150][2]; // [桁][総和%M][桁和][未満]
 
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll H,W,K;
+    cin >> H >> W >> K;
 
-    
-    ll N_ = N;
-    vec(ll) v;
-    while(N_){
-        v.push_back(N_%10);
-        N_/=10;
+
+    vvec(char) S(H,vec(char)(W));
+    rep(h,H){
+        string si; cin >> si;
+        rep(w,W) S[h][w] = si[w];
     }
-    ll l = v.size();
-    reverse(all(v));
-    // for(ll vi:v) cerr << vi << " "; cerr << nl;
 
+    ll ans = llINF;
 
-    auto f = [&](ll M)->ll{
-        rep(i,16)rep(j,150)rep(k,150)rep(a,2) dp[i][j][k][a] = 0;
-        dp[0][0][0][0] = 1;
-
-
-        rep(i,l)rep(j,M)rep(k,M+1){
-            // cerr << i << " ," << j << " , " << k << nl;
-            // N未満未確定
-            rep(x,v[i]){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][0];
+    rep(_,2){
+        rep(h,H){
+            if(K>W) break;
+            ll dcnt=0, xcnt=0;
+            rep(w,K){
+                if(S[h][w]=='.') dcnt++;
+                if(S[h][w]=='x') xcnt++;
             }
-            if( k+v[i] <= M){
-                dp[i+1][ (10*j + v[i])%M ][ k+v[i] ][0] += dp[i][j][k][0];
-            }
-            
+            if(xcnt==0) chmin(ans,dcnt);
 
-            // 確定
-            rep(x,10){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][1];
+            for(ll wr=K; wr<W; wr++){
+                if(S[h][wr]=='.') dcnt++;
+                if(S[h][wr]=='x') xcnt++;
+                ll wl = wr-K;
+                if(S[h][wl]=='.') dcnt--;
+                if(S[h][wl]=='x') xcnt--;
+                if(xcnt==0) chmin(ans,dcnt);
             }
         }
-        
 
-        // cerr << dp[l][0][M][0] << " , " << dp[l][0][M][1] << nl;
-        ll res = dp[l][0][M][0] + dp[l][0][M][1];
-        return res;
-    };
-
-
-    ll ans = 0;
-    rep1(m, 9*l){
-        // cerr << "---- " << m << " ----" << nl;
-        ll tmp = f(m);
-        // cerr <<  tmp << nl;
-        ans += tmp;
+        vvec(char) SS(W,vec(char)(H));
+        rep(h,H)rep(w,W) SS[w][h] = S[h][w];
+        swap(H,W);
+        swap(S,SS);
     }
 
+    // rep(w,W){
+    //     if(K>H) break;
+    //     ll dcnt=0, xcnt=0;
+    //     rep(h,K){
+    //         if(S[h][w]=='.') dcnt++;
+    //         if(S[h][w]=='x') xcnt++;
+    //     }
+    //     if(xcnt==0) chmin(ans,dcnt);
+
+    //     for(ll hr=K; hr<H; hr++){
+    //         if(S[hr][w]=='.') dcnt++;
+    //         if(S[hr][w]=='x') xcnt++;
+    //         ll hl = hr-K;
+    //         if(S[hl][w]=='.') dcnt--;
+    //         if(S[hl][w]=='x') xcnt--;
+    //         if(xcnt==0) chmin(ans,dcnt);
+    //     }
+    // }
+
+
+    if(ans>=llINF) ans = -1;
     cout << ans << endl;
 
 

@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -52,65 +52,35 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 
-ll dp[16][150][150][2]; // [桁][総和%M][桁和][未満]
+ll op(ll a,ll b){return max(a,b);};
+ll ee(){return -llINF;}
 
 
 void solve(){
     ll N;
     cin >> N;
 
-    
-    ll N_ = N;
-    vec(ll) v;
-    while(N_){
-        v.push_back(N_%10);
-        N_/=10;
-    }
-    ll l = v.size();
-    reverse(all(v));
-    // for(ll vi:v) cerr << vi << " "; cerr << nl;
+    ll nn = 2*N;
+    vec(ll) v(nn,-llINF);
 
-
-    auto f = [&](ll M)->ll{
-        rep(i,16)rep(j,150)rep(k,150)rep(a,2) dp[i][j][k][a] = 0;
-        dp[0][0][0][0] = 1;
-
-
-        rep(i,l)rep(j,M)rep(k,M+1){
-            // cerr << i << " ," << j << " , " << k << nl;
-            // N未満未確定
-            rep(x,v[i]){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][0];
-            }
-            if( k+v[i] <= M){
-                dp[i+1][ (10*j + v[i])%M ][ k+v[i] ][0] += dp[i][j][k][0];
-            }
-            
-
-            // 確定
-            rep(x,10){
-                if( k+x > M) break;
-                dp[i+1][ (10*j + x)%M ][ k+x ][1] += dp[i][j][k][1];
-            }
-        }
-        
-
-        // cerr << dp[l][0][M][0] << " , " << dp[l][0][M][1] << nl;
-        ll res = dp[l][0][M][0] + dp[l][0][M][1];
-        return res;
-    };
-
-
-    ll ans = 0;
-    rep1(m, 9*l){
-        // cerr << "---- " << m << " ----" << nl;
-        ll tmp = f(m);
-        // cerr <<  tmp << nl;
-        ans += tmp;
+    rep(_,N){
+        ll a,b;
+        cin >> a >> b;
+        --a; --b;
+        if(a>b) swap(a,b);
+        v[a] = b;
     }
 
-    cout << ans << endl;
+
+    segtree<ll, op, ee> seg(v);
+
+    rep(i,nn){
+        if(v[i]<0) continue;
+
+        if( seg.prod(i,v[i]) > v[i]) sayyes;        
+    }
+    sayno;
+
 
 
 }
