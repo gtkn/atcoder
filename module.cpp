@@ -30,6 +30,80 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
+// https://atcoder.jp/contests/abc339/submissions/50539226
+struct MergeSortTree{
+    ll n;
+    vec(ll) v; // 元のvector
+    vvec(ll) vv;
+    vvec(ll) cum;
+    ll m;
+
+    MergeSortTree(vec(ll) v){
+        this->n = v.size(); // サイズは2冪にしておく
+        this->v = v;
+        this->m = 3*this->n;
+
+        this->vv.resize(this->m);
+        this->cum.resize(this->m);
+        build(1,0,this->n);
+    }
+
+
+    void build(ll node, ll start, ll end){
+        vec(ll) &v = this->vv[node];
+        vec(ll) &c = this->cum[node];
+        if(start+1==end){
+            v = {this->v[start]};
+            c = {0, this->v[start]};
+            return;
+        }
+
+        ll mid = (start+end)/2;
+        build(node*2, start, mid);
+        build(node*2 + 1, mid, end);
+
+        v.insert(v.end(), all(this->vv[node*2]));
+        v.insert(v.end(), all(this->vv[node*2+1]));
+        sort(all(v));
+
+        ll nn = v.size();
+        c.resize(nn+1);
+        rep(i,nn) c[i+1] = c[i] + v[i];
+    }
+
+
+    // 区間の和を取得
+    ll query(ll left, ll right, ll x) {
+        return query(1, 0, this->n, left, right, x);
+    }
+
+    // 再帰的に区間の和を取得
+    ll query(ll node, ll start, ll end, ll left, ll right, ll x) {
+        if (right <= start || end <= left) {
+            // クエリ範囲とノード範囲が交差しない場合は0を返す（影響なし）
+            return 0;
+        }
+        if (left <= start && end <= right) {
+            vec(ll) &v = this->vv[node];
+            ll d = upper_bound(all(v), x) - v.begin();
+            return this->cum[node][d];
+        }
+        // それ以外の場合は左右の子ノードの値を再帰的に合算
+        ll mid = (start + end) / 2;
+        ll leftSum = query(node * 2, start, mid, left, right, x);
+        ll rightSum = query(node * 2 + 1, mid, end, left, right, x);
+        return leftSum + rightSum;
+    }
+
+
+
+
+};
+
+
+
+
 // // https://atcoder.jp/contests/abc331/submissions/48162113
 // // 複数個のModでやるローリングハッシュ
 // mt19937_64 rng(time(0));
