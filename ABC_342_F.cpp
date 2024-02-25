@@ -51,73 +51,67 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll N,L,D;
+    cin >> N >> L >> D;
 
-    ll st = 0, gl = N+1;
-    vvec(Pll) g(N+2);
-    rep(_,M){
-        ll u,v,w;
-        cin >> u >> v >> w;
-        g[u].emplace_back(v,w);
-    }
-
-    rep1(i,N) g[st].emplace_back(i,0);
-    rep1(i,N) g[i].emplace_back(gl,0);
-
-    ll N2 = N+2;
-    vvec(ll) dist(N2, vec(ll)(N2,llINF));
-    rep(now,N2){
-        dist[now][now] = 0;
-        for(auto [nxt,w]:g[now]) dist[now][nxt] = w;
-    }
-    rep(k,N2)rep(i,N2)rep(j,N2){
-        if(dist[i][k]>=llINF || dist[k][j]>=llINF) continue;
-        chmin(dist[i][j], dist[i][k]+dist[k][j]);
-    }
-
-
-    ll nn = (1<<(N+2));
-    vvec(ll) dp(N+2,vec(ll)(nn,llINF));
-
-
-    dp[st][1]=0;
-    rep(hist,nn)rep(now,N2){
-        if(!bit(hist,now)) continue;
-        if(dp[now][hist]>=llINF) continue;
-        rep(nxt,N2){
-            if(bit(hist,nxt)) continue;
-            if(dist[now][nxt]>=llINF) continue;
-            chmin(dp[nxt][hist|(1<<nxt)], dp[now][hist]+dist[now][nxt]);
+    double dd = 1./D;
+    
+    ll nn = N+D+10;
+    vec(double) dp0(nn),dp1(nn);
+    vec(double) cum0(nn),cum1(nn);
+    
+    cum0[0]=1; cum0[1]=-1;
+    double tmp = 0;
+    rep(i,nn){
+        tmp += cum0[i];
+        dp0[i] = tmp;
+        if(i<N){
+            double p = dp0[i]*dd;
+            cum0[i+1] += p;
+            cum0[i+D+1] -= p;
         }
     }
 
+    cum1[0]=1; cum1[1]=-1;
+    tmp = 0;
+    rep(i,nn){
+        tmp += cum1[i];
+        dp1[i] = tmp;
+        if(i<L){
+            double p = dp1[i]*dd;
+            cum1[i+1] += p;
+            cum1[i+D+1] -= p;
+        }
+    }
 
-    // queue<Pll> q;
-    // auto qpush = [&](ll cost,ll node, ll hist)->void{
-    //     if(chmin(dp[node][hist], cost)) q.emplace(node,hist);
-    // };
+    double b = 0;
+    for(ll i=N+1; i<nn; i++) b+=dp1[i];
 
-    // qpush(0,0,1);
-    // while(!q.empty()){
-    //     auto [now,hist] = q.front();
-    //     q.pop();
-    //     // for(auto [nxt,w]:g[now]){
-    //     //     qpush(dp[now][hist]+w, nxt, hist|(1<<nxt));
-    //     // }
-    //     rep(nxt,N2){
-    //         if(bit(hist,nxt)) continue;
-    //         qpush(dp[now][hist]+dist[now][nxt], nxt, hist|(1<<nxt));
-    //     }
+    vec(double) dp2(nn);
+    rep(i,N+1){
+        if(i<=L) dp2[i]=b;
+        else dp2[i] = dp2[i-1] + dp1[i-1];
+    }
 
-    // }
+    // rep(i,nn) cout << dp0[i] << ", "; cout << endl;
+    // rep(i,nn) cout << dp1[i] << ", "; cout << endl;
+    // rep(i,nn) cout << dp2[i] << ", "; cout << endl;
 
-    ll ans = dp[gl][nn-1];
-    if(ans>=llINF) cout << "No" << endl;
-    else cout << ans << endl;
+
+
+
+    vec(double) dp3(nn);
+    double ptot = 0;
+    repr(i,N+1){
+        dp3[i] = max(dp2[i], ptot*dd);
+        // cout << i << " ; " << dp2[i] << ", " << ptot << endl;
+        ptot += dp3[i];
+        ptot -= dp3[i+D];
+    }
+
+    printf("%.8f\r\n",dp3[0]);
+
 
 
 

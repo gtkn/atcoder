@@ -51,18 +51,65 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
+
+// a以上b以下の整数をランダムに返す関数
+ll RandInt(ll a,ll b){
+    return a + rand()%(b-a+1);
+}
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+bool is_prime(ll M){
+    for(ll x=2; x*x<=M; x++){
+        if(M%x==0) return false;
+    }
+    return true;
+
+}
+
+
 
 void solve(){
     ll N;
     cin >> N;
+    vec(string) A(N);
+    rep(i,N) cin >> A[i];
+
+    ll nn = 20;
+    vec(ll) ps(nn);
+    rep(i,nn){
+        ll M = 4;
+        while(!is_prime(M)){
+            M = RandInt(1e9,2e9);
+        }
+        ps[i]=M;
+    }
+
+    vvec(ll) as(N,vec(ll)(nn));
+    rep(i,N){
+        rep(j,nn){
+            ll rem = 0;
+            for(char c:A[i]){
+                rem = (rem*10 + (c-'0'))%ps[j];
+            }
+            as[i][j] = rem;
+        }
+    }
+
+
+    map<vec(ll),ll> cnt;
+    rep(i,N) cnt[as[i]]++;
+
+    ll ans = 0;
+    rep(i,N)rep(j,N){
+        vec(ll) v(nn);
+        rep(k,nn){
+            v[k] = ( as[i][k]*as[j][k] )%ps[k];
+        }
+        ans += cnt[v];
+    }
+
+    cout << ans << endl;
+
 
 
 
