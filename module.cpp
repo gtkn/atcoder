@@ -31,6 +31,44 @@ using bs = bitset<8>;
 
 
 
+
+// https://atcoder.jp/contests/abc342/submissions/50663624
+// 消せる priority_queue
+struct erasable_priority_queue{
+
+    // pair<priority_queue<ll>, priority_queue<ll>> pq;
+    priority_queue<ll> q0,q1;
+    ll zero = 0; // pqが空のときに返す値
+
+    erasable_priority_queue(){
+        this->q0.push(0);
+        this->q1.push(0);
+    }
+
+    // x を追加する関数
+    void add(ll x){
+        this->q0.push(x);
+    }
+
+    // x を削除する関数
+    void erase(ll x){
+        this->q1.push(x);
+    }
+
+    // pq に含まれる値の max (空なら 0 ) を返す関数
+    ll top(){
+        while (!(this->q0.empty()) && !(this->q1.empty()) && this->q0.top() == this->q1.top()) {
+            this->q0.pop();
+            this->q1.pop();
+        }
+        if(this->q0.empty()) return this->zero;
+        return this->q0.top();
+    }
+};
+
+
+
+
 // https://atcoder.jp/contests/abc339/submissions/50539226
 struct MergeSortTree{
     ll n;
