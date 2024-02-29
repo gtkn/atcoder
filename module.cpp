@@ -80,7 +80,7 @@ struct MergeSortTree{
     MergeSortTree(vec(ll) v){
         this->n = v.size(); // サイズは2冪にしておく
         this->v = v;
-        this->m = 3*this->n;
+        this->m = 4*this->n;
 
         this->vv.resize(this->m);
         this->cum.resize(this->m);
