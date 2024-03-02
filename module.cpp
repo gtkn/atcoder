@@ -69,6 +69,72 @@ struct erasable_priority_queue{
 
 
 
+class Lseg {
+private:
+    ll n;              // 元の配列の要素数
+    vector<erasable_priority_queue> tree;   // セグメント木のノードを格納する配列
+public:
+    // コンストラクタ
+    Lseg(ll n) {
+        this->n = n;
+        tree.resize(4 * n);  // ノード数は元の配列の要素数の4倍に設定（十分なサイズを確保）
+    }
+
+    ll get(ll idx){
+        return get(1,0,n,idx);
+    }
+
+    ll get(ll node, ll start, ll end, ll idx) {
+        // cout << node << " : " << start <<" , " << end << ", " << idx<< endl;
+        if(node<0) return 0;
+        ll res = 0;
+
+        if (idx < start || end <= idx) {
+            return 0;
+        }
+
+        chmax(res, tree[node].top());
+        if(start+1==end) return res;
+
+
+        ll mid = (start + end) / 2;
+        ll leftRes = get(node * 2, start, mid, idx);
+        ll rightRes = get(node * 2 + 1, mid, end, idx);
+
+        chmax(res, leftRes);
+        chmax(res, rightRes);
+
+        return res;
+    }
+
+
+
+    void apply(ll left, ll right, ll x){
+        return apply(1, 0, n, left, right, x);
+    }
+
+    void apply(ll node, ll start, ll end, ll left, ll right, ll x) {
+        // cout << node << ".. " << start <<" , " << end << ": " << left << " , " << right << endl;
+        if (right <= start || end <= left) {
+            return;
+        }
+        if (left <= start && end <= right) {
+            if(x>0) tree[node].add(x);
+            if(x<0) tree[node].erase(-x);
+            return;
+        }
+        ll mid = (start + end) / 2;
+        apply(node * 2, start, mid, left, right, x);
+        apply(node * 2 + 1, mid, end, left, right, x);
+        return;
+    }
+
+
+};
+
+
+
+
 // https://atcoder.jp/contests/abc339/submissions/50539226
 struct MergeSortTree{
     ll n;

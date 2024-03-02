@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/all>
-// using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -39,8 +39,9 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-const ll llINF = 1LL << 60;
-const int iINF = 1e9;
+constexpr ll llINF = 1LL << 60;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
 
 #define dame { puts("-1"); return;}
 #define sayno { puts("No"); return;}
@@ -60,67 +61,60 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll v1,v2,v3;
+    cin >> v1 >> v2 >> v3;
 
-    vec(ll) A(N),B(M);
-    rep(i,N) cin >> A[i];
-    rep(i,M) cin >> B[i];
+    ll nn = 14;
 
-    ll nn = N*(N+1)/2;
-
-    vvec(ll) dp(N+1,vec(ll)(nn+N+10, llINF));
-
-    dp[0][0] = 0;
-    rep(i,N)rep(j,nn+1){
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j+i+1], dp[i][j] + A[i]);
-    }
+    ll a1=7, b1=7, c1=7;
 
 
-    ll jtot = M*(M+1)/2, btot = 0;
+    auto f = [](vec(ll) as, vec(ll) bs, vec(ll) cs)->ll{
+        ll amin = llINF, amax = -llINF;
+        for(ll a:as) chmin(amin, a);
+        for(ll a:as) chmax(amax, a);
 
-    vec(Pll) v(M);
-    rep(i,M) v[i] = {B[i],i+1};
-    sort(all(v), [](Pll const& a, Pll const& b){
-        return(a.first*b.second > b.first*a.second);
-    });
+        ll bmin = llINF, bmax = -llINF;
+        for(ll b:bs) chmin(bmin, b);
+        for(ll b:bs) chmax(bmax, b);
+
+        ll cmin = llINF, cmax = -llINF;
+        for(ll c:cs) chmin(cmin, c);
+        for(ll c:cs) chmax(cmax, c);
+
+        ll x,y,z;
+        x = max(0LL,amin+7-amax);
+        y = max(0LL,bmin+7-bmax);
+        z = max(0LL,cmin+7-cmax);
+
+        return x*y*z;
+    };
 
 
-    ll ans = llINF;
-    rep(k,nn+1){
-        ll res = 0;
-        res += dp[N][nn-k];
+    rep(a2,nn)rep(b2,nn)rep(c2,nn)rep(a3,nn)rep(b3,nn)rep(c3,nn){
+        ll w12 = f({a1,a2},{b1,b2},{c1,c2});
+        ll w23 = f({a3,a2},{b3,b2},{c3,c2});
+        ll w31 = f({a1,a3},{b1,b3},{c1,c3});
+        ll w123 = f({a1,a2,a3},{b1,b2,b3},{c1,c2,c3});
 
-        while(!v.empty()){
-            auto [bj,j] = v.back();
-            if(k*j >= bj){
-                v.pop_back();
-                btot += bj;
-                jtot -= j;
-            }else{
-                break;
-            }
+        ll w1,w2,w3;
+        w3 = w123;
+        w2 = w12 + w23 + w31 - 3*w123;
+        w1 = 3*7*7*7 - 2*w2 - 3*w3;
+
+        if(w1==v1 && w2==v2 && w3==v3){
+
+            cout << "Yes" << endl;
+            cout << a1 <<" " << b1 <<  " " << c1 << " ";
+            cout << a2 <<" " << b2 <<  " " << c2 << " ";
+            cout << a3 <<" " << b3 <<  " " << c3 << " " << endl;
+            return;
+
         }
 
-        res += k*jtot + btot;
-
-        // cout << k << " : " << dp[N][nn-k] <<", " << jtot <<" , " << btot << endl;
-
-        chmin(ans,res);
     }
 
-    cout << ans << endl;
-
-
-
-
-
-
-
-
-
-
+    cout << "No" << endl;
 
 
 

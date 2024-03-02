@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/all>
-// using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -33,14 +33,15 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-const ll llINF = 1LL << 60;
-const int iINF = 1e9;
+constexpr ll llINF = 1LL << 60;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
 
 #define dame { puts("-1"); return;}
 #define sayno { puts("No"); return;}
@@ -60,68 +61,50 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll N;
+    cin >> N;
 
-    vec(ll) A(N),B(M);
+    vec(ll) A(N);
     rep(i,N) cin >> A[i];
-    rep(i,M) cin >> B[i];
 
-    ll nn = N*(N+1)/2;
-
-    vvec(ll) dp(N+1,vec(ll)(nn+N+10, llINF));
-
-    dp[0][0] = 0;
-    rep(i,N)rep(j,nn+1){
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j+i+1], dp[i][j] + A[i]);
+    vvec(ll) g(N);
+    rep(_,N-1){
+        ll u,v;
+        cin >> u >> v;
+        --u; --v;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
 
 
-    ll jtot = M*(M+1)/2, btot = 0;
 
-    vec(Pll) v(M);
-    rep(i,M) v[i] = {B[i],i+1};
-    sort(all(v), [](Pll const& a, Pll const& b){
-        return(a.first*b.second > b.first*a.second);
-    });
+    mint ans = 0;
 
+    auto f = [&](auto f, ll now, ll frm)->map<ll,mint>{
 
-    ll ans = llINF;
-    rep(k,nn+1){
-        ll res = 0;
-        res += dp[N][nn-k];
+        map<ll,mint> res;
+        for(ll nxt:g[now])if(nxt!=frm){
+            map<ll,mint> m = f(f, nxt, now);
 
-        while(!v.empty()){
-            auto [bj,j] = v.back();
-            if(k*j >= bj){
-                v.pop_back();
-                btot += bj;
-                jtot -= j;
-            }else{
-                break;
+            ans += m[A[now]];
+
+            if(res.size() < m.size()) swap(res,m);
+
+            for(auto [c,cnt]:m){
+                ans += res[c]*cnt;
+                res[c] += res[c]*cnt + cnt;
             }
         }
 
-        res += k*jtot + btot;
+        ans++;
+        res[A[now]]++;
+        return res;
 
-        // cout << k << " : " << dp[N][nn-k] <<", " << jtot <<" , " << btot << endl;
+    };
 
-        chmin(ans,res);
-    }
+    f(f,0,0);
 
-    cout << ans << endl;
-
-
-
-
-
-
-
-
-
-
-
+    cout << ans.val() << endl;
 
 
 }

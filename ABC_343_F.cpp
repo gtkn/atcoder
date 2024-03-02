@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/all>
-// using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -30,6 +30,8 @@ using l3 = __int128;
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
+using ll4 = tuple<ll,ll,ll,ll>;
+
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
@@ -39,8 +41,9 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-const ll llINF = 1LL << 60;
-const int iINF = 1e9;
+constexpr ll llINF = 1LL << 60;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
 
 #define dame { puts("-1"); return;}
 #define sayno { puts("No"); return;}
@@ -50,75 +53,51 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+
+struct S{
+    Pll p1,p2;
 };
 
+S op(S l,S r){
+    map<ll,ll> m;
+    vec(Pll) v = {l.p1, l.p2, r.p1, r.p2};
+    for(Pll vi:v) m[vi.first] += vi.second;
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+    vec(Pll) v2;
+    for(auto mi:m) v2.push_back(mi);
+    reverse(all(v2));
+
+    return {v2[0], v2[1]};
+}
+
+S ee(){return S{{-1,0},{-2,0}};}
+
+
 
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll N,Q;
+    cin >> N >> Q;
 
-    vec(ll) A(N),B(M);
+    vec(ll) A(N);
     rep(i,N) cin >> A[i];
-    rep(i,M) cin >> B[i];
-
-    ll nn = N*(N+1)/2;
-
-    vvec(ll) dp(N+1,vec(ll)(nn+N+10, llINF));
-
-    dp[0][0] = 0;
-    rep(i,N)rep(j,nn+1){
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j+i+1], dp[i][j] + A[i]);
-    }
 
 
-    ll jtot = M*(M+1)/2, btot = 0;
+    vec(S) v(N);
+    rep(i,N) v[i] = S{ {A[i],1},{0,0} };
 
-    vec(Pll) v(M);
-    rep(i,M) v[i] = {B[i],i+1};
-    sort(all(v), [](Pll const& a, Pll const& b){
-        return(a.first*b.second > b.first*a.second);
-    });
+    segtree<S, op, ee> seg(v);
 
-
-    ll ans = llINF;
-    rep(k,nn+1){
-        ll res = 0;
-        res += dp[N][nn-k];
-
-        while(!v.empty()){
-            auto [bj,j] = v.back();
-            if(k*j >= bj){
-                v.pop_back();
-                btot += bj;
-                jtot -= j;
-            }else{
-                break;
-            }
+    while(Q--){
+        ll t; cin >> t;
+        if(t==1){
+            ll p,x; cin >> p >> x;
+            seg.set(p-1, S{ {x,1},{0,0} } );
+        }else{
+            ll l,r; cin >> l >> r;
+            S res = seg.prod(l-1,r);
+            cout << res.p2.second << endl;
         }
-
-        res += k*jtot + btot;
-
-        // cout << k << " : " << dp[N][nn-k] <<", " << jtot <<" , " << btot << endl;
-
-        chmin(ans,res);
     }
-
-    cout << ans << endl;
-
-
-
-
-
-
-
-
 
 
 

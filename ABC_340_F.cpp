@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/all>
-// using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -39,8 +39,9 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-const ll llINF = 1LL << 60;
-const int iINF = 1e9;
+constexpr ll llINF = 1LL << 60;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
 
 #define dame { puts("-1"); return;}
 #define sayno { puts("No"); return;}
@@ -50,70 +51,46 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+tuple<ll,ll,ll> extgcd(ll a,ll b){
+    if(b==0) return {a,1,0};
+    ll g,x,y;
+    tie(g,x,y) = extgcd(b,a%b);
+    return {g,y,x-a/b*y};
+}
 
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll X,Y;
+    cin >> X >> Y;
 
-    vec(ll) A(N),B(M);
-    rep(i,N) cin >> A[i];
-    rep(i,M) cin >> B[i];
-
-    ll nn = N*(N+1)/2;
-
-    vvec(ll) dp(N+1,vec(ll)(nn+N+10, llINF));
-
-    dp[0][0] = 0;
-    rep(i,N)rep(j,nn+1){
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j+i+1], dp[i][j] + A[i]);
-    }
-
-
-    ll jtot = M*(M+1)/2, btot = 0;
-
-    vec(Pll) v(M);
-    rep(i,M) v[i] = {B[i],i+1};
-    sort(all(v), [](Pll const& a, Pll const& b){
-        return(a.first*b.second > b.first*a.second);
-    });
-
-
-    ll ans = llINF;
-    rep(k,nn+1){
-        ll res = 0;
-        res += dp[N][nn-k];
-
-        while(!v.empty()){
-            auto [bj,j] = v.back();
-            if(k*j >= bj){
-                v.pop_back();
-                btot += bj;
-                jtot -= j;
-            }else{
-                break;
-            }
+    if(X==0){
+        if(abs(Y)==1){
+            cout << "2 0" << endl;
+        }else if(abs(Y)==2){
+            cout << "1 0" << endl;
+        }else{
+            cout << -1 << endl;
         }
-
-        res += k*jtot + btot;
-
-        // cout << k << " : " << dp[N][nn-k] <<", " << jtot <<" , " << btot << endl;
-
-        chmin(ans,res);
+        return;
+    }
+    if(Y==0){
+        if(abs(X)==1){
+            cout << "0 2" << endl;
+        }else if(abs(X)==2){
+            cout << "0 1" << endl;
+        }else{
+            cout << -1 << endl;
+        }
+        return;
     }
 
-    cout << ans << endl;
 
+    auto [g, b, a] = extgcd(X,-Y);
 
+    if( (b*2)%g > 0 || (a*2)%g > 0) dame;
 
+    ll A = a*2/g, B = b*2/g;
+
+    cout << A << " " << B << endl;
 
 
 

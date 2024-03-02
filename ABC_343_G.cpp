@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-// #include <atcoder/all>
-// using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -20,7 +20,7 @@ using namespace std;
 //typedef vector<vvvi>vvvvi;
 
 #define all(x) x.begin(),x.end()
-#define watch(x) cout << (#x) << " is " << (x) << endl
+#define watch(x) cerr << (#x) << " is " << (x) << endl
 #define sfind(s,x) (s.find(x)!=s.end())
 
 using ll = long long;
@@ -39,8 +39,9 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-const ll llINF = 1LL << 60;
-const int iINF = 1e9;
+constexpr ll llINF = 1LL << 60;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
 
 #define dame { puts("-1"); return;}
 #define sayno { puts("No"); return;}
@@ -50,76 +51,76 @@ const int iINF = 1e9;
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N,M;
-    cin >> N >> M;
+    ll N;
+    cin >> N;
 
-    vec(ll) A(N),B(M);
-    rep(i,N) cin >> A[i];
-    rep(i,M) cin >> B[i];
-
-    ll nn = N*(N+1)/2;
-
-    vvec(ll) dp(N+1,vec(ll)(nn+N+10, llINF));
-
-    dp[0][0] = 0;
-    rep(i,N)rep(j,nn+1){
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j+i+1], dp[i][j] + A[i]);
-    }
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
 
 
-    ll jtot = M*(M+1)/2, btot = 0;
+    vvec(ll) vv(N+1,vec(ll)(N+1));
+    vec(bool) touse(N,true);
 
-    vec(Pll) v(M);
-    rep(i,M) v[i] = {B[i],i+1};
-    sort(all(v), [](Pll const& a, Pll const& b){
-        return(a.first*b.second > b.first*a.second);
-    });
+    rep(i,N)rep(j,N){
+        if(i==j){
+            vv[i][i] = -llINF;
+            continue;
+        }
 
+        if(S[i]==S[j]){
+            touse[max(i,j)] = false;
+            continue;
+        }
 
-    ll ans = llINF;
-    rep(k,nn+1){
-        ll res = 0;
-        res += dp[N][nn-k];
+        string ss = S[i] + S[j];
+        vec(int) z = z_algorithm(ss);
 
-        while(!v.empty()){
-            auto [bj,j] = v.back();
-            if(k*j >= bj){
-                v.pop_back();
-                btot += bj;
-                jtot -= j;
-            }else{
+        ll nn = ss.size();
+        for(ll st = S[i].size(); st < nn; st++){
+            if(z[st] >= S[i].size()){
+                touse[i] = false;
+                break;
+            }
+            if(z[st] == nn-st){
+                vv[j][i] = z[st];
                 break;
             }
         }
-
-        res += k*jtot + btot;
-
-        // cout << k << " : " << dp[N][nn-k] <<", " << jtot <<" , " << btot << endl;
-
-        chmin(ans,res);
     }
 
+
+    // rep(i,N){
+    //     rep(j,N) cout << vv[i][j] << " "; cout << endl;
+    // }
+    // rep(i,N) cout << touse[i] << " "; cout << endl;
+
+    ll M = (1<<(N+1));
+    vvec(ll) dp(M, vec(ll)(N+1,-llINF));
+
+
+    ll ini = (1<<N);
+    rep(i,N) if(!touse[i]) ini += (1<<i);
+    // rep(i,N) dp[ini][i] = 0;
+    dp[ini][N] = 0;
+
+    rep(used,M)rep(now,N+1){
+        if(!bit(used,now)) continue;
+        rep(nxt,N+1){
+            if(bit(used,nxt)) continue;
+            chmax(dp[used | (1<<nxt)][nxt], dp[used][now] + vv[now][nxt] );
+        }
+    }
+
+
+    ll ans = 0, dpmax = 0;
+
+    rep(i,N) chmax(dpmax, dp[M-1][i]);
+    rep(i,N)if(touse[i]) ans += S[i].size();
+    ans -= dpmax;
+
     cout << ans << endl;
-
-
-
-
-
-
-
-
-
 
 
 
