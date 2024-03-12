@@ -708,7 +708,7 @@ struct CoordinateCompressor {
 
 
 map<ll,ll> compressCoordinates(vec(ll) &v){
-    // 値の集合vを受け取って座圧する
+    // 値の集合vを受け取って座標圧縮する
     // res[val] = idx
     // v[idx] = val となるように入力のvも変更する
 
