@@ -61,50 +61,56 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll A,B;
+    cin >> A >> B;
 
-    ll ten = 1, ans = 0;
-    rep(_,ten){
-        ll y,l,r;
 
-        y = ten;
-        l = y*y; r = l+y;
-        if(l<=N) ans += min(r,N+1) - l;
-        else break;
+    auto f = [&](ll xx)->ll{
+        ll aa = A+xx;
+        ll bb = aa * (B/aa);
+        if(bb<B) bb+=aa;
+        ll yy = bb-B;
+        return xx+yy;
+    };
 
-        ten*=10;
+    ll ans = f(0);
+    ll th = 2*max(A,B)+10;
 
-        y = ten-2;
-        l = (y+1)*(y+1)-1; r = l+1;
-        if(l<=N) ans += min(r,N+1) - l;
-        else break;
-
-        y = ten-1;
-        l = ten*ten-ten; r = ten*ten;
-        if(l<=N) ans += min(r,N+1) - l;
-        else break;
-
+    for(ll k=1; k*k<th; k++){
+        // A+X = k
+        if(k>=A){
+            chmin(ans, f(k-A));
+        }
+        // Z=k
+        if(A*k < B){
+            chmin(ans, f((B+k-1)/k - A ));
+        }
     }
-    
-    cout << ans << endl;
+
+    cout<< ans << endl;
 
 
 
 
-    // map<ll,ll> m;
-    // rep1(x,N){
-    //     ll y = sqrt(x);
-    //     string xs = to_string(x), ys = to_string(y);
-    //     ll n = ys.size();
-    //     bool res = (ys == xs.substr(0,n));
-    //     if(res){
-    //         m[y]++;
-    //         ans++;
-    //     }
+    // ll l = 0, r = 1e9+10;
+    // while(r-l>10){
+    //     ll ml = (2*l+r)/3;
+    //     ll mr = (l+2*r)/3;
+        
+    //     ll tml = f(ml);
+    //     ll tmr = f(mr);
+
+    //     cerr << l << ", " << r << " : " << tml << ", " << tmr << endl;
+
+
+    //     if(tml < tmr) r=mr;
+    //     else l=ml;
     // }
-    // for(auto mi:m) cerr << mi.first << " : " << mi.second << nl;
 
+    // // cerr << l << ", " << r << endl;
+    // ll ans = llINF;
+    // for(ll x=l; x<=r; x++) chmin(ans,f(x));
+    // cout << ans << endl;
 
 
 
