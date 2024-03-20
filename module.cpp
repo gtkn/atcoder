@@ -1739,7 +1739,8 @@ struct CHT {
 };
 
 
-
+// グラハムスキャン、凸包
+// https://atcoder.jp/contests/abc341/submissions/51470753
 
 
 
