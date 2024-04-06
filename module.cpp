@@ -29,6 +29,9 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// bitset高速化
+// https://atcoder.jp/contests/abc348/submissions/52115935
+// vec(bitset<2000>) similer(N);
 
 
 
