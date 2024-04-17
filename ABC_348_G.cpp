@@ -51,14 +51,67 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+struct P{
+    ll a,b;
+    P(ll a=0, ll b=0):a(a),b(b){}
+    bool operator<(const P& x) const{
+        return b < x.b;
+    }
 };
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+// bが凸
+vector<ll> max_plus_convolution(const vector<ll> &a, const vector<ll> &b) {
+    ll na = a.size();
+    ll nb = b.size();
+    
+    auto f = [&](ll i, ll j)->ll{
+        if(i-j<0 || i-j>=nb) return -llINF;
+        return a[j]+b[i-j];
+    };
+
+    auto g = [&](auto g,vector<ll> is) -> vector<ll>{
+        ll m = is.size();
+        if(m==1){
+            ll res = -1, mx = -llINF;
+            rep(j,na){
+                if(chmax(mx,f(is[0],j))) res = j;
+            };
+            return {res};
+        }
+
+        vec(ll) nis;
+        for(ll i=0; i<m; i+=2) nis.push_back(is[i]);
+        auto js = g(g, nis);
+        js.push_back(na-1);
+        vec(ll) res(m);
+        rep(i,m){
+            if(i%2 == 0){
+                res[i] = js[i/2];
+            }else{
+                ll l=js[i/2], r=js[i/2+1];
+                ll bj = l, mx=-llINF;
+                for(ll j=l; j<=r; j++){
+                    if(chmax(mx,f(is[i],j))) bj = j;
+                }
+                res[i] = bj;
+            }
+        }
+
+        return res;
+    };
+
+    ll n = na+nb-1;
+    vec(ll) is(n);
+    iota(all(is),0);
+    vec(ll) js = g(g,is);
+
+    vec(ll) res(n);
+    rep(i,n) res[i] = f(i,js[i]);
+    return res;
+}
+
+
 
 void solve(){
     ll N;
@@ -67,97 +120,32 @@ void solve(){
     rep(i,N) cin >> A[i] >> B[i];
 
 
+    vec(P) pv(N);
+    rep(i,N) pv[i] = P(A[i],B[i]);
+    sort(all(pv));
 
-
-    priority_queue<Pll> q0,q1;
-    rep(i,N) q0.emplace(A[i]-B[i], i );
-    // rep(i,N) cerr << A[i]-B[i] << ' ' << i << endl;
-
-    ll bb = -llINF;
-    vec(bool) used(N);
-
-
-    vec(Pll) bv(N);
-    rep(i,N) bv[i] = {B[i],i};
-
-    sort(all(bv), greater<Pll>());
-
-    ll res = 0;
-    rep1(k,N){
-        while(!q0.empty()){
-            auto [d,i]  = q0.top();
-            if(used[i]){
-                q0.pop();
-                q1.emplace(A[i],i);
-            }else{
-                break;
-            }
+    auto f = [&](auto f, ll l,ll r)->vec(ll){
+        ll w = r-l;
+        if(w==1){
+            return {pv[l].a-pv[l].b};
         }
 
-        Pll x0 = {-llINF,-1};
-        if(!q0.empty()) x0 = q0.top();
-        Pll x1 = {-llINF,-1};
-        if(!q1.empty()) x1 = q1.top();
-        
-        if(bb>-llINF) x0.first += bb;
+        ll mid = (l+r)/2;
+        vec(ll) rv = f(f, mid,r);
+        vec(ll) av;
+        for(ll i=l; i<mid; i++) av.push_back(pv[i].a);
+        sort(all(av),greater<ll>());
+        vec(ll) lv = {0};
+        for(ll ai:av) lv.push_back(lv.back()+ai);
 
-        if(x0.first > x1.first || x1.second==-1){
-            res += x0.first;
-            // cerr << "k=" << k << " " << x0.first << " " << x0.second << endl;
-            chmax(bb, B[x0.second]);
-            q0.pop();
-        }else{
-            
-            res += x1.first;            
-            // cerr << "k=" << k << " " << x1.first << " " << x1.second << endl;
-            chmax(bb, B[x1.second]);
-            q1.pop();
-        }
+        vec(ll) res = max_plus_convolution(rv,lv);
+        vec(ll) lres = f(f,l,mid);
+        rep(i,lres.size()) chmax(res[i],lres[i]);
+        return res;
+    };
 
-
-        while(!bv.empty()){
-            auto [b,i] = bv.back();
-            if(b<=bb){
-                bv.pop_back();
-                used[i] = true;
-            }else{
-                break;
-            }
-        }
-
-
-        cout << res << endl;
-
-
-    }
-
-
-
-
-
-
-    // rep1(k,N){
-    //     ll tmp = -llINF;
-    //     vec(ll) v;
-
-    //     rep(ptn,(1<<N)){
-    //         if(__builtin_popcount(ptn)!=k) continue;
-    //         ll bmax = -llINF, tot = 0;
-    //         rep(i,N){
-    //             if(bit(ptn,i)==0) continue;
-    //             chmax(bmax,B[i]);
-    //             tot += A[i];
-    //         }
-    //         if(chmax(tmp,tot-bmax)){
-    //             v.clear();
-    //             rep(i,N) if(bit(ptn,i)) v.push_back(i);
-    //         };
-    //     }
-
-    //     cerr << k << "---" << tmp << endl;
-    //     for(auto i:v) cerr << i << ' '; cerr << endl;
-    // }
-
+    vec(ll) ans = f(f,0,N);
+    rep(i,N) cout << ans[i] << endl;
 
 }
 

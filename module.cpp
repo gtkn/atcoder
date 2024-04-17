@@ -29,6 +29,61 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// max-plus-convolution
+// https://atcoder.jp/contests/abc348/submissions/52461872
+// bが凸
+vector<ll> max_plus_convolution(const vector<ll> &a, const vector<ll> &b) {
+    ll na = a.size();
+    ll nb = b.size();
+    
+    auto f = [&](ll i, ll j)->ll{
+        if(i-j<0 || i-j>=nb) return -llINF;
+        return a[j]+b[i-j];
+    };
+
+    auto g = [&](auto g,vector<ll> is) -> vector<ll>{
+        ll m = is.size();
+        if(m==1){
+            ll res = -1, mx = -llINF;
+            rep(j,na){
+                if(chmax(mx,f(is[0],j))) res = j;
+            };
+            return {res};
+        }
+
+        vec(ll) nis;
+        for(ll i=0; i<m; i+=2) nis.push_back(is[i]);
+        auto js = g(g, nis);
+        js.push_back(na-1);
+        vec(ll) res(m);
+        rep(i,m){
+            if(i%2 == 0){
+                res[i] = js[i/2];
+            }else{
+                ll l=js[i/2], r=js[i/2+1];
+                ll bj = l, mx=-llINF;
+                for(ll j=l; j<=r; j++){
+                    if(chmax(mx,f(is[i],j))) bj = j;
+                }
+                res[i] = bj;
+            }
+        }
+
+        return res;
+    };
+
+    ll n = na+nb-1;
+    vec(ll) is(n);
+    iota(all(is),0);
+    vec(ll) js = g(g,is);
+
+    vec(ll) res(n);
+    rep(i,n) res[i] = f(i,js[i]);
+    return res;
+}
+
+
+
 // bitset高速化
 // https://atcoder.jp/contests/abc348/submissions/52115935
 // vec(bitset<2000>) similer(N);
