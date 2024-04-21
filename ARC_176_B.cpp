@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -51,65 +51,18 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-const int MOD = 998244353;
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+};
+
+
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    int N,Q;
-    cin >> N >> Q;
-
-    // vector<set<int>> g(N);
-    ll xx = 1; // x+1
-
-    dsu d(N);
-    vec(int) par(N,-1);
-    vec(int) siz(N,1);
-
-
-    auto f = [&](auto f, int now)->void{
-        if(par[now]==-1) return;
-        f(f,par[now]);
-        par[ par[now] ] = now;
-    };
-
-
-
-    while(Q--){
-        ll a,b,c;
-        cin >> a >> b >> c;
-        int t,u,v;
-        t = 1 + ((a*xx)%MOD)%2;
-        u = 1 + ((b*xx)%MOD)%N;
-        v = 1 + ((c*xx)%MOD)%N;
-
-        // cerr << t << " " << u << " " << v << endl;
-        u--; v--;
-
-        if(t==1){
-            int nu = siz[d.leader(u)];
-            int nv = siz[d.leader(v)];
-
-            if(nu<nv){
-                swap(u,v);
-                swap(nu,nv);
-            }
-            f(f,v);
-            par[v] = u;           
-            d.merge(u,v);
-            siz[d.leader(u)] = nu+nv;
-        }else{
-            int res=0;
-
-            rep(_,2){
-                int w = par[u];
-                if(w!=-1 && par[w]==v) res = w+1;
-                swap(u,v);
-            }
-            if(par[u]==par[v] && par[u]!=-1) res = par[u]+1;
-
-            cout << res << endl;
-            xx = res+1;
-        }
-    }
+    ll N;
+    cin >> N;
 
 
 
@@ -119,7 +72,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

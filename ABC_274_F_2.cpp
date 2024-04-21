@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -29,6 +29,8 @@ using l3 = __int128;
 
 using Pii = pair<int,int>;
 using Pll = pair<ll,ll>;
+
+using Pdl = pair<double,ll>;
 using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
@@ -51,65 +53,54 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-const int MOD = 998244353;
 
 void solve(){
-    int N,Q;
-    cin >> N >> Q;
+    ll N,A;
+    cin >> N >> A;
 
-    // vector<set<int>> g(N);
-    ll xx = 1; // x+1
+    vec(ll) W(N),X(N),V(N);
+    rep(i,N) cin >> W[i] >> X[i] >> V[i];
 
-    dsu d(N);
-    vec(int) par(N,-1);
-    vec(int) siz(N,1);
+    ll ans = 0;
+    rep(lf,N){
+        ll sum = W[lf];
+        vec(Pdl) q;
 
-
-    auto f = [&](auto f, int now)->void{
-        if(par[now]==-1) return;
-        f(f,par[now]);
-        par[ par[now] ] = now;
-    };
-
-
-
-    while(Q--){
-        ll a,b,c;
-        cin >> a >> b >> c;
-        int t,u,v;
-        t = 1 + ((a*xx)%MOD)%2;
-        u = 1 + ((b*xx)%MOD)%N;
-        v = 1 + ((c*xx)%MOD)%N;
-
-        // cerr << t << " " << u << " " << v << endl;
-        u--; v--;
-
-        if(t==1){
-            int nu = siz[d.leader(u)];
-            int nv = siz[d.leader(v)];
-
-            if(nu<nv){
-                swap(u,v);
-                swap(nu,nv);
+        rep(i,N)if(i!=lf){
+            if(V[i]==V[lf]){
+                if(X[lf] <= X[i] && X[i] <= X[lf]+A) sum += W[i];
+                continue;
             }
-            f(f,v);
-            par[v] = u;           
-            d.merge(u,v);
-            siz[d.leader(u)] = nu+nv;
-        }else{
-            int res=0;
 
-            rep(_,2){
-                int w = par[u];
-                if(w!=-1 && par[w]==v) res = w+1;
-                swap(u,v);
-            }
-            if(par[u]==par[v] && par[u]!=-1) res = par[u]+1;
+            double t = -1. * (X[lf]-X[i])/(V[lf]-V[i]);
+            bool isin = (V[i]>V[lf]);
+            q.emplace_back(t, (isin?1:-1)*W[i]);
 
-            cout << res << endl;
-            xx = res+1;
+            t = -1. * (X[lf]+A-X[i])/(V[lf]-V[i]);
+            isin = (V[i]<V[lf]);
+            q.emplace_back(t, (isin?1:-1)*W[i]);
         }
+
+        sort(all(q),[](Pdl a, Pdl b){
+            if(abs(a.first-b.first)<1e-12) return a.second > b.second;
+            return a.first < b.first;
+            });
+        ll tmp = 0, maxtmp = 0;
+        // cerr << lf << "---" << endl;
+        for(auto [t,w]:q){
+            // cerr << t << " " << w <<" " << tmp << endl;
+            tmp += w;
+            if(t > -1e-12){
+                if(chmax(maxtmp,tmp)){
+                    // cerr << lf << "," << t << " : " << sum+maxtmp << endl;
+
+                }
+            }
+        }
+        chmax(ans,sum+maxtmp);
     }
+
+    cout << ans << endl;
 
 
 
