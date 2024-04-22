@@ -51,18 +51,42 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
 
+// x^n % mod を求める関数
+ll pow_mod(ll x, ll n, ll mod) {
+    ll res = 1;
+    while (n > 0) {
+        if (n & 1) {
+            res = (res * x) % mod;
+        }
+        x = (x * x) % mod;
+        n >>= 1;
+    }
+    return res;
+}
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M,K;
+    cin >> N >> M >> K;
+
+    // while(N >= M) N -= (M-K);
+
+    ll d = N-M+1, l = M-K;
+    ll x = (d+l-1)/l;
+    if(N<M) x=0;
+    N-=x*l;
+
+    if(N==M-1 && K==M-1){
+        cout << 0 << endl;
+        return;
+    }
+
+
+
+    ll ans = pow_mod(2,N,10);
+
+    cout << ans << endl;
 
 
 

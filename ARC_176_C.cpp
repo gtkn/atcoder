@@ -62,17 +62,27 @@ void solve(){
         A[i]--; B[i]--; C[i]--;
     }
 
-    
-    vec(ll) vk(N,-1), vb(N,N-1);
-    vvec(ll) g(N);
+        
+    vec(ll) vk(N,-1), vb(N,llINF);
+    rep(i,M){
+        chmin(vb[A[i]],C[i]);
+        chmin(vb[B[i]],C[i]);
+    }
+
 
     vvec(ll) vv(N);
     rep(i,M) vv[C[i]].push_back(i);
 
 
-
+    vec(ll) x = vb;
+    sort(all(x));
+    mint ans = 1;
+    ll rem = 0;
     repr(c,N){
-        if(vv[c].empty()) continue;
+        while(!x.empty() && x.back()>=c){
+            x.pop_back();
+            rem++;
+        }
 
         if(vv[c].size()>1){
             map<ll,ll> mp;
@@ -87,26 +97,78 @@ void solve(){
                 }
             }
             if(center==-1) dame;
+            if(vk[center]>c) dame;
+            if(vb[center]<c) dame;
+            vk[center] = c;
+            rem--;
             
-            for(auto mi:mp){
-                if(mi.first==center){
-                    vk[mi.first] = c;
-                }else{
-                    chmin(vb[mi.first],c-1);
-                }
-            }
-        }else{
+        }else if(vv[c].size()==1){
             ll a = A[vv[c][0]], b = B[vv[c][0]];
-            chmin(vb[a],c);
-            chmin(vb[b],c);
-        }
+            if(vk[a]>c || vk[b]>c) dame;
+            if(vb[a]<c && vb[b]<c) dame;
 
-        for(auto i:vv[c]){
-            ll a = A[i], b = B[i];
-            g[a].push_back(b);
-            g[b].push_back(a);
+            if(vb[a]>=c && vb[b]>=c){
+                ans *= 2;
+            }
+            if(vb[a]<c){
+                swap(a,b);
+            }
+            vk[a] = c;
+            rem--;
+        }else{
+            ans *= rem;
+            rem--;
         }
     }
+
+    cout << ans.val() << endl;
+
+
+
+
+
+
+
+
+
+
+
+    // repr(c,N){
+    //     if(vv[c].empty()) continue;
+
+    //     if(vv[c].size()>1){
+    //         map<ll,ll> mp;
+    //         for(auto i:vv[c]){
+    //             ll a = A[i], b = B[i];
+    //             mp[a]++; mp[b]++;
+    //         }
+    //         ll center = -1;
+    //         for(auto mi:mp){
+    //             if(mi.second==vv[c].size()){
+    //                 center = mi.first;
+    //             }
+    //         }
+    //         if(center==-1) dame;
+            
+    //         for(auto mi:mp){
+    //             if(mi.first==center){
+    //                 vk[mi.first] = c;
+    //             }else{
+    //                 chmin(vb[mi.first],c-1);
+    //             }
+    //         }
+    //     }else{
+    //         ll a = A[vv[c][0]], b = B[vv[c][0]];
+    //         chmin(vb[a],c);
+    //         chmin(vb[b],c);
+    //     }
+
+    //     for(auto i:vv[c]){
+    //         ll a = A[i], b = B[i];
+    //         g[a].push_back(b);
+    //         g[b].push_back(a);
+    //     }
+    // }
 
 
 

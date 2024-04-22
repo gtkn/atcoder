@@ -54,6 +54,8 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 
+
+
 void solve(){
     ll N,A;
     cin >> N >> A;
@@ -64,7 +66,7 @@ void solve(){
     ll ans = 0;
     rep(lf,N){
         ll sum = W[lf];
-        vec(Pdl) q;
+        vec(tri) q;
 
         rep(i,N)if(i!=lf){
             if(V[i]==V[lf]){
@@ -72,32 +74,37 @@ void solve(){
                 continue;
             }
 
-            double t = -1. * (X[lf]-X[i])/(V[lf]-V[i]);
+            ll num = -(X[lf]-X[i]);
+            ll den = V[lf]-V[i];
+            if(den<0) num = -num, den = -den;
             bool isin = (V[i]>V[lf]);
-            q.emplace_back(t, (isin?1:-1)*W[i]);
+            q.emplace_back(num,den,(isin?1:-1)*W[i]);
 
-            t = -1. * (X[lf]+A-X[i])/(V[lf]-V[i]);
+            num = -(X[lf]+A-X[i]);
+            den = V[lf]-V[i];
+            if(den<0) num = -num, den = -den;
             isin = (V[i]<V[lf]);
-            q.emplace_back(t, (isin?1:-1)*W[i]);
+            q.emplace_back(num,den,(isin?1:-1)*W[i]);
         }
 
-        sort(all(q),[](Pdl a, Pdl b){
-            if(abs(a.first-b.first)<1e-12) return a.second > b.second;
-            return a.first < b.first;
-            });
-        ll tmp = 0, maxtmp = 0;
-        // cerr << lf << "---" << endl;
-        for(auto [t,w]:q){
-            // cerr << t << " " << w <<" " << tmp << endl;
-            tmp += w;
-            if(t > -1e-12){
-                if(chmax(maxtmp,tmp)){
-                    // cerr << lf << "," << t << " : " << sum+maxtmp << endl;
 
-                }
+        sort(all(q),[](const tri& a, const tri& b){
+            auto [na,da,wa] = a;
+            auto [nb,db,wb] = b;
+            if(na*db == nb*da) return wa > wb;
+            return na*db < nb*da;
+            });
+
+        chmax(ans, sum);
+        for(auto [n,d,w]:q){
+            if(n >= 0){
+                chmax(ans,sum);
+            }
+            sum += w;
+            if(n >= 0){
+                chmax(ans,sum);
             }
         }
-        chmax(ans,sum+maxtmp);
     }
 
     cout << ans << endl;
