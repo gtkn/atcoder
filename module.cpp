@@ -439,7 +439,7 @@ struct MergeSortTree{
 
 // // https://atcoder.jp/contests/abc331/submissions/48162113
 // // 複数個のModでやるローリングハッシュ
-// mt19937_64 rng(time(0));
+// mt19937_64 rng(time(0)); // rep(i,BN) base[i] = rand() % mods[i];
 // constexpr ll BN = 5;
 // ll mods[BN] = {998244353, 1000000007, 1000000009, 1000000021, 1000000033};
 // ll base[BN];
