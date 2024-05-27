@@ -52,88 +52,103 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+    ll to,i,j;
+    edge(ll to, ll i, ll j):to(to),i(i),j(j){}
 };
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N,L,R;
     cin >> N >> L >> R;
     R++;
 
-    
+    ll nn = (1<<N);
+    vvec(edge) g(nn+1);
 
-
-    vec(Pll) v01,v02,v03,v12,v13,v23;
-
-    ll now = L;
-    while(now<R){
-        ll d = R-now;        
-        ll ii = 0;
-        ll tmp = now;
-        ll two = 1;
-        while( !(tmp&1) && now+two*2<=R ){
-            tmp >>= 1;
-            ii++;
-            two *= 2;
+    rep(now,nn){
+        rep(i,N+1){
+            ll j=now;
+            bool isok = true;
+            rep(_,i){
+                if(j&1) isok = false; 
+                j >>= 1;
+            }
+            if(isok){
+                ll nxt = now + (1<<i);
+                g[now].push_back(edge(nxt,i,j));
+                g[nxt].push_back(edge(now,i,j));
+            }
         }
-        v12.emplace_back(ii,tmp);
     }
 
-
-
-
-    ll now = L;
-    while(now<R){
-        ll d = R-now;        
-        ll ii = 0;
-        ll tmp = now;
-        ll two = 1;
-        while( !(tmp&1) && now+two*2<=R ){
-            tmp >>= 1;
-            ii++;
-            two *= 2;
-        }
-        v12.emplace_back(ii,tmp);
-    }
-
-
-
-
-
-
-
-    // ll now = L;
-    // ll ans = 0;
-    // while(now<R){
-    //     ll d = R-now;
-        
-    //     ll ii = 0;
-    //     ll tmp = now;
-    //     ll two = 1;
-    //     while( !(tmp&1) && now+two*2<=R ){
-    //         tmp >>= 1;
-    //         ii++;
-    //         two *= 2;
+    // cerr << "graph made" << endl;
+    // rep(i,nn+1){
+    //     cerr << i << ": ";
+    //     for(auto e:g[i]){
+    //         cerr << e.to << " ";
     //     }
-
-    //     cout << "? " << ii << " " << tmp << endl << flush;
-    //     ll T;
-    //     cin >> T;
-    //     ans = (ans+T)%100;
-
-    //     now += two;
+    //     cerr << endl;
     // }
 
-    // cout << "! " << ans << endl << flush;
 
 
+    vec(ll) dist(nn+1,llINF);
+    priority_queue<Pll,vector<Pll>,greater<Pll>> pq;
+    auto pqpush = [&](ll d, ll pos){
+        if(chmin(dist[pos],d)) pq.push({d,pos});
+    };
+
+    pqpush(0,R);
+
+    while(!pq.empty()){
+        auto [d,now] = pq.top(); pq.pop();
+        if(dist[now]<d) continue;
+        for(auto e:g[now]){
+            ll nxt = e.to;
+            pqpush(d+1,nxt);
+        }
+    }
+
+    // cerr << "dijkstra done" << endl;
+    // rep(i,nn+1) cerr << i << ": " <<  dist[i] << endl;
+
+
+    ll now = L;
+    vec(Pll) v;
+    while(now!=R){
+        // cerr << now << endl;
+        // if(now==0) return;
+        for(auto [nxt,i,j]:g[now]){
+            if(dist[nxt]!=dist[now]-1) continue;
+            if(nxt < now) i+=100;
+            // cerr << now << " " << nxt << " " << i << " " << j << endl;
+            v.push_back({i,j});
+            now = nxt;
+            break;
+        }
+    }
+
+    // cerr << "v made" << endl;
+
+    ll ans = 0;
+    for(auto [i,j]:v){
+        ll c = 1;
+        if(i>=100){
+            c = -1;
+            i -= 100;
+        }
+        cout << "? " << i << " " << j << endl << flush;
+        ll T;
+        cin >> T;
+        ans += c*T;
+        ans = mod(ans,100);
+    }
+
+    cout << "! " << ans << endl << flush;
+
+    
 }
-
 
 
 int main(){
