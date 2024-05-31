@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+// #include <atcoder/all>
+// using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -76,8 +76,8 @@ void solve(){
 
     vvec(bool) vv(N,vec(bool)(N));
     rep(i,M){
-        if(X[i] > Y[i]) swap(X[i],Y[i]);
         vv[ X[i] ][ Y[i] ] = true;
+        vv[ Y[i] ][ X[i] ] = true;
     }
 
     rep(i,N){
@@ -86,50 +86,123 @@ void solve(){
         }
     }
 
-    // vec(Pll) v;
-    // rep(i,N)for(ll j=i+1;j<N;j++){
-    //     if(vv[i][j]){
-    //         v.emplace_back(i,j);
-    //     }
-    // }
-    // ll nn = v.size();
-
-
     rep(i,N) A[i]*=2;
     rep(i,N) B[i]*=2;
+
     vec(ll) C(N);
-    rep(i,N) C[i] = (A[i] + B[i])/2;
+    rep(i,N) C[i] = (A[i]+B[i])/2;
 
-    ll st = N, gl = N+1;
-    mf_graph<ll> g(N+2);
 
+
+    vec(ll) abig,cbig;
     rep(i,N){
-        ll diff = A[i] - C[i];
-        if(diff > 0){
-            g.add_edge(st,i,0);
-            g.add_edge(i,gl,diff);
+        if(A[i] > C[i]) abig.push_back(i);
+        else cbig.push_back(i);
+    }
+
+
+
+    vec(bool) isabig(N);
+    rep(i,abig.size()) isabig[ abig[i] ] = true;
+    
+    vec(bool) usec(N);
+    vvec(ll) memo(N);
+
+    rep(i,N)rep(j,i){
+        if(!vv[i][j]) continue;
+        if(isabig[i] && isabig[j]){
+            continue;
+        }else if(!isabig[i] && !isabig[j]){
+            usec[i] = true;
+            usec[j] = true;
+        }else if(isabig[i]){
+            memo[i].push_back(j);
         }else{
-            g.add_edge(st,i,-diff);
-            g.add_edge(i,gl,0);
+            memo[j].push_back(i);
         }
     }
 
-    rep(i,N)for(ll j=i+1;j<N;j++){
-        if(vv[i][j]){
-            g.add_edge(i,j,llINF);
-            g.add_edge(j,i,llINF);
+
+    // cerr << "memo:" << endl;
+    // for (int i = 0; i < N; i++) {
+    //     cerr << "memo[" << i << "]: ";
+    //     for (int j = 0; j < memo[i].size(); j++) {
+    //         cerr << memo[i][j] << " ";
+    //     }
+    //     cerr << endl;
+    // }
+
+
+    ll nab = abig.size();
+    ll ncb = cbig.size();
+
+
+    ll ans = -llINF;
+    // cerr << "nab:" << nab << " ncb:" << ncb << endl;    
+    if(nab < ncb){
+        // cerr << "nab < ncb" << endl;
+
+        rep(ptn,(1<<nab)){
+            vec(bool) uc = usec;
+            rep(j,nab){
+                if(bit(ptn,j)){
+                    uc[ abig[j] ] = true;
+                    for(ll k:memo[ abig[j] ]) uc[k] = true;
+                }
+            }
+            ll tmp = 0;
+            rep(i,N) tmp += (uc[i]? C[i]:A[i]);
+            chmax(ans,tmp);
         }
+
+    }else{
+        // cerr << "nab >= ncb" << endl;
+        ll nn = (1<<ncb);   
+        vvec(ll) dp(nab+1,vec(ll)(nn,-llINF));
+
+        // map<ll,ll> mp;
+        vec(ll) mp(N,-1);
+        rep(i,ncb) mp[cbig[i]] = i;
+
+        ll st0 = 0;
+        for(ll i:cbig){
+            if(usec[i]) st0 |= (1<<mp[i]);
+        }
+        dp[0][st0] = 0;
+        rep(i,N) dp[0][st0] += (usec[i]? C[i]:A[i]);
+
+
+        rep(i,nab){
+            rep(j,nn){
+                chmax(dp[i+1][j],dp[i][j]);
+                if(memo[abig[i]].empty()) continue;
+
+                ll jj = j;
+                ll diff = -A[ abig[i] ] + C[ abig[i] ];
+                for(ll k:memo[abig[i]]){
+                    if(bit(jj,mp[k])) continue;
+                    jj |= (1<<mp[k]);
+                    diff += C[k] - A[k];
+                }
+                chmax(dp[i+1][jj],dp[i][j]+diff);
+            }
+        }
+
+        // cerr << "dp:" << endl;
+        // for (int i = 0; i <= nab; i++) {
+        //     for (int j = 0; j < nn; j++) {
+        //         cerr << dp[i][j] << " ";
+        //     }
+        //     cerr << endl;
+        // }
+
+        // cerr << ans << endl;
+        rep(i,nab+1)rep(j,nn) chmax(ans,dp[i][j]);
     }
 
-    ll mc = g.flow(st,gl);
-    double ans = 0;
-    rep(i,N) ans += max(A[i],C[i]);
+    printf("%.1f\n",ans/2.0);
 
-    cerr << ans << " , " << mc << endl;
 
-    ans -= mc;
-    ans/=2;
-    printf("%.8f\n",ans);
 
 
 
