@@ -32,6 +32,16 @@ using bs = bitset<8>;
 
 
 
+// 約数列挙
+set<ll> divisor(ll n){
+    set<ll> res;
+    ll x=1;
+    while(x<=n){
+        res.insert(n/x);
+        x = n/(n/x)+1;
+    }
+    return res;
+}
 
 
 
