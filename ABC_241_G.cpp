@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -51,14 +51,6 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N,M;
@@ -66,7 +58,6 @@ void solve(){
 
     vvec(ll) vv0(N,vec(ll)(N)); // vv[i][j] ; iがjに 1:勝ち, -1:負け, 0:未定, -10:自分
     rep(i,N) vv0[i][i] = -10;
-    vec(ll) wcnt0(N); // 勝ち数
 
     rep(_,M){
         ll w,l;
@@ -74,89 +65,57 @@ void solve(){
         --w, --l;
         vv0[w][l] = 1;
         vv0[l][w] = -1;
-        wcnt0[w]++;
     }
 
+
+    vvec(ll) idx(N,vec(ll)(N));
+    ll nn = 0;
+    rep(i,N)rep(j,i) idx[i][j] = nn++;
+    assert(nn == N*(N-1)/2);    
 
     vec(ll) ans;
+    ll st = nn+N, gl = nn+N+1;
 
-    rep(k,N){
+    rep(p,N){
         vvec(ll) vv = vv0;
-        vec(ll) wcnt = wcnt0;
-
-        rep(j,N){
-            if(vv[k][j]!=0) continue;
-            vv[k][j] = 1;
-            vv[j][k] = -1;
-            wcnt[k]++;
-        }
-
-        bool isok = true;
-        rep(i,N)if(i!=k && wcnt[i] >= wcnt[k]) isok=false;
-        if(!isok) continue;
-
-        set<vector<ll>> dp_now;
-        dp_now.insert(wcnt);
-
-        rep(i,N)rep(j,i)if(vv[i][j]==0){
-            set<vector<ll>> dp_nxt;
-            for(vec(ll) w:dp_now){
-                if(w[i] >= w[j] && w[j]+1 < wcnt[k]){
-                    w[j]++;
-                    dp_nxt.insert(w);
-                    w[j]--;
-                }
-                if(w[i] <= w[j] && w[i]+1 < wcnt[k]){
-                    w[i]++;
-                    dp_nxt.insert(w);
-                    w[i]--;
-                }
+        ll wcnt = 0;
+        rep(i,N){
+            if(vv[p][i]==0){
+                vv[p][i] = 1;
+                vv[i][p] = -1;
             }
-            swap(dp_now,dp_nxt);
+            if(vv[p][i]==1) ++wcnt;
+        }
+        if(wcnt==0) continue;
+
+
+        mf_graph<ll> mf(nn+N+2);
+
+        rep(i,N)rep(j,i){
+            mf.add_edge(st,idx[i][j],1);
+            if(vv[i][j]==1){
+                mf.add_edge(idx[i][j],nn+i,1);
+            }
+            if(vv[i][j]==-1){
+                mf.add_edge(idx[i][j],nn+j,1);
+            }
+            if(vv[i][j]==0){
+                mf.add_edge(idx[i][j],nn+i,1);
+                mf.add_edge(idx[i][j],nn+j,1);
+            }
+        }
+        rep(i,N){
+            if(i==p) mf.add_edge(nn+i,gl,wcnt);
+            else mf.add_edge(nn+i,gl,wcnt-1);
         }
 
-        if(dp_now.size() > 0) ans.push_back(k);
-
-
-
-        // set<vector<ll>> dp_now;
-        // dp_now.insert(wcnt);
-
-        // rep(i,N)rep(j,i)if(vv[i][j]==0){
-        //     set<vector<ll>> dp_nxt;
-        //     for(vec(ll) w:dp_now){
-        //         for(ll x:{i,j}){
-        //             if(w[x]+1 >= wcnt[k]) continue;
-        //             w[x]++;
-        //             dp_nxt.insert(w);
-        //             w[x]--;
-        //         }
-        //     }
-        //     swap(dp_now,dp_nxt);
-        // }
-
-        // if(dp_now.size() > 0) ans.push_back(k);
-
-
-        // rep(i,N)rep(j,i)if(vv[i][j]==0){
-        //     if(wcnt[i] < wcnt[j]){
-        //         vv[i][j] = 1;
-        //         vv[j][i] = -1;
-        //         wcnt[i]++;
-        //     }else{
-        //         vv[i][j] = -1;
-        //         vv[j][i] = 1;
-        //         wcnt[j]++;
-        //     }
-        // }
-
-        // bool isok = true;
-        // rep(i,N)if(i!=k && wcnt[i] >= wcnt[k]) isok=false;
-        // if(isok) ans.push_back(k);
-
+        if(mf.flow(st,gl)==nn){
+            ans.push_back(p+1);
+        }
     }
 
-    for(auto a:ans) cout << a+1 << " "; cout << endl;
+    for(ll ai:ans) cout << ai << " "; cout << endl;
+
 
 
 }

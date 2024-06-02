@@ -2456,6 +2456,14 @@ T op(T a, T b){// A[i]はa<b
 T e(){return T({0,0,0});}
  
 
+/***
+ * 区間和、区間変更のlsegはそのままだとダメなのでSを定義する
+ * Sを定義したときはlseg作った後に初期化が必要
+***/
+// https://atcoder.jp/contests/abc356/submissions/54153131
+
+
+
 //--- opの順番を使う例 ---
 // https://atcoder.jp/contests/abl/submissions/46688883
 // mint ten[200020]; // 10^i

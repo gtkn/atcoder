@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-#include <atcoder/all>
-using namespace atcoder;
+//#include <atcoder/all>
+//using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -51,82 +51,78 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M,K;
+    cin >> N >> M >> K;
 
-    vec(string) S(N);
-    rep(i,N) cin >> S[i];
-    vec(ll) A(N);
-    rep(i,N) cin >> A[i];
+    vec(ll) C(N);
+    rep(i,N) cin >> C[i];
+    rep(i,N) C[i]--;
 
-    map<string,ll> mp;
-    rep(i,N) mp[S[i]] = 0;
-    rep(i,N) chmax(mp[S[i]],A[i]); 
 
-    ll nn = mp.size();
-    vec(string) S2;
-    vec(ll) A2;
-    for(auto [s,a]:mp){
-        S2.emplace_back(s);
-        A2.emplace_back(a);
+    if(K==1){
+        rep(_,N) cout << M << endl;
+        return;
     }
 
 
-    vvec(bool) isin(nn,vec(bool)(nn,false));
-    rep(i,nn)rep(j,nn){
-        if(i==j) continue;
-        string si = S2[i], sj = S2[j];
-        ll ni = si.size(), nj = sj.size();
-        if(ni >= nj) continue;;
 
-        string ss = si + "." + sj;
-        vec(int) z = z_algorithm(ss);
-        for(ll st=ni; st<ni+nj+1; ++st){
-            if(z[st]==ni){
-                isin[j][i] = true;
-                break;
-            }
+    vec(ll) C2 = C;
+    C2.insert(C2.end(),all(C));
+
+
+    vec(ll) b(N); // 色iの個数
+    for(ll ci:C) b[ci]++;
+
+    ll r = 0;
+    vec(ll) cnt(N); // 箱に入っている連続区間の中の色iの数
+    ll mcnt = 0;
+
+    while(r<N && mcnt<M){
+        ll ci = C2[r];
+        if(cnt[ci]%K==0) mcnt++;
+        cnt[ci]++;
+        r++;
+    }
+
+
+    auto f = [&](ll ii)->ll{
+        ll nn = (cnt[ii]+K-1)/K; // 色iiが使っている箱の数
+        return min(b[ii], nn*K);
+    };
+
+
+    ll res = 0;
+    rep(i,N) res += f(i);
+
+
+    vec(ll) ans;
+    rep(l,N){
+        ans.push_back(res);
+
+        ll ci = C2[l];
+
+        res -= f(ci);
+        cnt[C2[l]]--;
+        res += f(ci);
+
+        if(cnt[ci]%K!=0) continue;
+        
+        while(r<N+l+1){
+            ll cr = C2[r];
+            r++;
+
+            res -= f(cr);
+            cnt[cr]++;
+            res += f(cr);
+
+            if(cnt[cr]%K==1) break;
         }
     }
 
+    for(ll ai:ans) cout << ai << endl;
 
-    ll st = nn*2, gl = nn*2+1;
-    mf_graph<ll> mf(nn*2+2);
-
-    rep(i,nn) mf.add_edge(st,i,A2[i]);
-    rep(i,nn) mf.add_edge(nn+i,gl,A2[i]);
-    rep(i,nn)rep(j,nn){
-        if(isin[i][j]) mf.add_edge(i,nn+j,llINF);
-    }
-
-    ll atot = 0;
-    rep(i,nn) atot += A2[i];
-
-    ll fl = mf.flow(st,gl);
-
-    ll ans = atot - fl;
-
-    // cerr << atot << " " << fl << endl;
-    // rep(i,nn){
-    //     rep(j,nn) cerr << isin[i][j] << " "; cerr << endl;
-    // }
-    // rep(i,nn) cerr << S2[i] << " " << A2[i] << endl;
-
-    cout << ans << endl;
-
-
-
-    
 
 
 

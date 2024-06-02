@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -39,7 +39,7 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-constexpr ll llINF = 1LL << 61;
+constexpr ll llINF = 3e18;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
 
@@ -51,166 +51,151 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+/***
+ * 区間和、区間変更のlsegはそのままだとダメなのでSを定義する
+ * Sを定義したときはlseg作った後に初期化が必要
+***/
+
+
+ll op2(ll a,ll b){
+    return a+b;
+}
+ll ee2(){
+    return 0;
+}
+
+
+
+
+struct S{
+    ll sz;
+    ll val;
 };
+struct F{ll k;};
+
+S op(S l,S r){
+    return S{l.sz+r.sz, l.val+r.val};
+}
+S ee(){
+    return S{0,0};
+}
+
+S mapping(F f, S x){
+    if(f.k>=0) return S{ x.sz, f.k*x.sz };
+    return x;
+}
+F composition(F f,F g){
+    if(f.k>=0) return f;
+    return g;
+}
+F id(){return F{-1};}
 
 
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
+
+
 
 void solve(){
     ll Q,K;
     cin >> Q >> K;
 
+    vec(ll) t(Q),x(Q);
+    rep(i,Q) cin >> t[i] >> x[i];
+
+
     set<ll> st;
-    map<ll,ll> mf,mr;
+    for(ll xi:x) st.insert(xi);
     st.insert(-llINF);
     st.insert(llINF);
-    mf[-llINF] = 2*llINF;
-    mf[llINF] = 2*llINF;
-    mr[-llINF] = 2*llINF;
-    mr[llINF] = 2*llINF;
+    ll nn = 0;
+    map<ll,ll> mp;
+    for(ll xi:st) mp[xi] = nn++;
+    vec(ll) pm(nn);
+    for(ll xi:st) pm[mp[xi]] = xi;
 
-    map<ll,ll> gp;
-    gp[-llINF] = 0;
-    gp[llINF] = 1;
+    lazy_segtree<S,op,ee,F,mapping,composition,id> lseg(nn);
+    // set<ll> S;
+    // S.insert(-llINF);
+    // S.insert(llINF);
+    rep(i,nn) lseg.set(i,S{1,0});
+
+    segtree<ll,op2,ee2> seg(nn);
+    seg.set(0,1);
+    seg.set(nn-1,1);    
 
 
-    vec(ll) sz = {1,1};
-    ll nn = 2;
 
 
 
 
+    rep(i,Q){
+        ll xi = x[i];
+        ll y = mp[xi];
 
-    auto merge = [&](ll l,ll r)->void{
-        if(mf[l] > K) return;
+        if(t[i]==1){
+            ll l,r;
 
-        if(sz[gp[l]] < sz[gp[r]]){
-            ll id = gp[r];
-            ll now = l;
-            sz[id] += sz[gp[l]];
-            sz[gp[l]] = 0;
-            while(mr[now]<=K){
-                gp[now] = id;
-                now = now-mr[now];
+            ll tmpl=0,tmpr=y;
+            while(tmpr-tmpl>1){
+                ll mid = (tmpl+tmpr)/2;
+                if(seg.prod(mid,y)==0) tmpr = mid;
+                else tmpl = mid;
             }
-        }else{
-            ll id = gp[l];
-            ll now = r;
-            sz[id] += sz[gp[r]];
-            sz[gp[r]] = 0;
-            while(mf[now]<=K){
-                gp[now] = id;
-                now = now+mf[now];
+            l = tmpl;
+
+            tmpl = y+1, tmpr = nn;
+            while(tmpr-tmpl>1){
+                ll mid = (tmpl+tmpr)/2;
+                if(seg.prod(y+1,mid)==0) tmpl = mid;
+                else tmpr = mid;
             }
-        }
-    };
+            r = tmpl;
 
-
-    auto split = [&](ll l, ll r)->void{
-        sz[gp[l]]--;
-        if(mf[l] <= K){
-            return;
-        }
-
-        ll lsz = distance(st.begin(), st.upper_bound(l) );
-        ll id = nn++;
-        sz[id] = 0;
-        if(lsz*2 < st.size()){
-            ll now = l;
-            while(mr[now]<=K){
-                gp[now] = id;
-                sz[id]++;
-                sz[gp[r]]--;
-                now = now-mr[now];
-            }
-        }else{
-            ll now = r;
-            while(mf[now]<=K){
-                gp[now] = id;
-                sz[id]++;
-                sz[gp[l]]--;
-                now = now+mf[now];
-            } 
-        }
-    };
-
-
-
-    while(Q--){
-        ll t,x;
-        cin >> t >> x;
-
-        if(t==1){
-            if(st.find(x)==st.end()){
-                auto itr = st.upper_bound(x);
-                ll r = *itr;
-                ll l = *(--itr);
-
-                st.insert(x);
-
-                mf[l] = x-l;
-                mf[x] = r-x;
-                mr[x] = x-l;
-                mr[r] = r-x;
-
-                gp[x] = nn++;
-                sz.push_back(1);
-
-                merge(l,x);
-                merge(x,r);
+            if(seg.get(y)==0){
+                seg.set(y,1);
+                if(abs(pm[r]-xi)<=K) lseg.apply(y,r,F{1});
+                if(abs(xi-pm[l])<=K) lseg.apply(l,y,F{1});
             }else{
-                st.erase(x);
-
-                auto itr = st.upper_bound(x);
-                ll r = *itr;
-                ll l = *(--itr);
-
-                mf[l] = r-l;
-                mf[x] = llINF;
-                mr[x] = llINF;
-                mr[r] = r-l;
-
-                split(l,r);
+                seg.set(y,0);
+                if(abs(pm[r]-pm[l])>K) lseg.apply(l,r,F{0});
             }
-
-            cerr << "-----" << endl;
-            cerr << "st: ";
-            for(auto p:st){
-                cerr << p << " ";
-            }
-            cerr << endl;
-            cerr << "mf: ";
-            for(auto p:mf){
-                cerr << p.first << " " << p.second << "/ ";
-            }
-            cerr << endl;
-            cerr << "mr: ";
-            for(auto p:mr){
-                cerr << p.first << " " << p.second << "/ ";
-            }
-            cerr << endl;
-            cerr << "gp: ";
-            for(auto p:gp){
-                cerr << p.first << " " << p.second << "/ ";
-            }
-            cerr << endl;
-            cerr << "sz: ";
-            for(auto p:sz){
-                cerr << p << " ";
-            }
-            cerr << endl;
-
-
-
         }else{
-            cout << sz[gp[x]] << endl;
+            ll y = mp[xi];
+
+            ll l = y, r = nn;
+            while(r-l>1){
+                ll mid = (l+r)/2;
+                if(lseg.prod(y,mid).val==mid-y) l = mid;
+                else r = mid;
+            }
+            ll th1 = r;
+
+            l = 0, r = y;
+            while(r-l>1){
+                ll mid = (l+r)/2;
+                if(lseg.prod(mid,y).val==y-mid) r = mid;
+                else l = mid;
+            }
+            ll th0 = r;
+
+
+            ll res = seg.prod(th0,th1);
+            cout << res << endl;
         }
+
+        // cerr << "---" << i << "---" << endl;
+        // cerr << t[i] << " " << x[i] << endl;
+        // rep(i,nn) cerr << seg.get(i) << " "; cerr << endl;
+        // rep(i,nn) cerr << pm[i] << " "; cerr << endl;
+        // rep(i,nn) cerr << lseg.get(i).val << " "; cerr << endl;
+        // cerr << endl;
+
 
     }
+
+
+
+
+
 
 
 
