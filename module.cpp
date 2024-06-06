@@ -2784,6 +2784,7 @@ int lcm(int a, int b){
 }
 
 
+
 // extgcd
 // {g,x,y} : ax+by=g 
 tuple<ll,ll,ll> extgcd(ll a,ll b){
