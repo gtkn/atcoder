@@ -39,7 +39,7 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-constexpr ll llINF = 1LL << 60;
+constexpr ll llINF = 1LL << 61;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
 
@@ -53,7 +53,14 @@ constexpr char nl = '\n';
 
 
 ll op(ll a,ll b){return max(a,b);}
-ll e(){return 0;}
+ll ee(){return 0;}
+
+
+ll mul(ll a, ll b){
+    if(a==0 || b==0) return 0;
+    if(llINF/a < b) return llINF;
+    return a*b;
+}
 
 
 void solve(){
@@ -61,88 +68,81 @@ void solve(){
     cin >> N >> H;
 
     vec(ll) t(N),d(N);
-    segtree<ll,op,e> seg0(d);
-
     rep(i,N) cin >> t[i] >> d[i];
 
+
     set<ll> st;
-    st.insert(1);
-    rep(i,N) st.insert(t[i]);
+    for(ll ti:t) st.insert(ti);
+    st.insert(llINF);
 
-    map<ll,vector<ll>> memo;
-    rep(i,N) memo[t[i]].push_back(i);
+    segtree<ll,op,ee> segin(N),segout(N);
 
-    segtree<ll,op,e> seg1(d);
+    rep(i,N) segout.set(i,d[i]);
 
-    vec(ll) vt;
-    for(ll ti:st) vt.emplace_back(ti);
+    vec(Pll) tmemo(N);
+    rep(i,N) tmemo[i] = {t[i],i};
+    sort(all(tmemo),greater<Pll>());
 
-    ll nn = st.size();
-    vec(Pll) dmg;
-    // ll dmax = seg1.all_prod();
-    dmg.emplace_back( 0, seg1.all_prod() );
-    for(auto [ti, vi]:memo){
-        for(ll ii:vi){
-            seg1.set(ii,0);
-            seg0.set(ii,t[ii]*d[ii]);
-        }
-        dmg.emplace_back( seg0.all_prod(), seg1.all_prod() );
-    }
-
-    // cerr << "nn: " << nn << endl;
-    // cerr << "dmg: " << endl;
-    // rep(i,nn) cerr << vt[i] << " : " << dmg[i].first << " " << dmg[i].second << endl;
-
-
-    auto mul = [](ll a, ll b, ll th) {
-        if (a > th / b) {
-            return th;
-        } else {
-            return a * b;
-        }
-    };
-
-    auto f = [&](ll rem)->bool{
-        ll hp = H;
-        repr(i,nn){
-            ll ti = vt[i];
-            if(rem<ti) continue;
-
-            ll tt = rem-ti+1;
-            ll ttt = mul(tt,tt+1,llINF)/2;
-            // ll xx = max(dmg[i].first*tt, dmg[i].second*ttt );
-            ll xx = 0;
-            chmax(xx, mul(dmg[i].first, tt, hp) );
-            chmax(xx, mul(dmg[i].second, ttt, hp) );
-            if(dmg[i].first <= hp/tt + 1) chmax(xx, dmg[i].first*tt);
-            else chmax(xx, hp);
-
-
-            hp -= xx;
-            rem -= tt;
-            // cerr << "rem: " << rem << " hp: " << hp << " tt:" << tt << " xx:" << xx << endl;
-            // cerr << dmg[i].first << " " << dmg[i].second << endl;
-        }
-        // hp-=dmax;
-
-        return (hp<=0);
-    };
-
-    // f(576460752303423497);
-    // return;
     
+    ll pred = 0;
+    ll hp = H;
+
+    for(ll nowt:st){
+        while (!tmemo.empty() && tmemo.back().first <= pred) {
+            ll idx = tmemo.back().second;
+            segin.set(idx, d[idx]*t[idx]);
+            segout.set(idx,0);
+            tmemo.pop_back();
+        }
+
+        // inoutの切り替わりを計算
+        ll din = segin.all_prod();
+        ll dout = segout.all_prod();
+        ll l = pred, r = nowt+1;
+        while(r-l>1){
+            ll mid = (l+r)/2;
+            if(din>=dout*mid) l=mid;
+            else r=mid;
+        }
+
+        ll th = r;        
+        auto f = [&](ll tt)->ll{
+            ll res = 0;
+            {
+                ll tmp = min(th-1-pred, tt-pred);
+                res += mul(din, tmp);
+            }
+            if(tt>=th){
+                ll tmp = mul(tt+th, tt-th+1)/2;
+                res += mul(dout, tmp);
+            }
+            return res;
+        };
+        
+        ll dtot = f(nowt);
 
 
+        // cerr << "nowt: " << nowt << " , " << pred << " , " << th << " , " << dtot << endl;
 
-    ll l=0,r=llINF+10;
-    while(r-l>1){
-        ll mid = (l+r)/2;
-        if(f(mid)) r = mid;
-        else l = mid;
+        if(hp > dtot){
+            hp -= dtot;
+            pred = nowt;
+            continue;
+        }
+
+
+        // hp=0のタイミングを計算
+        l = pred; r = nowt+1;
+        while(r-l>1){
+            ll mid = (l+r)/2;
+            if(f(mid) >= hp) r=mid;
+            else l=mid;
+        }
+        cout << r << endl;
+        return;
+
     }
-
-    cout << r << endl;
-
+    
 
 }
 
