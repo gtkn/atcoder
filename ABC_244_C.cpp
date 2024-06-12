@@ -39,7 +39,7 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-constexpr ll llINF = 1LL << 61;
+constexpr ll llINF = 1LL << 60;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
 
@@ -64,6 +64,22 @@ void solve(){
     ll N;
     cin >> N;
 
+    ll nn = 2*N+1;
+    vec(bool) used(nn+1);
+
+    ll now = 1;
+    rep(_,N){
+        while(used[now] && now<=nn) now++;
+        cout << now << endl;
+        used[now] = true;
+        ll x;
+        cin >> x;
+        used[x] = true;
+    }
+
+    while(used[now] && now<=nn) now++;
+    cout << now << endl;
+    
 
 
 }

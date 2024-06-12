@@ -64,7 +64,17 @@ void solve(){
     ll N;
     cin >> N;
 
+    ll l=0, r=N;
+    for(ll i=0; i<20 && r-l>1; i++){
+        ll m = (l+r)/2;
+        cout << "? " << m+1 << endl;
+        ll s;
+        cin >> s;
+        if(s==1) r=m;
+        else l=m;
+    }
 
+    cout << "! " << r << endl;
 
 }
 

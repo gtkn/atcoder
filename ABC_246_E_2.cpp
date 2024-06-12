@@ -51,18 +51,58 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+
+struct state{
+    ll c,x,y,d;
+    state(ll c=0, ll x=0, ll y=0, ll d=0):c(c),x(x),y(y),d(d){}
 };
 
-
-vec(ll) dh = {1,0,-1,0};
-vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N;
     cin >> N;
+    ll Ax,Ay,Bx,By;
+    cin >> Ax >> Ay >> Bx >> By;
+    Ax--; Ay--; Bx--; By--;
+
+    vvec(bool) S(N,vec(bool)(N));
+    rep(i,N){
+        string si; cin >> si;
+        rep(j,N) S[i][j] = (si[j]=='#');
+    }
+
+    vec(Pll) dd = { {1,1}, {1,-1}, {-1,1}, {-1,-1} };
+
+    vvvec(ll) dp(N,vvec(ll)(N,vec(ll)(4,llINF)));
+    queue<state> q; // c,x,y,d
+    
+    auto qpush = [&](ll c, ll x, ll y, ll d)->void{
+        if(x<0 || x>=N || y<0 || y>=N) return;
+        if(S[x][y]) return;
+        if (chmin(dp[x][y][d],c)){
+            q.emplace(c,x,y,d);
+        }
+    };
+
+    rep(k,4) qpush(1,Ax,Ay,k);
+
+    while(!q.empty()){
+        auto [c,x,y,d] = q.front(); q.pop();
+        if(dp[x][y][d]<c) continue;
+
+        rep(k,4){
+            auto [dx,dy] = dd[k];
+            ll nx = x+dx, ny = y+dy;
+            ll nc = c+(k!=d);
+            qpush(nc,nx,ny,k);
+        }
+    }
+
+
+    ll ans = llINF;
+    rep(k,4) chmin(ans,dp[Bx][By][k]);
+    if(ans>=llINF) ans = -1;
+    cout << ans << endl;
 
 
 

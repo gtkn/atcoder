@@ -61,10 +61,27 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll X,A,D,N;
+    cin >> X >> A >> D >> N;
 
+    ll ans = llINF;
 
+    ll smin = A;
+    ll smax = A+D*(N-1);
+    if(smin > smax) swap(smin,smax);
+
+    chmin(ans,abs(X-smin));
+    chmin(ans,abs(X-smax));
+
+    ll ad = abs(D);
+
+    if(smin <= X && X <= smax && ad != 0){
+        ll r = mod(X-smin,ad);
+        chmin(ans,r);
+        chmin(ans,ad-r);
+    }
+
+    cout << ans << endl;
 
 }
 
