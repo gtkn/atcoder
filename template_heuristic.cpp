@@ -58,6 +58,15 @@ constexpr int Seed = 42;
 mt19937 rng(Seed);
 
 
+ll N;
+
+void get_input(){
+    cin >> N;
+}
+
+
+
+
 
 
 // 0.以上1.未満の整数をランダムに返す関数
@@ -124,14 +133,31 @@ struct Coordinate
     Coordinate(ll h=0, ll w=0):h(h),w(w){}
 };
 
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
+vec(string) drul = {"D","R","U","L"};
 
 
+
+
+
+
+class Answer{
+private:
+    
+public:
+    Answer() {
+    }
+};
+
+
+ll simulate(){
+    return 0;
+}
 
 
 class Solver{
 private:
-
-
 
 public:
     Solver(){
@@ -158,8 +184,7 @@ public:
 
 
 int main(){
-    ll N;
-    cin >> N;
+    get_input();
 
     Solver solver;
     solver.solve_sample();

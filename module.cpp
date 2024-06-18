@@ -970,7 +970,7 @@ vec(Pll) rangeMerge(vec(Pll) v){
     sort(all(v));
     res.push_back(v[0]);
     for(Pll vi:v){
-        if(res.back().first <= vi.first && vi.first < res.back().second){
+        if(res.back().first <= vi.first && vi.first < res.back().second){ // ここ<=のほうがいいかも
             chmax(res.back().second, vi.second);
         }else{
             res.push_back(vi);
