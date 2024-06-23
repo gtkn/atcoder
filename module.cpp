@@ -30,6 +30,87 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 数列の区間最小値を求める
+struct SparseTable {
+    int N;
+    vector<vector<ll>> table;
+    
+    SparseTable(const vector<ll>& arr) {
+        N = arr.size();
+        ll K = log2(N) + 1;
+        table.resize(N, vector<ll>(K));
+        
+        for (ll i = 0; i < N; i++) {
+            table[i][0] = arr[i];
+        }
+        
+        for (ll j = 1; (1 << j) <= N; j++) {
+            for (ll i = 0; i + (1 << j) <= N; i++) {
+                table[i][j] = min(table[i][j-1], table[i + (1 << (j-1))][j-1]);
+            }
+        }
+    }
+    
+    SparseTable() = default; // Add default constructor
+    
+    ll query(ll l, ll r) {
+        ll j = log2(r - l + 1);
+        return min(table[l][j], table[r - (1 << j) + 1][j]);
+    }
+};
+
+
+// 距離をO(1)で求めるLCA
+struct LCA2{
+    ll N;
+    vvec(ll) g;
+    vec(Pll) inout;
+    vec(ll) dep;
+    vec(ll) tour_dep, tour_index;
+    SparseTable st;
+
+    LCA2(vvec(ll) _g, ll rt = 0):g(_g){
+        N = g.size();
+        
+        dep.resize(N);
+        inout.resize(N);
+        dfs(rt,rt,0);
+        // cerr << "tour_index.size() = " << tour_index.size() << endl;
+
+        st = SparseTable(tour_dep);    
+    }
+
+    void dfs(ll now, ll frm, ll d){
+        dep[now] = d;
+        inout[now].first = tour_index.size();
+        tour_index.push_back(now);
+        tour_dep.push_back(d);
+        for(ll nxt:g[now]){
+            if(nxt==frm) continue;
+            dfs(nxt,now,d+1);
+            tour_index.push_back(now);
+            tour_dep.push_back(d);
+        }
+        inout[now].second = tour_index.size();
+        tour_index.push_back(now);
+        tour_dep.push_back(d);
+    }
+
+
+    ll get_dist(ll a,ll b){
+        ll l = min(inout[a].first,inout[b].first);
+        ll r = max(inout[a].second,inout[b].second);
+        // cerr << a << " " << b << " / " << l << " " << r << " : " << tour_dep.size() << endl;;
+        ll lca_dep = st.query(l,r);
+        return dep[a]+dep[b]-2*lca_dep;
+    }
+
+
+};
+
+
+
+
 
 
 // 約数列挙
