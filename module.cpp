@@ -29,6 +29,28 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+string runLengthEncoding(string s) {
+    ll n = s.size();
+    string compressed;
+    rep(i,n){
+        ll count = 1;
+        while (i + 1 < n && s[i] == s[i + 1]) {
+            count++;
+            i++;
+        }
+        compressed += s[i] + to_string(count);
+    }
+    return compressed;
+}
+
+
+string toBinary(ll num, int N) {
+    string binary;
+    repr(i,N) binary += (num & (1 << i)) ? '1' : '0';
+    return binary;
+}
+
+
 
 // 数列の区間最小値を求める
 struct SparseTable {
