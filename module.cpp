@@ -29,6 +29,13 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+// Auxiliary Tree
+// https://atcoder.jp/contests/abc340/submissions/54972680
+// 木から、ある頂点集合XとそのLCAの集合からなる木を作るやつ
+
+
+
 string runLengthEncoding(string s) {
     ll n = s.size();
     string compressed;
