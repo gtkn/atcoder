@@ -1320,7 +1320,7 @@ public:
 
 
 
-        vector<ll> A,B; // 先祖の数、子孫の数、どちらも自分を含む
+        vector<ll> A,B; // 先祖の数、子孫の数
 
         ll dfs(ll now, ll num){
             num += cnt[now];
@@ -1391,6 +1391,47 @@ auto getCent = [&](auto getCent, ll sz, ll now, ll frm) ->Pll{
     chmin(res, Pll(tmax,now));
     return res;
 };
+
+
+
+
+
+// 重心分解
+// https://atcoder.jp/contests/abc362/submissions/55560043
+ll getCentroid(const vvec(ll)& g, ll n, ll root) {
+    vec(ll) subtreeSize(n, 0);
+    function<void(ll, ll)> dfs = [&](ll u, ll p) {
+        subtreeSize[u] = 1;
+        for (ll v : g[u]) {
+            if (v != p) {
+                dfs(v, u);
+                subtreeSize[u] += subtreeSize[v];
+            }
+        }
+    };
+    dfs(root, -1);
+    ll centroid = root;
+    ll minSubtreeSize = n;
+    function<void(ll, ll)> findCentroid = [&](ll u, ll p) {
+        ll maxSubtreeSize = n - subtreeSize[u];
+        for (ll v : g[u]) {
+            if (v != p) {
+                maxSubtreeSize = max(maxSubtreeSize, subtreeSize[v]);
+                findCentroid(v, u);
+            }
+        }
+        if (maxSubtreeSize < minSubtreeSize) {
+            minSubtreeSize = maxSubtreeSize;
+            centroid = u;
+        }
+    };
+    findCentroid(root, -1);
+    return centroid;
+}
+// ll rt = getCentroid(g, N, 0);
+
+
+
 
 
 // ロールバック付きUnionFind

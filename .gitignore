@@ -1,0 +1,26 @@
+# 無視するファイル
+#.gitignore
+in.dat
+out.dat
+*.sh
+tmp.cpp
+module.cpp
+a.out
+result.txt
+*.ipynb
+test*
+
+Pipfile*
+
+PAST*
+botu_*
+sample_*
+AHC_*
+.vscode
+
+/atcoder/
+/ac-library/
+/.vscode/
+
+masters*
+track*
