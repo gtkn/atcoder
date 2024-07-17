@@ -61,29 +61,30 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N,L;
-    cin >> N >> L;
+    ll N;
+    cin >> N;
+    vec(ll) X(N),Y(N),Z(N);
+    rep(i,N) cin >> X[i] >> Y[i] >> Z[i];
 
-    vec(ll) A(N);
-    rep(i,N) cin >> A[i];
+    ll ztot = 0;
+    rep(i,N) ztot += Z[i];
 
-    ll M = 200020;
-    vec(ll) dp(M,llINF);
-    dp[0] = 0;
-
-    rep1(k,L-1){
-        ll w = k*(L-k);
-        for(ll i=w; i<M; i++){
-            chmin(dp[i],dp[i-w]+1);
+    vvec(ll) dp(N+1,vec(ll)(ztot+1,llINF));
+    dp[0][0] = 0;
+    rep(i,N)rep(j,ztot-Z[i]+1){
+        if(X[i]>Y[i]){
+            chmin(dp[i+1][j+Z[i]],dp[i][j]);
+        }else{
+            chmin(dp[i+1][j],dp[i][j]);
+            ll d = (Y[i]-X[i])/2 + 1;
+            chmin(dp[i+1][j+Z[i]],dp[i][j]+d);
         }
     }
 
-    for(ll ai:A){
-        ll ans = dp[ai];
-        if(ans>=llINF) ans = -1;
-        cout << ans << endl;
-    }
+    ll ans = llINF;
+    rep(j,ztot+1) if(j>ztot-j) chmin(ans,dp[N][j]);
 
+    cout << ans << endl;
 
 }
 

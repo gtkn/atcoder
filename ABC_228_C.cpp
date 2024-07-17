@@ -61,28 +61,25 @@ vec(ll) dh = {1,0,-1,0};
 vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N,L;
-    cin >> N >> L;
+    ll N,K;
+    cin >> N >> K;
 
-    vec(ll) A(N);
-    rep(i,N) cin >> A[i];
-
-    ll M = 200020;
-    vec(ll) dp(M,llINF);
-    dp[0] = 0;
-
-    rep1(k,L-1){
-        ll w = k*(L-k);
-        for(ll i=w; i<M; i++){
-            chmin(dp[i],dp[i-w]+1);
+    vec(ll) v(N);
+    rep(i,N){
+        rep(_,3){
+            ll pij; cin >> pij;
+            v[i] += pij;
         }
     }
+    vec(ll) v0 = v;
+    sort(all(v));
 
-    for(ll ai:A){
-        ll ans = dp[ai];
-        if(ans>=llINF) ans = -1;
-        cout << ans << endl;
+    rep(i,N){
+        ll th = v0[i] + 300;
+        int cnt = v.end() - upper_bound(all(v), th);
+        if(cnt<K) sayyn;
     }
+
 
 
 }
