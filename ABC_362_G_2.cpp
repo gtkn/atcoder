@@ -51,7 +51,6 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
 struct Aho_Corasick{
     using MP = unordered_map<char,ll>;
     vector<MP> to;
@@ -82,7 +81,6 @@ struct Aho_Corasick{
             ll now = q.front(); q.pop();
             for(auto& [c,nxt]:to[now]){
                 fail[nxt] = (*this)(fail[now],c);
-                cnt[nxt] += cnt[fail[nxt]]; // for ABC_268_H
                 q.push(nxt);
             }
         }
@@ -102,8 +100,6 @@ struct Aho_Corasick{
     ll operator[](ll pos) const {
         return cnt[pos];
     }
-
-
 };
 
 
@@ -111,24 +107,60 @@ struct Aho_Corasick{
 void solve(){
     string S;
     cin >> S;
-    ll N;
-    cin >> N;
-    vec(string) T(N);
-    rep(i,N) cin >> T[i];
+    ll Q;
+    cin >> Q;
+    vec(string) T(Q);
+    rep(i,Q) cin >> T[i];
 
     Aho_Corasick ac;
-    rep(i,N) ac.add(T[i]);
+    for(auto& t:T) ac.add(t);
+    ac.add(S);
     ac.init();
 
-    ll ans = 0, now = 0;
-    for(char c:S){
-        now = ac(now,c);
-        if(ac[now] > 0){
-            ans++;
-            now = 0;
+    ll nn = ac.to.size();
+
+    vvec(ll) g(nn);
+    rep(i,nn){
+        ll j = ac.fail[i];
+        if(j!=-1) g[j].push_back(i);
+    }
+
+    vvec(ll) vv(nn);
+    rep(i,Q){
+        ll now = 0;
+        for(char c:T[i]) now = ac(now,c);
+        vv[now].push_back(i);
+    }
+
+    vec(ll) scnt(nn);
+    {
+        ll now = 0;
+        for(char c:S){
+            now = ac(now,c);
+            scnt[now]++;
         }
     }
-    cout << ans << endl;
+
+    vec(ll) ans(Q);
+
+    auto f = [&](auto f,ll now)->ll{
+        ll cnt = scnt[now];
+        for(ll nxt:g[now]){
+            cnt += f(f,nxt);
+        }
+        for(ll idx:vv[now]){
+            ans[idx] += cnt;
+        }
+        return cnt;
+    };
+
+
+    f(f,0);
+
+    rep(i,Q) cout << ans[i] << endl;
+
+
+
 
 
 }

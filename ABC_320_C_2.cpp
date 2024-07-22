@@ -52,82 +52,30 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 
-struct Aho_Corasick{
-    using MP = unordered_map<char,ll>;
-    vector<MP> to;
-    vector<ll> cnt,fail;
-
-    Aho_Corasick():to(1),cnt(1){}
-
-    ll add(const string& s){ // trieにsを追加
-        ll now = 0;
-        for(char c:s){ // 1文字ずつ見ていく
-            if(!to[now].count(c)){ // まだないなら新しいノードを作る
-                to[now][c] = to.size();
-                to.emplace_back();
-                cnt.push_back(0);
-            }
-            now = to[now][c];
-        }
-        cnt[now]++; // このノードがsの終端であることを示す
-        return now;
-    }
-
-    void init(){ // fail関数を構築
-        fail = vector<ll>(to.size(),-1);
-        queue<ll> q;
-        q.push(0);
-
-        while(!q.empty()){
-            ll now = q.front(); q.pop();
-            for(auto& [c,nxt]:to[now]){
-                fail[nxt] = (*this)(fail[now],c);
-                cnt[nxt] += cnt[fail[nxt]]; // for ABC_268_H
-                q.push(nxt);
-            }
-        }
-    }
-
-    ll operator()(ll now, char c) const {
-        while( now != -1 ){
-            auto itr = to[now].find(c);
-            if (itr != to[now].end()){
-                return itr->second;
-            }
-            now = fail[now];
-        }
-        return 0;
-    }
-
-    ll operator[](ll pos) const {
-        return cnt[pos];
-    }
-
-
-};
-
-
-
 void solve(){
-    string S;
-    cin >> S;
-    ll N;
-    cin >> N;
-    vec(string) T(N);
-    rep(i,N) cin >> T[i];
+    ll M;
+    cin >> M;
 
-    Aho_Corasick ac;
-    rep(i,N) ac.add(T[i]);
-    ac.init();
+    vec(string) S(3);
+    rep(i,3) cin >> S[i];
 
-    ll ans = 0, now = 0;
-    for(char c:S){
-        now = ac(now,c);
-        if(ac[now] > 0){
-            ans++;
-            now = 0;
+
+
+    ll ans = llINF;
+
+    vec(ll) p = {0,1,2};
+
+
+    do{
+        rep(t0,M)rep1(t1,M)rep1(t2,M){
+            char c0 = S[p[0]][t0];
+            char c1 = S[p[1]][(t0+t1)%M];
+            char c2 = S[p[2]][(t0+t1+t2)%M];
+            if(c0==c1 && c1==c2) chmin(ans,t0+t1+t2);
         }
-    }
+    }while(next_permutation(all(p)));
+
+    if(ans>=llINF) ans = -1;
     cout << ans << endl;
 
 

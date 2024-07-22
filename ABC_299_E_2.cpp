@@ -51,84 +51,83 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-struct Aho_Corasick{
-    using MP = unordered_map<char,ll>;
-    vector<MP> to;
-    vector<ll> cnt,fail;
-
-    Aho_Corasick():to(1),cnt(1){}
-
-    ll add(const string& s){ // trieにsを追加
-        ll now = 0;
-        for(char c:s){ // 1文字ずつ見ていく
-            if(!to[now].count(c)){ // まだないなら新しいノードを作る
-                to[now][c] = to.size();
-                to.emplace_back();
-                cnt.push_back(0);
-            }
-            now = to[now][c];
-        }
-        cnt[now]++; // このノードがsの終端であることを示す
-        return now;
-    }
-
-    void init(){ // fail関数を構築
-        fail = vector<ll>(to.size(),-1);
-        queue<ll> q;
-        q.push(0);
-
-        while(!q.empty()){
-            ll now = q.front(); q.pop();
-            for(auto& [c,nxt]:to[now]){
-                fail[nxt] = (*this)(fail[now],c);
-                cnt[nxt] += cnt[fail[nxt]]; // for ABC_268_H
-                q.push(nxt);
-            }
-        }
-    }
-
-    ll operator()(ll now, char c) const {
-        while( now != -1 ){
-            auto itr = to[now].find(c);
-            if (itr != to[now].end()){
-                return itr->second;
-            }
-            now = fail[now];
-        }
-        return 0;
-    }
-
-    ll operator[](ll pos) const {
-        return cnt[pos];
-    }
-
-
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
 
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    string S;
-    cin >> S;
-    ll N;
-    cin >> N;
-    vec(string) T(N);
-    rep(i,N) cin >> T[i];
-
-    Aho_Corasick ac;
-    rep(i,N) ac.add(T[i]);
-    ac.init();
-
-    ll ans = 0, now = 0;
-    for(char c:S){
-        now = ac(now,c);
-        if(ac[now] > 0){
-            ans++;
-            now = 0;
-        }
+    ll N,M;
+    cin >> N >> M;
+    vvec(ll) g(N);
+    rep(_,M){
+        ll u,v;
+        cin >> u >> v;
+        --u; --v;
+        g[u].push_back(v);
+        g[v].push_back(u);
     }
-    cout << ans << endl;
+
+    ll K;
+    cin >> K;
+    vec(ll) p(K),d(K);
+    rep(i,K) cin >> p[i] >> d[i];
+    rep(i,K) p[i]--;
+
+
+    vec(bool) isw(N);
+    vvec(ll) vv(K);
+
+    rep(k,K){
+        // cerr << k << "---" << p[k]+1 << " , " << d[k] << endl;
+        vec(ll) dp(N,llINF);
+
+        priority_queue<Pll,vector<Pll>,greater<Pll>> pq;
+        auto push = [&](ll dist,ll pos)->void{
+            if(chmin(dp[pos],dist)) pq.emplace(dist,pos);
+        };
+        push(0,p[k]);
+
+        while(!pq.empty()){
+            auto [d0,now] = pq.top(); pq.pop();
+            // cerr << now << ":" << d0 << endl;
+            if(d0>dp[now]) continue;
+            if(d0==d[k]) vv[k].push_back(now);
+            if(d0>=d[k]) continue;
+            isw[now] = true;
+            for(ll nxt:g[now]) push(d0+1,nxt);
+        }
+
+        // rep(i,N) cerr << isw[i] << " "; cerr << endl;
+
+    }
+
+    // rep(k,K){
+    //     for(ll pos:vv[k]) cerr << pos+1 << " "; cerr << endl;
+    // }    
+
+
+    rep(k,K){
+        bool isok = false;
+        for(ll pos:vv[k]) if(!isw[pos]) isok=true;
+        if(!isok) sayno;
+    }    
+
+    
+
+
+    cout << "Yes" << endl;
+    rep(i,N) cout << !isw[i]; cout << endl; 
+
+
+
+
+
+
 
 
 }

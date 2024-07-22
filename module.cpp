@@ -30,6 +30,66 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
+// エイホ・コーラシック
+// https://atcoder.jp/contests/abc268/submissions/55837000
+// ある文字列が他の文字列の部分文字列として何回出現するかを求める
+struct Aho_Corasick{
+    using MP = unordered_map<char,ll>;
+    vector<MP> to;
+    vector<ll> cnt,fail;
+
+    Aho_Corasick():to(1),cnt(1){}
+
+    ll add(const string& s){ // trieにsを追加
+        ll now = 0;
+        for(char c:s){ // 1文字ずつ見ていく
+            if(!to[now].count(c)){ // まだないなら新しいノードを作る
+                to[now][c] = to.size();
+                to.emplace_back();
+                cnt.push_back(0);
+            }
+            now = to[now][c];
+        }
+        cnt[now]++; // このノードがsの終端であることを示す
+        return now;
+    }
+
+    void init(){ // fail関数を構築
+        fail = vector<ll>(to.size(),-1);
+        queue<ll> q;
+        q.push(0);
+
+        while(!q.empty()){
+            ll now = q.front(); q.pop();
+            for(auto& [c,nxt]:to[now]){
+                fail[nxt] = (*this)(fail[now],c);
+                cnt[nxt] += cnt[fail[nxt]]; // for ABC_268_H
+                q.push(nxt);
+            }
+        }
+    }
+
+    ll operator()(ll now, char c) const {
+        while( now != -1 ){
+            auto itr = to[now].find(c);
+            if (itr != to[now].end()){
+                return itr->second;
+            }
+            now = fail[now];
+        }
+        return 0;
+    }
+
+    ll operator[](ll pos) const {
+        return cnt[pos];
+    }
+
+
+};
+
+
+
 // Auxiliary Tree
 // https://atcoder.jp/contests/abc340/submissions/54972680
 // 木から、ある頂点集合XとそのLCAの集合からなる木を作るやつ

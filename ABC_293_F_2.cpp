@@ -51,83 +51,96 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-struct Aho_Corasick{
-    using MP = unordered_map<char,ll>;
-    vector<MP> to;
-    vector<ll> cnt,fail;
-
-    Aho_Corasick():to(1),cnt(1){}
-
-    ll add(const string& s){ // trieにsを追加
-        ll now = 0;
-        for(char c:s){ // 1文字ずつ見ていく
-            if(!to[now].count(c)){ // まだないなら新しいノードを作る
-                to[now][c] = to.size();
-                to.emplace_back();
-                cnt.push_back(0);
-            }
-            now = to[now][c];
-        }
-        cnt[now]++; // このノードがsの終端であることを示す
-        return now;
-    }
-
-    void init(){ // fail関数を構築
-        fail = vector<ll>(to.size(),-1);
-        queue<ll> q;
-        q.push(0);
-
-        while(!q.empty()){
-            ll now = q.front(); q.pop();
-            for(auto& [c,nxt]:to[now]){
-                fail[nxt] = (*this)(fail[now],c);
-                cnt[nxt] += cnt[fail[nxt]]; // for ABC_268_H
-                q.push(nxt);
-            }
-        }
-    }
-
-    ll operator()(ll now, char c) const {
-        while( now != -1 ){
-            auto itr = to[now].find(c);
-            if (itr != to[now].end()){
-                return itr->second;
-            }
-            now = fail[now];
-        }
-        return 0;
-    }
-
-    ll operator[](ll pos) const {
-        return cnt[pos];
-    }
-
-
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
 
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    string S;
-    cin >> S;
     ll N;
     cin >> N;
-    vec(string) T(N);
-    rep(i,N) cin >> T[i];
 
-    Aho_Corasick ac;
-    rep(i,N) ac.add(T[i]);
-    ac.init();
 
-    ll ans = 0, now = 0;
-    for(char c:S){
-        now = ac(now,c);
-        if(ac[now] > 0){
-            ans++;
-            now = 0;
+    auto f1 = [&](ll bmax)->ll{
+        // assert(bmax<1e8);
+        ll res = 0;
+        for(ll b = 2; b<=bmax; b++){
+            ll tmp = N;
+            bool isok = true;
+            ll cnt = 0;
+            while(tmp>0){
+                ll r = tmp%b;
+                if(r>1){
+                    isok=false;
+                    break;
+                }
+                tmp/=b;
+                cnt++;
+            }
+            if(isok && cnt>8) res++;
         }
-    }
+        return res;
+    };
+
+    auto g = [](ll b, ll z)->ll{
+        ll res = 0;
+        vec(ll) v;
+        while(z){
+            v.push_back(z&1);
+            z>>=1;
+        }
+        reverse(all(v));
+        for(bool vi:v){
+            if(res>llINF/b) return llINF;
+            res = res*b+vi;
+        }
+        return res;
+    };
+
+
+    auto f2 = [&](ll kmax)->ll{
+        ll res = 0;
+        for(ll z = 2; z < (1<<kmax); z++){
+            ll l = 2, r = N+1;
+            while(r-l>1){
+                ll m = (l+r)/2;
+                if( g(m,z)>N ) r=m;
+                else l = m;
+            }
+            if(g(l,z)==N){
+                res++;
+            }
+        }
+        return res;
+    };
+
+
+    auto h = [&]()->ll{
+        ll res=2;
+        for(ll x=2; x<N; x++){
+            ll tmp = 1;
+            rep(_,8){
+                if(tmp>N/x){
+                    tmp = llINF;
+                    break;
+                }
+                tmp *= x;
+            }
+            if(tmp<=N) res = x;
+            else break;
+        }
+        return res;
+    };
+
+
+
+    ll ans = 0;
+    ans += f2(8);
+    ans += f1(h());
     cout << ans << endl;
 
 
@@ -137,7 +150,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }
