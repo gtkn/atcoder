@@ -29,6 +29,31 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 最短経路で距離と価値を評価したいときの構造体
+// https://atcoder.jp/contests/adt_hard_20240724_1/submissions/55997262
+struct S {
+    ll dist;
+    ll value;
+    
+    S() : dist(llINF), value(0) {}
+    S(ll dist, ll value) : dist(dist), value(value) {}
+
+    bool operator<(const S& other) const {
+        if(dist != other.dist) return dist < other.dist;
+        return value > other.value;
+    }
+
+    bool operator>(const S& other) const {
+        if(dist != other.dist) return dist > other.dist;
+        return value < other.value;
+    }
+
+    S operator+(const S& other)  {
+        return S(dist+other.dist,value+other.value);
+    }
+};
+
+
 
 
 // 最長共通部分列, LCS
