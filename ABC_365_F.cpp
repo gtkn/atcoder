@@ -66,6 +66,105 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) L(N+1),U(N+1);
+    rep1(i,N) cin >> L[i] >> U[i];
+
+    ll Q;
+    cin >> Q;
+    vec(ll) sx(Q),sy(Q),tx(Q),ty(Q);
+    rep(i,Q) cin >> sx[i] >> sy[i] >> tx[i] >> ty[i];
+
+
+    vector<set<ll>> vs(N+1);
+    // vvec(ll) vv(N+1);
+    // rep1(i,N) vv[i].push_back(L[i]);
+    // rep1(i,N) vv[i].push_back(L[i]);
+
+    vec(Pll) rng(N+1);
+
+    rep1(i,N-1){
+        ll l = max(L[i],L[i+1]);
+        ll u = min(U[i],U[i+1]);
+        vs[i].insert(l);
+        vs[i].insert(u);
+        rng[i] = {l,u};
+    }
+
+    rep(i,Q){
+        vs[sx[i]].insert(sy[i]);
+    }
+    rep(i,Q){
+        vs[tx[i]].insert(ty[i]);
+    }
+
+    rep1(i,N-1){
+        for(ll y:vs[i]){
+            if(rng[i].first<=y && y<=rng[i].second){
+                vs[i+1].insert(y);
+            }
+        }
+    }
+
+
+    vvec(ll) vv(N+1);
+    rep1(i, N) {
+        for (ll y : vs[i]) {
+            vv[i].push_back(y);
+        }
+    }
+
+
+    ll nn = 0;
+    // rep1(i,N) nn += vs[i].size();
+
+    map<Pll,ll> mp;
+    rep1(x,N)for(ll y:vv[x]){
+        mp[{x,y}] = nn++;
+    }
+
+
+    vvec(Pll) g(nn);
+    rep1(x,N){
+        ll sz = g[x].size();
+        rep(i,sz-1){
+            ll y0 = vv[x][i];
+            ll y1 = vv[x][i+1];
+            g[mp[{x,y0}]].emplace_back(mp[{x,y1}],abs(y1-y0));
+            g[mp[{x,y1}]].emplace_back(mp[{x,y0}],abs(y1-y0));
+        }
+    }
+
+
+    rep1(x,N-1){
+        for(ll y:vv[x]){
+            if(rng[x].first <= y && y <= rng[x].second){
+                g[mp[{x,y}]].emplace_back(mp[{x+1,y}],1);
+            }
+        }
+    }
+
+
+    ll rt = sqrt(N);
+    map<Pll,ll> wp;   
+    for(ll a = 1; a<=N; a+=rt){
+        ll b = a+rt;
+        map<Pll,ll> dp;
+        for(ll y:vv[a]) dp[ {mp[{a,y}], mp[{a,y}] } ] = 0;
+        for(ll x=a; x<a+rt; x++){
+            
+        }
+
+
+
+
+    }
+
+
+
+
+
+
+
 
 
 }

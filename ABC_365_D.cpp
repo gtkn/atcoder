@@ -65,8 +65,31 @@ vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 void solve(){
     ll N;
     cin >> N;
+    string S;
+    cin >> S;
 
+    vec(ll) v(N);
+    rep(i,N){
+        if(S[i]=='R') v[i] = 0;
+        if(S[i]=='P') v[i] = 1;
+        if(S[i]=='S') v[i] = 2;
+    }
 
+    vvec(ll) dp(N+1,vec(ll)(3,0));
+    rep(i,N)rep(j,3){
+        rep(jj,3){
+            if(jj == (v[i]-1+3)%3) continue;
+            if(j==jj) continue;
+            ll d = 0;
+            if(jj == (v[i]+1)%3) d = 1;
+            chmax(dp[i+1][jj],dp[i][j]+d);
+        }
+    }
+
+    ll ans = 0;
+    rep(j,3) chmax(ans,dp[N][j]);
+
+    cout << ans << endl;
 
 }
 

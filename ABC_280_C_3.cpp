@@ -39,7 +39,6 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-inline Pll PllSum(Pll x, Pll y){return {x.first+y.first,x.second+y.second};}
 constexpr ll llINF = 1LL << 61;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
@@ -58,13 +57,22 @@ struct edge{
 };
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
-    ll N;
-    cin >> N;
+    string S,T;
+    cin >> S >> T;
+
+    ll n = S.size();
+    rep(i,n){
+        if(S[i]!=T[i]){
+            cout << i+1 << endl;
+            return;
+        }
+    }
+
+    cout << n+1 << endl;
 
 
 

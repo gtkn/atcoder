@@ -39,7 +39,6 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-inline Pll PllSum(Pll x, Pll y){return {x.first+y.first,x.second+y.second};}
 constexpr ll llINF = 1LL << 61;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
@@ -58,14 +57,37 @@ struct edge{
 };
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+vec(ll) dh = {1,0,-1,0};
+vec(ll) dw = {0,1,0,-1};
 
 void solve(){
     ll N;
     cin >> N;
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
 
+    vec(ll) v(N);
+    rep(i,N) v[i] = i;
+    sort(all(v),[&](ll i, ll j){
+        return S[i] < S[j];
+    });
+
+    vec(ll) ans(N);
+    rep(i,N-1){
+        ll i0 = v[i], i1 = v[i+1];
+        string s0 = S[i0], s1 = S[i1];
+
+        ll cnt = 0;
+        rep(j,min(s0.size(),s1.size())){
+            if( s0[j] == s1[j] ) cnt++;
+            else break;
+        }
+
+        chmax(ans[i0],cnt);
+        chmax(ans[i1],cnt);
+    }
+
+    rep(i,N) cout << ans[i] << endl;
 
 
 }

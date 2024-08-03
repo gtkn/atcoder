@@ -63,9 +63,33 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
 
+    vec(ll) A(N);
+    rep(i,N) cin >> A[i];
+
+
+    auto f = [&](ll x)->bool{
+        ll tot = 0;
+        rep(i,N) tot += min(x,A[i]);
+        return tot <= M;
+    };
+
+    if(f(llINF)){
+        cout << "infinite" << endl;
+        return;
+    }
+
+
+    ll l = 0, r = 1e9+10;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)) l = mid;
+        else r = mid;
+    }
+
+    cout << l << endl;
 
 
 }

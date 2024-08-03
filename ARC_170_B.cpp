@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+// #include <atcoder/all>
+// using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -52,20 +52,60 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
+
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N);
+    rep(i,N) cin >> A[i];
+    rep(i,N) A[i]--;
 
+    vvec(ll) pos(10);
+    rep(i,N) pos[A[i]].push_back(i);
+
+
+    vvec(ll) delq(N+1);
+    multiset<ll> st;
+
+    rep(j,N){
+        ll aj = A[j];
+        for(ll d=-4; d<=4; ++d){
+            ll ai = aj-d;
+            ll ak = aj+d;
+            if(ai<0 || ai>=10 || ak<0 || ak>=10) continue;
+
+            auto itr1 = lower_bound(all(pos[ai]),j);
+            if(itr1 == pos[ai].begin()) continue;
+            ll i = *(--itr1);
+
+            auto itr2 = upper_bound(all(pos[ak]),j);
+            if(itr2 == pos[ak].end()) continue;
+            ll k = *itr2;
+
+            // cerr << i << ' ' << j << ' ' << k << "," << d << endl;
+            // ans += (i+1)*(N-k);
+
+            st.insert(k);
+            delq[i+1].push_back(k);
+        }
+    }
+
+
+    ll ans = 0;
+    rep(i,N){
+        for(auto k: delq[i]){
+            st.erase(st.find(k));
+        }
+        if(st.empty()) continue;
+        ll k = *st.begin();
+        ans += N-k;
+    }
+
+    cout << ans << endl;
 
 
 }

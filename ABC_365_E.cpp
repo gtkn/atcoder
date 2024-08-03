@@ -52,20 +52,35 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+// using bs = bitset<32>;
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N);
+    rep(i,N) cin >> A[i];   
 
+
+    ll ans = 0;
+    rep(b,32){
+        vec(ll) cnt(N+1);
+        rep(i,N){
+            cnt[i+1] = cnt[i] + bit(A[i],b);
+        }
+        ll ocnt = 0, ecnt = 0, pcnt = 0;
+        rep(i,N-1){
+            if(cnt[i]&1) ocnt++;
+            else ecnt++;
+
+            if(cnt[i+2]&1) pcnt += ecnt;
+            else pcnt += ocnt;
+        }
+        // cerr << "b: " << b << " pcnt: " << pcnt << endl;
+
+        ans += pcnt * (1LL<<b);
+    }
+
+    cout << ans << endl;
 
 
 }

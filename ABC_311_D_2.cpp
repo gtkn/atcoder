@@ -52,19 +52,50 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
 
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+
+    vec(string) S(N);
+    rep(i,N) cin >> S[i];
+
+    vvec(bool) used(N,vec(bool)(M));
+    vvec(bool) checled(N,vec(bool)(M));
+
+    auto f = [&](Pll now, ll k)->Pll{
+        while( 1 ){
+            used[now.first][now.second] = true;
+            Pll nxt = PllSum(now,dhw[k]);
+            if( nxt.first<0 || nxt.first>=N || nxt.second<0 || nxt.second>=M ) break;
+            if( S[nxt.first][nxt.second]=='#' ) break;
+            now = nxt;
+        }
+        return now;
+    };
+
+    queue<Pll> q;
+    q.push({1,1});
+
+    while(!q.empty()){
+        Pll now = q.front(); q.pop();
+        if( checled[now.first][now.second] ) continue;
+        checled[now.first][now.second] = true;
+        rep(k,4){
+            Pll nxt = f(now,k);
+            if( !checled[nxt.first][nxt.second] ) q.push(nxt);
+        }
+    }
+
+    ll ans = 0;
+    rep(i,N) rep(j,M){
+        if( used[i][j] ) ++ans;
+    }
+
+    cout << ans << endl;
+
 
 
 

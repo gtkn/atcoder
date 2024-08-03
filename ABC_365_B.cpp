@@ -66,6 +66,16 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(Pll) v(N);
+    rep(i,N){
+        ll a; cin >> a;
+        v[i] = {a,i};
+    }
+
+    sort(all(v));
+
+    ll ans = v[N-2].second;
+    cout << ans+1 << endl;
 
 
 }

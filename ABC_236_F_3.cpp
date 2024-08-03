@@ -39,7 +39,6 @@ using tri = tuple<ll,ll,ll>;
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
 template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
 inline ll mod(ll a, ll m) {return (a % m + m) % m;}
-inline Pll PllSum(Pll x, Pll y){return {x.first+y.first,x.second+y.second};}
 constexpr ll llINF = 1LL << 61;
 constexpr int iINF = 1e9;
 constexpr char nl = '\n';
@@ -52,19 +51,31 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
     ll N;
     cin >> N;
+
+    ll nn = (1<<N);
+    vec(ll) c(nn);
+    rep1(i,nn-1) cin >> c[i];  
+
+    vec(Pll) v(nn);
+    rep(i,nn) v[i] = {c[i],i};
+    sort(all(v));
+
+    vec(bool) used(nn);
+    ll ans = 0;
+
+    for(auto [ci,bi]:v){
+        if(used[bi]) continue;
+        ans += ci;
+        used[bi] = true;
+        rep(bj,nn)if(used[bj]) used[ bi^bj ] = true;
+    }
+
+    cout << ans << endl;    
+
 
 
 

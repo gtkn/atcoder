@@ -63,9 +63,26 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll Y;
+    cin >> Y;
 
+    ll n = 365;
+    if(Y%4!=0){
+        cout << n << endl;
+        return;
+    }
+
+    if(Y%100!=0){
+        cout << n+1 << endl;
+        return;
+    }
+
+    if(Y%400!=0){
+        cout << n << endl;
+        return;
+    }
+
+    cout << n+1 << endl;
 
 
 }
