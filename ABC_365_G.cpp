@@ -63,8 +63,61 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+
+    vec(ll) T(M),P(M);
+    rep(i,M) cin >> T[i] >> P[i];
+
+    vvec(Pll) vv(N+1);
+    vec(ll) memo(N+1,llINF);
+    rep(i,M){
+        ll pi = P[i], ti = T[i];
+        if(memo[pi]==llINF){
+            memo[pi] = ti;
+        }else{
+            vv[pi].emplace_back(memo[pi],ti);
+            memo[pi] = llINF;
+        }
+    }
+
+
+    map<Pll,ll> mp;
+
+    auto f = [&](ll a, ll b)->ll{
+        // if(vv[a].size() > vv[b].size()) swap(a,b);
+
+        ll res = 0;
+        ll x = 0;
+        for(auto [l,r]: vv[a]){
+            while(x < vv[b].size() && vv[b][x].first < r){
+                ll w = min(r,vv[b][x].second) - max(l,vv[b][x].first);
+                if(w>0) res += w;
+                if(r <= vv[b][x].second) break;
+                x++;
+            }
+        }
+        return res;
+    };
+
+
+
+    ll Q;
+    cin >> Q;
+    while(Q--){
+        ll a,b;
+        cin >> a >> b;
+
+        if(mp.find({a,b})!=mp.end()){
+            cout << mp[{a,b}] << nl;
+            continue;
+        }
+
+        ll res = f(a,b);
+        mp[{a,b}] = res;
+        cout << res << nl;
+
+    }
 
 
 

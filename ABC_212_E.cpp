@@ -33,7 +33,7 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -63,8 +63,35 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M,K;
+    cin >> N >> M >> K;
+
+    vvec(ll) g(N);
+    vec(ll) U(M),V(M);
+    rep(i,M){
+        cin >> U[i] >> V[i];
+        --U[i]; --V[i];
+        g[U[i]].push_back(V[i]);
+        g[V[i]].push_back(U[i]);
+    }
+
+
+    vvec(mint) dp(K+1,vec(mint)(N,0));
+    dp[0][0]=1;
+
+    rep(i,K){
+        mint tot = 0;
+        rep(j,N) tot += dp[i][j];
+
+        rep(j,N){
+            dp[i+1][j] = tot - dp[i][j];
+            for(ll frm: g[j]){
+                dp[i+1][j] -= dp[i][frm];
+            }
+        }
+    }
+
+    cout << dp[K][0].val() << endl;
 
 
 

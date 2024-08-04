@@ -33,7 +33,7 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-//using mint = modint998244353;
+using mint = modint998244353;
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -52,20 +52,42 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
 
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll P;
+    cin >> P;
 
+
+    mint ans = 1;
+
+    ll p = P-1;
+    set<ll> yakusuu;
+    for(ll x = 1; x*x <= p; ++x){
+        if(p%x==0){
+            yakusuu.insert(x);
+            yakusuu.insert(p/x);
+        }
+    }
+
+    vec(ll) y(all(yakusuu));
+    reverse(all(y));
+    // cerr << y.size() << endl;
+
+    map<ll,mint> mp;
+    for(ll g:y){
+        mint cnt = p/g;
+        for(auto [gg,c]:mp){
+            if(gg%g==0){
+                cnt -= c;
+            }
+        }
+        mp[g] = cnt;
+        ans += cnt * p/g;
+        // cerr << g << " " << mp[g].val() << endl;
+    }
+
+    cout << ans.val() << endl;
 
 
 }

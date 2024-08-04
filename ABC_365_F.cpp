@@ -1,8 +1,8 @@
 //title
 #include <bits/stdc++.h>
 using namespace std;
-//#include <atcoder/all>
-//using namespace atcoder;
+#include <atcoder/all>
+using namespace atcoder;
 #define rep(i,n) for (ll i = 0; i < (n); ++i)
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
@@ -52,15 +52,46 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+
+struct S{
+    ll l,r,d;
+    S(ll l=0, ll r=llINF, ll d=-1):l(l),r(r),d(d){}
+
+    Pll operator()(ll s){
+        if(d==-1){ // A
+            if(s<l) return {l,l-s};
+            if(s>r) return {r,s-r};
+            return {s,0};
+        }else{
+            return {r, d+abs(s-l)};
+        }
+    }
+
 };
 
+S op(S a, S b){
+    if(a.d==-1){
+        if(b.d==-1){
+            if(a.r < b.l) return S(a.r, b.l, b.l-a.r);
+            if(a.l > b.r) return S(a.l, b.r, a.l-b.r);
+            return S(max(a.l,b.l), min(a.r,b.r), -1);
+        }else{ // A->B
+            auto [t,d] = a(b.l);
+            return S(t, b.r, b.d+d);
+        }
+    }else{ // B->?
+        auto [t,d] = b(a.r);
+        return S(a.l, t, a.d+d);
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+    }
+}
+S ee(){
+    return S();
+}
+
+
+
+
 
 void solve(){
     ll N;
@@ -69,95 +100,111 @@ void solve(){
     vec(ll) L(N+1),U(N+1);
     rep1(i,N) cin >> L[i] >> U[i];
 
+    segtree<S,op,ee> seg(N+1);
+    rep1(i,N) seg.set(i,S(L[i],U[i],-1));
+
     ll Q;
     cin >> Q;
-    vec(ll) sx(Q),sy(Q),tx(Q),ty(Q);
-    rep(i,Q) cin >> sx[i] >> sy[i] >> tx[i] >> ty[i];
+    while(Q--){
+        ll sx,sy,tx,ty;
+        cin >> sx >> sy >> tx >> ty;
+        if(sx>tx) swap(sx,tx), swap(sy,ty);
+        S f = seg.prod(sx,tx);
+        auto [y,d] = f(sy);
+        d += abs(y-ty);
+        d += abs(sx-tx);
+        cout << d << endl;
+    }
 
 
-    vector<set<ll>> vs(N+1);
+
+
+
+    // ll Q;
+    // cin >> Q;
+    // vec(ll) sx(Q),sy(Q),tx(Q),ty(Q);
+    // rep(i,Q) cin >> sx[i] >> sy[i] >> tx[i] >> ty[i];
+
+
+    // vector<set<ll>> vs(N+1);
+    // // vvec(ll) vv(N+1);
+    // // rep1(i,N) vv[i].push_back(L[i]);
+    // // rep1(i,N) vv[i].push_back(L[i]);
+
+    // vec(Pll) rng(N+1);
+
+    // rep1(i,N-1){
+    //     ll l = max(L[i],L[i+1]);
+    //     ll u = min(U[i],U[i+1]);
+    //     vs[i].insert(l);
+    //     vs[i].insert(u);
+    //     rng[i] = {l,u};
+    // }
+
+    // rep(i,Q){
+    //     vs[sx[i]].insert(sy[i]);
+    // }
+    // rep(i,Q){
+    //     vs[tx[i]].insert(ty[i]);
+    // }
+
+    // rep1(i,N-1){
+    //     for(ll y:vs[i]){
+    //         if(rng[i].first<=y && y<=rng[i].second){
+    //             vs[i+1].insert(y);
+    //         }
+    //     }
+    // }
+
+
     // vvec(ll) vv(N+1);
-    // rep1(i,N) vv[i].push_back(L[i]);
-    // rep1(i,N) vv[i].push_back(L[i]);
-
-    vec(Pll) rng(N+1);
-
-    rep1(i,N-1){
-        ll l = max(L[i],L[i+1]);
-        ll u = min(U[i],U[i+1]);
-        vs[i].insert(l);
-        vs[i].insert(u);
-        rng[i] = {l,u};
-    }
-
-    rep(i,Q){
-        vs[sx[i]].insert(sy[i]);
-    }
-    rep(i,Q){
-        vs[tx[i]].insert(ty[i]);
-    }
-
-    rep1(i,N-1){
-        for(ll y:vs[i]){
-            if(rng[i].first<=y && y<=rng[i].second){
-                vs[i+1].insert(y);
-            }
-        }
-    }
+    // rep1(i, N) {
+    //     for (ll y : vs[i]) {
+    //         vv[i].push_back(y);
+    //     }
+    // }
 
 
-    vvec(ll) vv(N+1);
-    rep1(i, N) {
-        for (ll y : vs[i]) {
-            vv[i].push_back(y);
-        }
-    }
+    // ll nn = 0;
+    // // rep1(i,N) nn += vs[i].size();
+
+    // map<Pll,ll> mp;
+    // rep1(x,N)for(ll y:vv[x]){
+    //     mp[{x,y}] = nn++;
+    // }
 
 
-    ll nn = 0;
-    // rep1(i,N) nn += vs[i].size();
-
-    map<Pll,ll> mp;
-    rep1(x,N)for(ll y:vv[x]){
-        mp[{x,y}] = nn++;
-    }
-
-
-    vvec(Pll) g(nn);
-    rep1(x,N){
-        ll sz = g[x].size();
-        rep(i,sz-1){
-            ll y0 = vv[x][i];
-            ll y1 = vv[x][i+1];
-            g[mp[{x,y0}]].emplace_back(mp[{x,y1}],abs(y1-y0));
-            g[mp[{x,y1}]].emplace_back(mp[{x,y0}],abs(y1-y0));
-        }
-    }
+    // vvec(Pll) g(nn);
+    // rep1(x,N){
+    //     ll sz = g[x].size();
+    //     rep(i,sz-1){
+    //         ll y0 = vv[x][i];
+    //         ll y1 = vv[x][i+1];
+    //         g[mp[{x,y0}]].emplace_back(mp[{x,y1}],abs(y1-y0));
+    //         g[mp[{x,y1}]].emplace_back(mp[{x,y0}],abs(y1-y0));
+    //     }
+    // }
 
 
-    rep1(x,N-1){
-        for(ll y:vv[x]){
-            if(rng[x].first <= y && y <= rng[x].second){
-                g[mp[{x,y}]].emplace_back(mp[{x+1,y}],1);
-            }
-        }
-    }
+    // rep1(x,N-1){
+    //     for(ll y:vv[x]){
+    //         if(rng[x].first <= y && y <= rng[x].second){
+    //             g[mp[{x,y}]].emplace_back(mp[{x+1,y}],1);
+    //         }
+    //     }
+    // }
 
 
-    ll rt = sqrt(N);
-    map<Pll,ll> wp;   
-    for(ll a = 1; a<=N; a+=rt){
-        ll b = a+rt;
-        map<Pll,ll> dp;
-        for(ll y:vv[a]) dp[ {mp[{a,y}], mp[{a,y}] } ] = 0;
-        for(ll x=a; x<a+rt; x++){
-            
-        }
+    // ll rt = sqrt(N);
+    // map<Pll,ll> wp;   
+    // for(ll a = 1; a<=N; a+=rt){
+    //     ll b = a+rt;
+    //     map<Pll,ll> dp;
+    //     for(ll y:vv[a]) dp[ {mp[{a,y}], mp[{a,y}] } ] = 0;
+    //     for(ll x=a; x<a+rt; x++){
 
-
-
-
-    }
+    //     }
+    // }
 
 
 
