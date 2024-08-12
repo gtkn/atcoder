@@ -46,91 +46,88 @@ const int iINF = 1e9;
 #define yn {puts("Yes");}else{puts("No");}
 
 //------------------------------------------------
-// 掃き出し法?
-// 一般的な型に対応するためのテンプレート
-template <typename T>
-struct Matrix {
-    vector<vector<T>> data;
 
-    Matrix(int rows, int cols) : data(rows, vector<T>(cols)) {}
 
-    int rows() const { return data.size(); }
-    int cols() const { return data[0].size(); }
+using mint = modint;
+
+// xの1次式に対するFPS
+struct FPS1d{
+    ll K; // 最大次数-1 // x^0, x^1, ..., x^(K-1)
+    vec(mint) coeffs;
+
+    FPS1d(ll K=1):K(K){
+        coeffs.resize(K);
+    }
+
+    void add(mint a, mint b){ // += a*x + b
+        coeffs[1] += a;
+        coeffs[0] += b;
+    }
+
+    void mul(mint a, mint b){ // *= a*x + b
+        for(ll i=K-1; i>0; --i){            
+            coeffs[i] = coeffs[i-1]*a + coeffs[i]*b;
+        }
+        coeffs[0] *= b;
+    }   
+
+    void div(mint a, mint b){ // /= a*x + b
+        if(a==mint(0) && b == mint(0)){
+            return;
+        }
+
+        if(a==mint(0)){
+            rep(i,K) coeffs[i] /= b;
+            return;
+        }
+
+        // if(b==mint(0)){
+        //     rep(i,K-1){
+        //         coeffs[i] = coeffs[i+1]/a;
+        //     }
+        //     coeffs[K-1] = mint(0);
+        //     return;
+        // }
+
+        vec(mint) tmp(K);
+        repr(i,K-1){
+            tmp[i] = (coeffs[i+1] - b*tmp[i+1])/a;
+        }
+        swap(coeffs,tmp);
+
+        // rep(i,K){
+        //     if(i==0){
+        //         coeffs[0] /= b;
+        //     }else{
+        //         coeffs[i] = (coeffs[i]-coeffs[i-1]*a)/b;
+        //     }
+        // }
+    }
 };
 
-template <typename T>
-struct Vector {
-    vector<T> data;
 
-    Vector(int size) : data(size) {}
 
-    int size() const { return data.size(); }
-};
+// Lagrange interpolation
+vector<mint> lagrange_interpolation(const vector<mint>& x, const vector<mint>& y) {
+    ll K = x.size();
 
-// 行列の表示
-template <typename T>
-void printMatrix(const Matrix<T>& mat) {
-    int rows = mat.rows();
-    int cols = mat.cols();
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            cout << mat.data[i][j] << "\t";
-        }
-        cout << endl;
+    FPS1d f(K+1);
+    f.coeffs[0] = 1;
+
+    rep(i,K) f.mul(mint(1),-x[i] );
+
+    vec(mint) res(K);
+    rep(i,K){
+        FPS1d f2 = f;
+        f2.div(mint(1),-x[i]);
+
+        mint c = y[i];
+        rep(j,K)if(i!=j) c /= (x[i]-x[j]);
+        rep(j,K) res[j] += f2.coeffs[j]*c;
     }
+    return res;
 }
 
-// 連立方程式の解を計算する関数（テンプレート化）
-template <typename T>
-Vector<T> solveLinearEquations(const Matrix<T>& A, const Vector<T>& b) {
-    int N = A.rows();
-    Matrix<T> augmentedMatrix(N, N + 1);
-
-    // 係数行列と右辺ベクトルを合併
-    for (int i = 0; i < N; ++i) {
-        for (int j = 0; j < N; ++j) {
-            augmentedMatrix.data[i][j] = A.data[i][j];
-        }
-        augmentedMatrix.data[i][N] = b.data[i];
-    }
-
-    // ガウシアン消去法
-    for (int i = 0; i < N; ++i) {
-        // ピボット選択
-        int pivotRow = i;
-        for (int j = i + 1; j < N; ++j) {
-            // if (abs(augmentedMatrix.data[j][i]) > abs(augmentedMatrix.data[pivotRow][i])) {
-            if (augmentedMatrix.data[j][i].val() > augmentedMatrix.data[pivotRow][i].val()) {
-                pivotRow = j;
-            }
-        }
-        swap(augmentedMatrix.data[i], augmentedMatrix.data[pivotRow]);
-
-        // ピボット要素を1にする
-        T pivot = augmentedMatrix.data[i][i];
-        for (int j = i; j <= N; ++j) {
-            augmentedMatrix.data[i][j] /= pivot;
-        }
-
-        // 他の行から現在の行を引く
-        for (int k = 0; k < N; ++k) {
-            if (k != i) {
-                T factor = augmentedMatrix.data[k][i];
-                for (int j = i; j <= N; ++j) {
-                    augmentedMatrix.data[k][j] -= factor * augmentedMatrix.data[i][j];
-                }
-            }
-        }
-    }
-
-    // 解を取得
-    Vector<T> solution(N);
-    for (int i = 0; i < N; ++i) {
-        solution.data[i] = augmentedMatrix.data[i][N];
-    }
-
-    return solution;
-}
 
 
 
@@ -140,28 +137,16 @@ void solve(){
     vec(ll) a(p);
     rep(i,p) cin >> a[i];
 
-
     // modがテストケースで変わるとき
-    using mint = modint;
     mint::set_mod(p);
 
-
-    // 連立方程式を解く
-    Matrix<mint> X(p, p);
-    Vector<mint> Y(p);
     
-    rep(i,p){
-        mint x = 1;
-        rep(j,p){
-            X.data[i][j] = x;
-            x *= i;
-        }
-    }
-    rep(i,p) Y.data[i] = a[i];
+    vec(mint) x(p),y(p);
+    rep(i,p) x[i] = mint(i);
+    rep(i,p) y[i] = mint(a[i]);
 
-
-    Vector<mint> ans = solveLinearEquations(X, Y);
-    rep(i,p) cout << ans.data[i].val() << " "; cout << endl;
+    vec(mint) ans = lagrange_interpolation(x,y);
+    rep(i,p) cout << ans[i].val() << " "; cout << endl;
 
 
 

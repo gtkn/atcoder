@@ -29,6 +29,137 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+
+
+
+
+// xの1次式に対するFPS
+struct FPS1d{
+    ll K; // 最大次数-1 // x^0, x^1, ..., x^(K-1)
+    vec(mint) coeffs;
+
+    FPS1d(ll K=1):K(K){
+        coeffs.resize(K);
+    }
+
+    void add(mint a, mint b){ // += a*x + b
+        coeffs[1] += a;
+        coeffs[0] += b;
+    }
+
+    void mul(mint a, mint b){ // *= a*x + b
+        for(ll i=K-1; i>0; --i){            
+            coeffs[i] = coeffs[i-1]*a + coeffs[i]*b;
+        }
+        coeffs[0] *= b;
+    }   
+
+    void div(mint a, mint b){ // /= a*x + b
+        if(a==mint(0) && b == mint(0)){
+            return;
+        }
+
+        if(a==mint(0)){
+            rep(i,K) coeffs[i] /= b;
+            return;
+        }
+
+        // if(b==mint(0)){
+        //     rep(i,K-1){
+        //         coeffs[i] = coeffs[i+1]/a;
+        //     }
+        //     coeffs[K-1] = mint(0);
+        //     return;
+        // }
+
+        vec(mint) tmp(K);
+        repr(i,K-1){
+            tmp[i] = (coeffs[i+1] - b*tmp[i+1])/a;
+        }
+        swap(coeffs,tmp);
+
+        // rep(i,K){
+        //     if(i==0){
+        //         coeffs[0] /= b;
+        //     }else{
+        //         coeffs[i] = (coeffs[i]-coeffs[i-1]*a)/b;
+        //     }
+        // }
+    }
+};
+
+
+// ラグランジュ補完
+// N点(x,y)が与えられたとき、N-1次の多項式を求める
+// Lagrange interpolation
+vector<mint> lagrange_interpolation(const vector<mint>& x, const vector<mint>& y) {
+    ll K = x.size();
+
+    FPS1d f(K+1);
+    f.coeffs[0] = 1;
+
+    rep(i,K) f.mul(mint(1),-x[i] );
+
+    vec(mint) res(K);
+    rep(i,K){
+        FPS1d f2 = f;
+        f2.div(mint(1),-x[i]);
+
+        mint c = y[i];
+        rep(j,K)if(i!=j) c /= (x[i]-x[j]);
+        rep(j,K) res[j] += f2.coeffs[j]*c;
+    }
+    return res;
+}
+
+
+
+
+
+
+// https://atcoder.jp/contests/abc366/submissions/56581995
+// bit xor の掃き出し法
+// dは連立方程式のAとbをまとめたもの
+vector<bool> bit_row_reduction(vvec(bool) d){
+    ll h = d.size(), w = d[0].size();
+
+    ll now_i = 0;
+    rep(j,w-1){
+        for(ll i=now_i; i<h; ++i){
+            if(d[i][j]){
+                swap(d[i],d[now_i]);
+                break;
+            }
+        }
+        if( !d[now_i][j] ) continue;
+        rep(i,h){
+            if(i==now_i) continue;
+            if(d[i][j]) rep(jj,w) d[i][jj] =  d[i][jj]^d[now_i][jj];
+        }
+        now_i++;
+        if(now_i == h) break;
+    }
+
+    vec(bool) res(w); // 変数はw-1個, w番目は解なしかどうか
+    rep(i,h){
+        ll j = 0;
+        while(j<w-1 && !d[i][j]) j++;
+        if(j==w-1){
+            if(d[i][w-1]){ // 解なし
+                res[w-1] = true;
+                return res;
+            }
+            continue;
+        }
+        res[j] = d[i][w-1];
+    }
+    return res;
+}
+
+
+
+
 // 最短経路で距離と価値を評価したいときの構造体
 // https://atcoder.jp/contests/adt_hard_20240724_1/submissions/55997262
 struct S {
