@@ -31,90 +31,14 @@ using bs = bitset<8>;
 
 
 
-
-
-
-// xの1次式に対するFPS
-struct FPS1d{
-    ll K; // 最大次数-1 // x^0, x^1, ..., x^(K-1)
-    vec(mint) coeffs;
-
-    FPS1d(ll K=1):K(K){
-        coeffs.resize(K);
-    }
-
-    void add(mint a, mint b){ // += a*x + b
-        coeffs[1] += a;
-        coeffs[0] += b;
-    }
-
-    void mul(mint a, mint b){ // *= a*x + b
-        for(ll i=K-1; i>0; --i){            
-            coeffs[i] = coeffs[i-1]*a + coeffs[i]*b;
-        }
-        coeffs[0] *= b;
-    }   
-
-    void div(mint a, mint b){ // /= a*x + b
-        if(a==mint(0) && b == mint(0)){
-            return;
-        }
-
-        if(a==mint(0)){
-            rep(i,K) coeffs[i] /= b;
-            return;
-        }
-
-        // if(b==mint(0)){
-        //     rep(i,K-1){
-        //         coeffs[i] = coeffs[i+1]/a;
-        //     }
-        //     coeffs[K-1] = mint(0);
-        //     return;
-        // }
-
-        vec(mint) tmp(K);
-        repr(i,K-1){
-            tmp[i] = (coeffs[i+1] - b*tmp[i+1])/a;
-        }
-        swap(coeffs,tmp);
-
-        // rep(i,K){
-        //     if(i==0){
-        //         coeffs[0] /= b;
-        //     }else{
-        //         coeffs[i] = (coeffs[i]-coeffs[i-1]*a)/b;
-        //     }
-        // }
-    }
-};
-
-
-// ラグランジュ補完
-// N点(x,y)が与えられたとき、N-1次の多項式を求める
-// Lagrange interpolation
-vector<mint> lagrange_interpolation(const vector<mint>& x, const vector<mint>& y) {
-    ll K = x.size();
-
-    FPS1d f(K+1);
-    f.coeffs[0] = 1;
-
-    rep(i,K) f.mul(mint(1),-x[i] );
-
-    vec(mint) res(K);
-    rep(i,K){
-        FPS1d f2 = f;
-        f2.div(mint(1),-x[i]);
-
-        mint c = y[i];
-        rep(j,K)if(i!=j) c /= (x[i]-x[j]);
-        rep(j,K) res[j] += f2.coeffs[j]*c;
-    }
-    return res;
-}
-
-
-
+// Zobrist Hash 
+// 集合をハッシュ化するやつ
+// https://atcoder.jp/contests/abc367/submissions/56834801
+// ll MOD = (1LL<<61)-1;
+// vec(ll) h(N+1);
+// rep1(i,N) h[i] = RandInt(1,MOD-1);
+// 集合のときはこれのxorを取る
+// 多重集合のときは和
 
 
 
@@ -237,7 +161,7 @@ struct Aho_Corasick{
     ll add(const string& s){ // trieにsを追加
         ll now = 0;
         for(char c:s){ // 1文字ずつ見ていく
-            if(!to[now].count(c)){ // まだないなら新しいノードを作る
+            if(!to[now].count(c)){ // まだないな新しいノードを作る
                 to[now][c] = to.size();
                 to.emplace_back();
                 cnt.push_back(0);
@@ -1072,7 +996,7 @@ struct FPS{
         coeffs.resize(K);
     };
 
-    void mul(ll d){ // これは内容による
+    void mul(ll d){ // これは内容による // *(x^d+1) ?
         for(ll i=K; i>=d; i--){
             coeffs[i] += coeffs[i-d];
         }
