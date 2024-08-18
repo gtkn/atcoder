@@ -30,6 +30,30 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// オイラー関数
+// オイラーの定理をするときに使う
+// https://atcoder.jp/contests/abc222/submissions/56859569
+ll euler_phi(ll n) {
+    ll result = n;
+    for (ll i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            while (n % i == 0) {
+                n /= i;
+            }
+            result -= result / i;
+        }
+    }
+    if (n > 1) {
+        result -= result / n;
+    }
+    return result;
+}
+
+
+
+
+
+
 
 // Zobrist Hash 
 // 集合をハッシュ化するやつ
@@ -84,7 +108,7 @@ vector<bool> bit_row_reduction(vvec(bool) d){
 
 
 
-// 最短経路で距離と価値を評価したいときの構造体
+// 短経路で距離と価値を評価したいときの構造体
 // https://atcoder.jp/contests/adt_hard_20240724_1/submissions/55997262
 struct S {
     ll dist;
