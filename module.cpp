@@ -30,6 +30,19 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+struct twomax{
+    Pll p1,p2; // {value, index}, p1.first >= p2.first
+    twomax(Pll p1={-llINF,-1}, Pll p2={-llINF,-1}):p1(p1),p2(p2){};
+
+    void add(Pll p){
+        if(p2.first <= p.first) swap(p2,p);
+        if(p1.first <= p2.first) swap(p2,p1);
+    }
+};
+
+
+
+
 // オイラー関数
 // オイラーの定理をするときに使う
 // https://atcoder.jp/contests/abc222/submissions/56859569
