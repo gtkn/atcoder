@@ -1902,6 +1902,7 @@ void dfs(ll now, ll eid, ll d){
 
 
 // x^n % mod を求める関数
+// オーバーフローに注意
 ll pow_mod(ll x, ll n, ll mod) {
     ll res = 1;
     while (n > 0) {
@@ -1913,6 +1914,25 @@ ll pow_mod(ll x, ll n, ll mod) {
     }
     return res;
 }
+
+// // x^n % mod を求める関数
+// ll pow_mod(ll _x, ll _n, ll _mod) {
+//     l3 x = _x;
+//     l3 n = _n;
+//     l3 mod = _mod;
+//     x %= mod;
+//     l3 res = 1;
+//     while (n > 0) {
+//         if (n & 1) {
+//             res = (res * x) % mod;
+//         }
+//         x = (x * x) % mod;
+//         n >>= 1;
+//     }
+//     return (ll)res;
+// }
+
+
 
 // NTTを行う関数
 void ntt(vector<ll>& a, bool inv) {
