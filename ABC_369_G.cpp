@@ -75,6 +75,9 @@ void solve(){
     rep(i,N-1) cin >> U[i] >> V[i] >> L[i];
     rep(i,N-1) U[i]--, V[i]--;
 
+    ll ltot = 0;
+    rep(i,N-1) ltot += L[i];
+
     vvec(Pll) g(N);
     rep(i,N-1){
         g[U[i]].emplace_back(V[i],L[i]);
@@ -121,16 +124,32 @@ void solve(){
     rep(_,N){
         auto [dmax,idx] = lseg.all_prod();
         res += dmax*2;
+        chmin(res,2*ltot);
 
         cout << res << endl;
 
+        vec(ll) memo;
         ll now = idx;
         while(!used[now]){
-            // cerr << now << endl;
-            lseg.apply(now, rs[now], -lseg.get(now).first);
+            memo.push_back(now);
             used[now] = true;
             now = par[now];
         }
+
+        reverse(all(memo));
+        for(auto i:memo){
+            lseg.apply(i, rs[i], -lseg.get(i).first);
+        }
+
+
+
+        // ll now = idx;
+        // while(!used[now]){
+        //     // cerr << now << endl;
+        //     lseg.apply(now, rs[now], -lseg.get(now).first);
+        //     used[now] = true;
+        //     now = par[now];
+        // }
 
         // cerr << "--- " << endl;
         // rep(i,N) cerr << lseg.get(i).first << " "; cerr << endl;
