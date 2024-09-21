@@ -75,6 +75,40 @@ Pll ChineseRem(ll b1, ll m1, ll b2, ll m2) {
   return make_pair(r, m);
 }
 
+//---素因数分解------
+map<ll, ll > prime_factor(ll n) {
+    map<ll, ll > pf;
+    for(ll f=2; f*f<=n; ++f){
+        while(n%f == 0){
+            pf[f]++;
+            n /= f;
+        }
+    }
+    if(n!=1) pf[n] = 1;
+    return pf;
+}
+
+
+
+
+vec(ll) eratosthenes(ll n){
+    vec(bool) isok(n+1,true);
+    isok[0]=false; isok[1]=false;
+    rep1(i,n){
+        if(!isok[i]) continue;
+        ll a=i*2;
+        while(a<=n){
+            isok[a]=false;
+            a+=i;
+        }
+    }
+    vec(ll) res;
+    rep1(i,n) if(isok[i]) res.push_back(i);
+
+    return res;
+}
+
+
 
 void solve(){
     ll N;
@@ -88,42 +122,8 @@ void solve(){
     rep(i,N) A[i]--;
 
     vec(ll) ans(N,-1);
+    vec(ll) dp(N+1,-1);
 
-    // ll b = 0, m = 1;
-
-    // rep(st,N){
-    //     if(ans[st]>=0) continue;
-
-    //     vec(ll) c(st);
-    //     ll now = P[st];
-    //     while(now != st){
-    //         c.push_back(now);
-    //         now = P[now];
-    //     }
-
-    //     ll l = c.size();
-        
-    //     ll d = -1, cmin = llINF;
-    //     rep(i,l/__gcd(l,m)){
-    //         if(chmin(cmin, c[ mod(b+m*i,l) ])) d = i;
-    //     }
-
-    //     rep(i,l){
-    //         ans[c[i]] =  A[ mod(c[i]+d,l) ];
-    //     }
-
-    //     m = m*l/__gcd(m,l);
-
-
-
-    // }
-
-    // rep(i,N) cout << ans[i]+1 << " "; cout << endl;
-
-
-
-
-    ll m0 = 1, b0 = 0;
 
     rep(st,N){
         if(ans[st]>=0) continue;
@@ -144,30 +144,36 @@ void solve(){
         }
         
         sort(all(v));
-        ll m1 = v.size();
+        ll L = v.size();
 
-        // cerr << " --- " << endl;
-        // for(ll pos:memo) cerr << pos << " "; cerr << endl;
+        map<ll,ll> pf = prime_factor(L);
+        
 
-
-        for(auto [a1,b1]:v){
-            ll bb = b0, mm = m0;
-            auto [r,m] = ChineseRem(b0,m0,b1,m1);
-            if(m==-1){
-                b0 = bb;
-                m0 = mm;
-                continue;
+        for(auto [_,x]:v){
+            bool isok = true;
+            for(auto [p,n]:pf){
+                ll pp = 1;
+                rep(_,n+1){
+                    ll xi = mod(x, pp);
+                    if(dp[pp]!=xi && dp[pp]!=-1)  isok = false;
+                    pp *= p;
+                }
             }
 
-            // cerr << b0 << " , " << b1 << " ," << m0 << "," << r << ", " << a1 << endl;
+            if(!isok) continue;
 
-            m0 = m;
-            b0 = r;
 
-            rep(i,m1){
-                ll now = memo[i];
-                ll nxt = memo[mod(i+b1,m1)];
-                ans[now] = A[nxt];
+            for(auto [p,n]:pf){
+                ll pp = 1;
+                rep(_,n+1){
+                    ll xi = mod(x, pp);
+                    dp[pp]=xi;
+                    pp *= p;
+                }
+            }
+
+            rep(i,L){
+                ans[memo[i]] = A[memo[mod(i+x,L)]];
             }
             break;
         }
@@ -177,21 +183,6 @@ void solve(){
     rep(i,N) cout << ans[i]+1 << " "; cout << endl;
 
 
-    // // cerr <<m0 << " , " << b0 << endl;
-    // rep(_,100){
-    //     vec(ll) tmp(N);
-    //     rep(i,N) tmp[i] = A[P[i]];
-    //     A = tmp;
-    //     // rep(i,N) cerr << A[i] + 1 << " "; cerr << endl;
-    //     rep(i,N){
-    //         if(A[i]>ans[i]) break;
-    //         if(A[i]<ans[i]){
-    //             ans = A;
-    //             break;
-    //         }
-    //     }
-    // }
-    // rep(i,N) cerr << ans[i]+1 << " "; cerr << endl;
 
 
 

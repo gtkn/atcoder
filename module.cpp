@@ -30,6 +30,27 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+template<typename T, typename Compare = less<T>>
+struct TwoMax {
+    pair<T, ll> p1, p2; // {value, index}, p1.first >= p2.first
+    Compare comp;
+
+    TwoMax(pair<T, ll> p1 = {numeric_limits<T>::lowest(), -1}, 
+           pair<T, ll> p2 = {numeric_limits<T>::lowest(), -1}, 
+           Compare comp = Compare()) 
+        : p1(p1), p2(p2), comp(comp) {}
+
+    void add(pair<T, ll> p) {
+        if (!comp(p2.first, p.first)) swap(p2, p);
+        if (!comp(p1.first, p2.first)) swap(p2, p1);
+    }
+};
+
+// TwoMax<ll, greater<ll>> minTwoMax;
+
+
+
+// 大きい方を2つ番号付きで持つ構造体
 struct twomax{
     Pll p1,p2; // {value, index}, p1.first >= p2.first
     twomax(Pll p1={-llINF,-1}, Pll p2={-llINF,-1}):p1(p1),p2(p2){};
@@ -40,6 +61,17 @@ struct twomax{
     }
 };
 
+
+// 小さいほうを2つ持つ構造体
+struct twomin{
+    ll v1,v2;
+    twomin(ll v1=llINF, ll v2=llINF):v1(v1),v2(v2){};
+
+    void add(ll v){
+        if(v < v1) swap(v,v1);
+        if(v < v2) swap(v,v2);
+    }
+};
 
 
 
@@ -2363,6 +2395,10 @@ struct CHT {
 };
 
 
+// CHTと似た感じで、直線の集合の下側をとる作業を直接実装したやつ
+// https://atcoder.jp/contests/abc372/submissions/58002019
+
+
 // グラハムスキャン、凸包
 // https://atcoder.jp/contests/abc341/submissions/51470753
 
@@ -2803,6 +2839,18 @@ bool operator>(const State& a, const State& b){
     }
 
 
+ll sqrt_floor(ll x){
+    ll xx = sqrt(x);
+    ll res = xx;
+    for(ll a=max(1LL,xx-10); a<=xx+10; ++a){
+        if(a*a <= x) res = a;
+    }
+    return res;
+}
+
+
+
+
 
 // オーバーフローとmod考慮したpow
     ll mypow(ll x, ll y, ll modnum){
@@ -3012,43 +3060,52 @@ void showP(vector<P> vp){
 
 
 // グループ分けを管理するデータ構造
-//   parentにサイズを持たせる実装は後で(https://atcoder.jp/contests/abc177/editorial/90)
+//   parentにサイズを持たせる実装は後で(https://atcoder.jp/contests/abc177/editorial/90), 
+//  同じグループの番号を持たせる https://atcoder.jp/contests/abc372/submissions/57978770
 //---Union Find---
 struct UnionFind{
-  // グループのサイズ、要素の親idx、要素から親までのランクの配列
-  vector<int> gsize,parent,rank;
+    // グループのサイズ、要素の親idx、要素から親までのランクの配列
+    vector<int> gsize,parent,rank;
 
-  //コンストラクタ　各配列を初期化
-  UnionFind(int N){
-    gsize = vector<int>(N,1);
-    parent = vector<int>(N,-1);
-    rank = vector<int>(N);
-  }
+    //コンストラクタ　各配列を初期化
+    UnionFind(int N){
+        gsize = vector<int>(N,1);
+        parent = vector<int>(N,-1);
+        rank = vector<int>(N);
+    }
 
-  //親を求める
-  int findparent(int x){
-    if(parent[x]<0) return x;
-    else return parent[x] = findparent(parent[x]); //rankが小さくなるよう親を再設定
-  }
+    //親を求める
+    int findparent(int x){
+        if(parent[x]<0) return x;
+        else return parent[x] = findparent(parent[x]); //rankが小さくなるよう親を再設定
+    }
 
-  // 2要素x,yの属するグループを合併
-  bool unite(int x, int y){
-    x = findparent(x);
-    y = findparent(y);
-    if(x==y) return false;
-    
-    if(rank[x] < rank[y]) swap(x,y);
-    parent[y] = x;
-    gsize[x] += gsize[y];
-    gsize[y] = 0;
-    if(rank[x]==rank[y]) rank[x]++;
-    return true;
-  }
+    // 2要素x,yの属するグループを合併
+    bool unite(int x, int y){
+        x = findparent(x);
+        y = findparent(y);
+        if(x==y) return false;
+        
+        if(rank[x] < rank[y]) swap(x,y);
+        parent[y] = x;
+        gsize[x] += gsize[y];
+        gsize[y] = 0;
+        if(rank[x]==rank[y]) rank[x]++;
+        return true;
+    }
 
-  // 2要素x,yが同じ集合に属するかどうか
-  bool same(int x, int y){
-    return findparent(x) == findparent(y);
-  }
+    // 2要素x,yが同じ集合に属するかどうか
+    bool same(int x, int y){
+        return findparent(x) == findparent(y);
+    }
+
+
+    // 要素xが属するグループのサイズ
+    int size(int x){
+        return gsize[findparent(x)];
+    }
+
+
 };
 
 
