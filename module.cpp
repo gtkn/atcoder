@@ -73,6 +73,39 @@ struct twomin{
     }
 };
 
+// https://atcoder.jp/contests/abc245/submissions/58059328
+// でこのアイデアだったがTLEで使わなかった
+
+struct twomin{
+    Pll p1,p2; // {value, index}, p1.first >= p2.first
+    twomin(Pll p1={llINF,-1}, Pll p2={llINF,-1}):p1(p1),p2(p2){};
+
+    bool add(Pll p){
+        bool res = false;
+        
+        if(p1.second == p.second){
+            res = chmin(p1.first,p.first);
+        }else if(p2.second == p.second){
+            res = chmin(p2.first,p.first);
+        }else{        
+            if(p2.first >= p.first){
+                swap(p2,p);
+                res = true;
+            }
+        }
+        if(p1.first >= p2.first){
+            swap(p2,p1);
+        }
+        return res;
+    }
+
+    void show(){
+        cerr << p1.first << ", " << p1.second << " / " << p2.first << ", " << p2.second << endl;
+    }
+};
+
+
+
 
 
 // オイラー関数
