@@ -30,6 +30,11 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 群ラベル付きグラフにおける単一始点最短非零パス問題
+// https://atcoder.jp/contests/abc245/editorial/3698
+// これの実装例を見る
+
+
 template<typename T, typename Compare = less<T>>
 struct TwoMax {
     pair<T, ll> p1, p2; // {value, index}, p1.first >= p2.first
