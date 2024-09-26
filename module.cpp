@@ -29,6 +29,62 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// https://atcoder.jp/contests/abc248/submissions/31045582
+// 分数の計算
+template<class T> class frac{
+    T bunsi,bunbo;
+    constexpr void setting() noexcept {
+        T g = gcd(bunsi,bunbo);
+        bunsi /= g;bunbo /= g;
+        if(bunbo < 0){
+        bunsi = -bunsi;bunbo = -bunbo;
+        }
+    }
+    public:
+    constexpr frac(T Bunsi = 0,T Bunbo = 1) noexcept {
+        bunsi = Bunsi;bunbo = Bunbo;
+        setting();
+    }
+    constexpr T &Bunsi() noexcept {return bunsi;}
+    constexpr const T &Bunsi() const noexcept {return bunsi;}
+    constexpr T &Bunbo() noexcept {return bunbo;}
+    constexpr const T &Bunbo() const noexcept {return bunbo;}
+    constexpr frac<T> &operator+=(const frac<T> &rhs) noexcept {
+        bunsi = bunsi*rhs.bunbo+bunbo*rhs.bunsi;
+        bunbo *= rhs.bunbo;
+        setting();
+        return *this;
+    }
+    constexpr frac<T> &operator-=(const frac<T> &rhs) noexcept {
+        bunsi = bunsi*rhs.bunbo-bunbo*rhs.bunsi;
+        bunbo *= rhs.bunbo;
+        setting();
+        return *this;
+    }
+    constexpr frac<T> &operator*=(const frac<T> &rhs) noexcept {
+        bunbo *= rhs.bunbo;
+        bunsi *= rhs.bunsi;
+        setting();
+        return *this;
+    }
+    constexpr frac<T> &operator/=(const frac<T> &rhs) noexcept {
+        bunbo *= rhs.bunsi;
+        bunsi *= rhs.bunbo;
+        setting();
+        return *this;
+    }
+    constexpr frac<T> operator+(const frac<T> &rhs) const noexcept {return frac(*this) += rhs;}
+    constexpr frac<T> operator-(const frac<T> &rhs) const noexcept {return frac(*this) -= rhs;}
+    constexpr frac<T> operator*(const frac<T> &rhs) const noexcept {return frac(*this) *= rhs;}
+    constexpr frac<T> operator/(const frac<T> &rhs) const noexcept {return frac(*this) /= rhs;}
+    constexpr bool operator<(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo < bunbo*rhs.bunsi;}
+    constexpr bool operator>(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo > bunbo*rhs.bunsi;}
+    constexpr bool operator>=(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo >= bunbo*rhs.bunsi;}
+    constexpr bool operator<=(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo <= bunbo*rhs.bunsi;}
+    constexpr bool operator==(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo == bunbo*rhs.bunsi;}
+    constexpr bool operator!=(const frac<T> &rhs) const noexcept {return bunsi*rhs.bunbo != bunbo*rhs.bunsi;}
+};
+
 
 // 群ラベル付きグラフにおける単一始点最短非零パス問題
 // https://atcoder.jp/contests/abc245/editorial/3698
