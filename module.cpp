@@ -29,6 +29,30 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+
+// bit xor の掃き出し法
+// https://atcoder.jp/contests/abc249/submissions/30994270
+template <class T, int W> int sweep(vector<T>& c) {
+    int n = (int)c.size(), rank = 0;
+    for (int d = W - 1; d >= 0; --d) {
+        int k = rank;
+        while (k < n and !(c[k] >> d & 1)) {
+            k += 1;
+        }
+        if (k < n) {
+            swap(c[k], c[rank]);
+            for (int i = rank + 1; i < n; ++i) {
+                if (c[i] >> d & 1) {
+                    c[i] ^= c[rank];
+                }
+            }
+            rank += 1;
+        }
+    }
+    return rank;
+}
+
+
 // https://atcoder.jp/contests/abc248/submissions/31045582
 // 分数の計算
 template<class T> class frac{
