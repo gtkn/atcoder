@@ -31,6 +31,7 @@ using bs = bitset<8>;
 
 
 // bit xor の掃き出し法
+// 参照渡しのcを操作して、ランクを返す
 // https://atcoder.jp/contests/abc249/submissions/30994270
 template <class T, int W> int sweep(vector<T>& c) {
     int n = (int)c.size(), rank = 0;
