@@ -65,18 +65,54 @@ vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 void solve(){
     ll N,W;
     cin >> N >> W;
-    vec(ll) u(N),v(N);
-    rep(i,N) cin >> u[i] >> v[i];
+    vec(ll) w(N),v(N);
+    rep(i,N) cin >> w[i] >> v[i];
+
+    ll M = 3030;
+    vvec(ll) vv(M);
+    rep(i,N) vv[w[i]].push_back(i);
+
+    vvec(Pll) c(M);
+    vec(ll) cnt(N);
 
 
+    auto f = [&](ll ii)->ll{
+        cnt[ii]++;
+        return v[ii] - 2*cnt[ii] + 1;
+    };
 
-    
+    rep(wi,M){
+        c[wi].emplace_back(0,0);
+        if(vv[wi].empty()) continue;
+        
+        priority_queue<Pll> q;
+        for(ll ii:vv[wi]) q.emplace(f(ii),ii);
+
+        ll wtot = 0, vtot = 0;
+        while(wtot<M){
+            auto [vi,ii] = q.top(); q.pop();
+            wtot += wi;
+            vtot += vi;
+            c[wi].emplace_back(wtot,vtot);
+            q.emplace(f(ii),ii);
+        }
+        sort(all(c[wi]));
+    }
+
+    vvec(ll) dp(M+1,vec(ll)(M+1,-llINF));
+    dp[0][0] = 0;
 
 
+    rep(i,M)rep(j,M){
+        for(auto [wi,vi]:c[i]){
+            if(j+wi>M) break;            
+            chmax(dp[i+1][j+wi], dp[i][j]+vi);
+        }
+    }
 
-
-
-
+    ll ans = 0;
+    rep(j,W+1) chmax(ans,dp[M][j]);
+    cout << ans << endl;
 
 
 }

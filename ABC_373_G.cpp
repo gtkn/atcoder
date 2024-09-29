@@ -52,19 +52,124 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+
+bool is_intersection(Pll p0, Pll p1, Pll q0, Pll q1){
+    // 線分p0p1とq0q1が交差しているかどうか
+    auto cross = [](Pll a, Pll b, Pll c)->ll{
+        ll x1 = b.first - a.first, y1 = b.second - a.second;
+        ll x2 = c.first - a.first, y2 = c.second - a.second;
+        return x1*y2 - x2*y1;
+    };
+
+    ll c1 = cross(p0,p1,q0);
+    c1 /= abs(c1);
+    ll c2 = cross(p0,p1,q1);
+    c2 /= abs(c2);
+    ll c3 = cross(q0,q1,p0);
+    c3 /= abs(c3);
+    ll c4 = cross(q0,q1,p1);
+    c4 /= abs(c4);
+
+    if(c1*c2 > 0) return false;
+    if(c3*c4 > 0) return false;
+    return true;
 };
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
     ll N;
     cin >> N;
+
+
+    vec(ll) A(N),B(N),C(N),D(N);
+    rep(i,N) cin >> A[i] >> B[i];
+    rep(i,N) cin >> C[i] >> D[i];
+
+
+    vec(ll) ans(N);
+    rep(i,N) ans[i] = i;
+
+    while(1){
+        bool isok = true;
+        rep(i,N)rep(j,i){
+            ll ii = ans[i], jj = ans[j];
+            if( is_intersection( {A[i],B[i]}, {C[ii],D[ii]}, {A[j],B[j]}, {C[jj],D[jj]}  ) ){
+                swap(ans[i],ans[j]);
+                // cerr << i << " " << j << endl;
+                isok = false;
+            }
+        }
+        // rep(i,N) cerr << ans[i]+1 << " "; cerr << endl;
+        if(isok) break;
+    }
+
+    rep(i,N) cout << ans[i]+1 << " "; cout << endl;
+
+
+
+    // ll nn = 2*N;
+    // vec(ll) x,y;
+    // rep(i,N) x.push_back(A[i]+1);
+    // rep(i,N) x.push_back(C[i]+1);
+    // rep(i,N) y.push_back(B[i]+1);
+    // rep(i,N) y.push_back(D[i]+1);
+
+
+    // vec(ll) v(nn);
+    // rep(i,nn) v[i] = i;
+
+    // sort(all(v),[&](ll i, ll j){
+    //     ll c = x[i]*y[j] - y[i]*x[j];
+    //     return c>0;
+    // });
+
+
+    // vec(ll) d2(nn);
+    // rep(i,nn) d2[i] = x[i]*x[i] + y[i]*y[i];
+
+
+    // vec(ll) p,q;
+    // vec(ll) ans(N,-1);
+
+
+    // for(ll ii:v){
+    //     if(ii<N) p.push_back(ii);
+    //     else q.push_back(ii);
+
+    //     if(p.size() != q.size() || p.size() == 0) continue;
+
+    //     sort(all(p),[&](ll i, ll j){return d2[i] < d2[j];});
+    //     sort(all(q),[&](ll i, ll j){return d2[i] < d2[j];});
+
+    //     while(!p.empty()){
+    //         // cerr << p.back() << " " << q.back() << endl;
+    //         ans[ p.back() ] = q.back() - N;
+    //         p.pop_back();
+    //         q.pop_back();
+    //     }
+    // }
+
+    // rep(i,N) cout << ans[i]+1 << " "; cout << endl;
+
+
+    // rep(i,N) assert(ans[i]>=0);    
+    // rep(i,N)rep(j,i){
+    //     ll ii = ans[i], jj = ans[j];
+    //     bool cross = is_intersection( {A[i],B[i]}, {C[ii],D[ii]}, {A[j],B[j]}, {C[jj],D[jj]}  );
+    //     if(cross){
+    //         cout << "--- " << i << " " << j << endl;
+    //         printf("(%lld,%lld) -> (%lld,%lld) \r\n", A[i],B[i],C[ii],D[ii]);
+    //         printf("(%lld,%lld) -> (%lld,%lld) \r\n", A[j],B[j],C[jj],D[jj]);
+
+    //     }
+    // }
+
+
+
+
+
+
 
 
 
