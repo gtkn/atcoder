@@ -30,6 +30,14 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 座標を持つ構造体
+struct Coordinate
+{
+    ll h,w;
+    Coordinate(ll h=0, ll w=0):h(h),w(w){}
+};
+
+
 // bit xor の掃き出し法
 // 参照渡しのcを操作して、ランクを返す
 // https://atcoder.jp/contests/abc249/submissions/30994270
