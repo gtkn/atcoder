@@ -30,6 +30,50 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+
+
+
+
+// Lowlink algorithm to find bridges
+struct Lowlink {
+    struct edge{
+        ll to,c,idx;
+        edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+    };
+
+    const vvec(edge) &g;
+    vec(int) ord, low;
+    vec(bool) visited;
+    // vec(Pll) bridges;
+    vec(ll) bridges;
+    int k;
+
+    Lowlink(const vvec(edge) &g) : g(g), ord(g.size(), -1), low(g.size(), -1), visited(g.size(), false), k(0) {
+        rep(i, g.size()) if (ord[i] == -1) dfs(i, -1);
+    }
+
+    void dfs(ll v, ll p) {
+        visited[v] = true;
+        ord[v] = low[v] = k++;
+        for (auto &e : g[v]) {
+            if (e.to == p) continue;
+            if (!visited[e.to]) {
+                dfs(e.to, v);
+                low[v] = min(low[v], low[e.to]);
+                // if (ord[v] < low[e.to]) bridges.emplace_back(min(v, e.to), max(v, e.to));
+                if (ord[v] < low[e.to]) bridges.emplace_back(e.idx);
+            } else {
+                low[v] = min(low[v], ord[e.to]);
+            }
+        }
+    }
+};
+
+
+
+
+
+
 // 座標を持つ構造体
 struct Coordinate
 {
