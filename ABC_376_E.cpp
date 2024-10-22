@@ -63,8 +63,64 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,K;
+    cin >> N >> K;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i];
+    rep(i,N) cin >> B[i];
+
+    vec(Pll) ab(N);
+    rep(i,N) ab[i] = {A[i],B[i]};
+    sort(all(ab));
+
+    ll btot = 0;
+    priority_queue<ll> pq;
+    ll ans = llINF;
+
+    for(auto [ai,bi]:ab){
+        btot += bi;
+        pq.push(bi);
+        while(pq.size()>K){
+            btot -= pq.top();
+            pq.pop();
+        }
+        if(pq.size()==K){
+            chmin(ans, btot*ai);
+        }
+    }
+    cout << ans << endl;
+    
+
+
+
+
+
+    // vec(Pll) ba(N);
+    // rep(i,N) ba[i] = {B[i],A[i]};
+    // sort(all(ba));
+
+
+    // ll ans = llINF;
+
+    // ll btot = 0;
+    // ll amax = 0;
+    // rep(i,K){
+    //     btot += ba[i].first;
+    //     chmax(amax, ba[i].second);
+    // }
+
+    // chmin(ans, btot*amax);
+
+    // rep(i,N) cerr << ba[i].first << " " << ba[i].second << endl;
+    // cerr << "amax : " << amax << endl;
+    // cerr << "btot : " << btot << endl;
+
+    // btot -= ba[K-1].first;
+    // for(ll i=K; i<N; ++i){
+    //     chmin(ans, (btot+ba[i].first)*ba[i].second );
+    // }
+
+    // cout << ans << endl;
 
 
 
@@ -74,7 +130,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

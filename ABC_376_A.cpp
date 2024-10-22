@@ -63,8 +63,20 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,C;
+    cin >> N >> C;
+    vec(ll) T(N+1);
+    rep1(i,N) cin >> T[i];
+    T[0]=-llINF;
+
+    ll ans = 0, pred = -llINF;
+    rep1(i,N){
+        if(T[i]-pred < C) continue;
+        ans++;
+        pred = T[i];
+    }
+
+    cout << ans << endl;
 
 
 

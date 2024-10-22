@@ -66,6 +66,33 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i];
+    rep(i,N-1) cin >> B[i];
+
+
+    sort(all(A));
+    sort(all(B));
+
+    // for(ll x:A) cerr << x << " "; cerr << endl;
+    // for(ll x:B) cerr << x << " "; cerr << endl;
+
+
+    ll ans = llINF;
+    rep(_,N){
+        if(B.back() >= A.back()){
+            B.pop_back();
+            A.pop_back();
+            continue;
+        }
+        if(ans==llINF){
+            ans = A.back();
+            A.pop_back();
+        }else{
+            dame;
+        }
+    }
+    cout << ans << endl;
 
 
 }

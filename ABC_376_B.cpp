@@ -63,8 +63,73 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,Q;
+    cin >> N >> Q;
+
+    ll l=0,r=1;
+    ll ans = 0;
+
+    while(Q--){
+        char h;
+        ll t;
+        cin >> h >> t;
+        t--;
+
+        ll res = llINF;
+        if(h=='L'){
+            ll x = l;
+            ll tmp = 0;
+            while(x!=t){
+                x = (x-1+N)%N;
+                if(x==r){
+                    tmp=llINF;
+                    break;
+                }
+                tmp++;
+            }
+            chmin(res,tmp);
+
+            x = l;
+            tmp= 0;
+            while(x!=t){
+                x = (x+1)%N;
+                if(x==r){
+                    tmp=llINF;
+                    break;
+                }
+                tmp++;
+            }
+            chmin(res,tmp);
+            l = t;
+        }else{
+            ll x = r;
+            ll tmp = 0;
+            while(x!=t){
+                x = (x-1+N)%N;
+                if(x==l){
+                    tmp=llINF;
+                    break;
+                }
+                tmp++;
+            }
+            chmin(res,tmp);
+            tmp= 0;
+            x = r;
+            while(x!=t){
+                x = (x+1)%N;
+                if(x==l){
+                    tmp=llINF;
+                    break;
+                }
+                tmp++;
+            }
+            chmin(res,tmp);
+            r=t;
+        }
+        ans += res;
+    }
+
+    cout << ans << endl;
 
 
 

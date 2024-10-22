@@ -52,20 +52,51 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N-1);
+    rep(i,N-1) cin >> A[i];
 
+    vec(mint) e(N),p(N);
+    p[0] = 1;
+
+    vec(mint) ed(N+1),pd(N+1);
+    mint sumed=0,sumpd=0;
+
+    rep(i,N){
+        sumed += ed[i];
+        sumpd += pd[i];
+        e[i] += sumed;
+        p[i] += sumpd;
+
+        if(i==N-1) break;   
+
+        ll ai = A[i];
+        mint q = mint(ai+1).inv();
+        mint c = q/(1-q);
+        
+        mint ee = c*e[i] + c*c/q*p[i];
+        mint pp = c*p[i];
+
+        ed[i+1] += ee;
+        ed[i+ai+1] -= ee;
+        pd[i+1] += pp;
+        pd[i+ai+1] -= pp;
+    }
+
+    cout << e[N-1].val() << endl;
+
+
+    // rep(i,N) cerr << e[i].val() << " "; cerr << endl;
+    // rep(i,N) cerr << p[i].val() << " "; cerr << endl;
+    // rep(i,N+1) cerr << ed[i].val() << " "; cerr << endl;
+    // rep(i,N+1) cerr << pd[i].val() << " "; cerr << endl;
+    // cerr << sumed.val() << " " << sumpd.val() << endl;
+    // sumed += ed[N];
+    // sumpd += pd[N];
+    // cerr << sumed.val() << " " << sumpd.val() << endl;
 
 
 }

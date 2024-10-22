@@ -65,8 +65,30 @@ vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 void solve(){
     ll N;
     cin >> N;
+    ll nn = (1<<N);
+    vvec(ll) C(nn,vec(ll)(N));
+    rep(i,nn)rep(j,N) cin >> C[i][j];
 
+    vec(ll) dp(nn);
+    rep(j,N){
+        vec(ll) dp2(nn);
+        ll w = (1<<j);
 
+        for(ll l=0; l<nn; l+=2*w){
+            ll lmax = 0, rmax = 0;
+            for(ll i=l; i<l+w; ++i)     chmax(lmax, dp[i]);
+            for(ll i=l+w; i<l+2*w; ++i) chmax(rmax, dp[i]);
+            for(ll i=l; i<l+w; ++i)     dp2[i] = dp[i] + rmax + C[i][j];
+            for(ll i=l+w; i<l+2*w; ++i) dp2[i] = dp[i] + lmax + C[i][j];
+            if(j>0) for(ll i=l; i<l+2*w; ++i)   dp2[i] -= C[i][j-1];
+            // cerr << l << " " << l+w << " " << l+2*w << " " << lmax << " " << rmax << endl;
+        }
+        swap(dp,dp2);
+        // rep(i,nn) cerr << dp[i] << " "; cerr << endl;
+    }
+    ll ans = 0;
+    rep(i,nn) chmax(ans,dp[i]);
+    cout << ans << endl;
 
 }
 

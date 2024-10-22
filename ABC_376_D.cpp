@@ -63,8 +63,47 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+    vvec(ll) gf(N),gr(N);
+    rep(_,M){
+        ll a,b;
+        cin >> a >> b;
+        a--; b--;
+        gf[a].push_back(b);
+        gr[b].push_back(a);
+    }
+
+
+    auto f = [&](const vvec(ll)& g )->vec(ll){
+        vec(ll) dist(N,llINF);
+        queue<ll> q;
+        if(chmin(dist[0],0LL)) q.push(0);
+
+        while(!q.empty()){
+            ll now = q.front();
+            q.pop();
+            for(ll nxt:g[now]){
+                if(chmin(dist[nxt],dist[now]+1)) q.push(nxt);
+            }
+        }
+        return dist;
+    };
+
+    vec(ll) df = f(gf);
+    vec(ll) dr = f(gr);
+
+    // rep(i,N) cerr << df[i] << " "; cerr << endl;
+    // rep(i,N) cerr << dr[i] << " "; cerr << endl;
+
+    ll ans = llINF;
+    rep1(i,N-1){
+        chmin(ans,df[i]+dr[i]);
+    }
+    if(ans>=llINF) ans = -1;
+
+    cout << ans << endl;
+
 
 
 

@@ -66,6 +66,33 @@ void solve(){
     ll N;
     cin >> N;
 
+    vec(ll) p(N+1),a(N+1);
+    rep1(i,N) cin >> p[i];
+    rep1(i,N) cin >> a[i];
+
+    vvec(ll) g(N+1);
+    rep1(i,N) g[p[i]].push_back(i);
+
+    mint atot = 0;
+    rep1(i,N) atot += a[i];
+
+    priority_queue<Pll,vector<Pll>,greater<Pll>> pq;
+    for(ll nxt:g[0]) pq.emplace(a[nxt],nxt);
+
+    mint pp = 1;
+    mint ans = 0;
+    ll cnt = 0;
+    mint den = atot.inv();
+    while(!pq.empty()){
+        auto [aa,now] = pq.top(); pq.pop();
+        cnt++;
+        ans += cnt * aa * den * pp;
+        pp *= (atot-aa)*den;
+        for(ll nxt:g[now]) pq.emplace(a[nxt],nxt);
+    }
+
+    cout << ans.val() << endl;
+
 
 
 }
@@ -74,7 +101,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    //cin >> testcasenum;
+    cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

@@ -52,20 +52,47 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
 
+bool is_prime(ll n){
+    if(n<=1) return false;
+    for(ll i=2; i*i<=n; ++i){
+        if(n%i==0) return false;
+    }
+    return true;
+}
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) A(N),B(N);
+    rep(i,N) cin >> A[i] >> B[i];
+    rep(i,N)if(A[i]==1){
+        swap(A[i],A[0]);
+        swap(B[i],B[0]);
+    }
 
+
+    vvec(ll) vv(N);
+    rep(i,N)rep(j,N){
+        if(is_prime(A[i]+A[j])){
+            vv[i].push_back(j);
+        }
+    }
+
+    ll nn = 2*N;
+    ll st = nn, gl = nn+1;
+
+    mf_graph<ll> g(nn+2);
+    rep(i,N) g.add_edge(st,i,B[i]);
+    rep(i,N) g.add_edge(i+N,gl,B[i]); 
+    rep(i,N)for(ll j:vv[i]){
+        g.add_edge(i,j+N,B[i]);
+    }
+
+    ll ans = g.flow(st,gl)/2;
+
+    cout << ans << endl;
 
 
 }
