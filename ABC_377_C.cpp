@@ -52,70 +52,40 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct S{
-    ll a,l,root;
-    S(ll a=0, ll l=1, ll root=0):a(a),l(l),root(root){}
-
-    // bool operator>(const S &s) const{
-    //     return a*s.l > s.a*l;
-    // }
-
-    bool operator<(const S &s) const{
-        return a*s.l < s.a*l;
-    }
-
-};
-
-
 struct edge{
     ll to,c,idx;
     edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+vec(ll) dh = {2,1,-1,-2,-2,-1,1,2};
+vec(ll) dw = {1,2,2,1,-1,-2,-2,-1};
+// vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
 
-    vec(ll) p(N+1),a(N+1);
-    rep1(i,N) cin >> p[i];
-    rep1(i,N) cin >> a[i];
+    set<Pll> st;
 
-    mint atot = 0;
-    rep1(i,N) atot += a[i];
-
-    vec(S) v(N+1);
-    rep(i,N+1) v[i] = S(a[i],1,i);
-
-    dsu uf(N+1);
-
-    priority_queue<S> pq;
-    rep1(i,N) pq.emplace(a[i],1,i);
-
-    mint ans = 0;
-
-    while(!pq.empty()){
-        S s1 = pq.top(); pq.pop();
-        ll par = p[s1.root];
-
-        if(s1.root != v[uf.leader(s1.root)].root) continue;
-
-        S s2 = v[uf.leader(par)];
-        S s21 = S(s1.a+s2.a,s1.l+s2.l,s2.root);
-
-        uf.merge(s1.root,s2.root);
-        v[uf.leader(s1.root)] = s21;
-
-        ans += s1.a*s1.l + s2.a*s2.l;
-        pq.push(s21);
+    rep(_,M){
+        ll a,b;
+        cin >> a >> b;
+        rep(k,8){
+            ll nh = a+dh[k], nw = b+dw[k];
+            if(nh<=0||nh>N||nw<=0||nw>N) continue;
+            st.insert({nh,nw});
+        }
+        st.insert({a,b});
     }
 
-    ans/=atot;
-    cout << ans.val() << endl;
+
+    ll ans = N*N - st.size();
+    cout << ans << endl;
+
+
+
+
 
 
 }
@@ -124,7 +94,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

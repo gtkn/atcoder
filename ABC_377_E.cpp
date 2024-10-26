@@ -52,70 +52,91 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct S{
-    ll a,l,root;
-    S(ll a=0, ll l=1, ll root=0):a(a),l(l),root(root){}
-
-    // bool operator>(const S &s) const{
-    //     return a*s.l > s.a*l;
-    // }
-
-    bool operator<(const S &s) const{
-        return a*s.l < s.a*l;
+ll pow_mod(ll x, ll n, ll mod) {
+    ll res = 1;
+    while (n > 0) {
+        if (n & 1) {
+            res = (res * x) % mod;
+        }
+        x = (x * x) % mod;
+        n >>= 1;
     }
-
-};
-
-
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+    return res;
+}
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,K;
+    cin >> N >> K;
 
-    vec(ll) p(N+1),a(N+1);
-    rep1(i,N) cin >> p[i];
-    rep1(i,N) cin >> a[i];
+    vec(ll) P(N);
+    rep(i,N) cin >> P[i];
+    rep(i,N) P[i]--;
 
-    mint atot = 0;
-    rep1(i,N) atot += a[i];
+    vec(bool) used(N);
+    vvec(ll) vv;
+    vec(ll) pos(N);
+    vec(ll) idx(N);
+    vec(ll) sz(N);
+    vec(ll) d(N);
 
-    vec(S) v(N+1);
-    rep(i,N+1) v[i] = S(a[i],1,i);
+    rep(st,N){
+        if(used[st]) continue;
+        ll ii = vv.size();
 
-    dsu uf(N+1);
+        vec(ll) v = {st};
+        ll now = P[st];
+        while(now!=st){
+            v.push_back(now);
+            now = P[now];
+        }
+        for(ll i:v) used[i] = true;
 
-    priority_queue<S> pq;
-    rep1(i,N) pq.emplace(a[i],1,i);
+        vv.push_back(v);
+        for(ll i:v) idx[i] = ii;
 
-    mint ans = 0;
+        ll m = v.size();
+        for(ll i:v) sz[i] = m;
 
-    while(!pq.empty()){
-        S s1 = pq.top(); pq.pop();
-        ll par = p[s1.root];
+        ll dd = pow_mod(2,K,m);
+        for(ll i:v) d[i] = dd;
 
-        if(s1.root != v[uf.leader(s1.root)].root) continue;
-
-        S s2 = v[uf.leader(par)];
-        S s21 = S(s1.a+s2.a,s1.l+s2.l,s2.root);
-
-        uf.merge(s1.root,s2.root);
-        v[uf.leader(s1.root)] = s21;
-
-        ans += s1.a*s1.l + s2.a*s2.l;
-        pq.push(s21);
+        rep(i,m) pos[v[i]] = i;
     }
 
-    ans/=atot;
-    cout << ans.val() << endl;
+    vec(ll) ans(N);
+    rep(i,N){
+        ll x = (pos[i] + d[i])%sz[i];
+        ans[i] = vv[ idx[i] ][x];
+    }
+
+    rep(i,N) cout << ans[i]+1 << " "; cout << endl;
+
+
+
+
+
+
+    // rep(_,10){
+    //     rep(i,N) cerr << P[i] << " "; cerr << endl;
+    //     vec(ll) p2(N);
+    //     rep(i,N) p2[i] = P[P[i]];
+    //     P = p2;
+    // }
+
+
+    // ll M = 60;
+
+    // vvec(ll) db(N,vec(ll)(M));
+    // rep(i,N) db[i][0] = P[P[i]];
+
+    // rep(j,M-1)rep(i,N){
+    //     db[i][j+1] = db[db[i][j]][j];
+    // }
+
+    // vec(ll) ans = P;
+    // rep(j,M) if(bit(K,j)) rep(i,N) ans[i] = db[ans[i]][j];
+
+    // rep(i,N) cout << ans[i]+1 << " "; cout << endl;
 
 
 }
@@ -124,7 +145,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }

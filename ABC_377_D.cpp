@@ -52,70 +52,53 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct S{
-    ll a,l,root;
-    S(ll a=0, ll l=1, ll root=0):a(a),l(l),root(root){}
-
-    // bool operator>(const S &s) const{
-    //     return a*s.l > s.a*l;
-    // }
-
-    bool operator<(const S &s) const{
-        return a*s.l < s.a*l;
-    }
-
-};
 
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N, M;
+    cin >> N >> M;
 
-    vec(ll) p(N+1),a(N+1);
-    rep1(i,N) cin >> p[i];
-    rep1(i,N) cin >> a[i];
+    vec(ll) L(N),R(N);
+    rep(i,N) cin >> L[i] >> R[i];
+    rep(i,N) L[i]--, R[i]--;
 
-    mint atot = 0;
-    rep1(i,N) atot += a[i];
+    vvec(ll) rs(M);
+    rep(i,N) rs[L[i]].push_back(R[i]);
 
-    vec(S) v(N+1);
-    rep(i,N+1) v[i] = S(a[i],1,i);
 
-    dsu uf(N+1);
+    ll ans = 0;
 
-    priority_queue<S> pq;
-    rep1(i,N) pq.emplace(a[i],1,i);
-
-    mint ans = 0;
-
-    while(!pq.empty()){
-        S s1 = pq.top(); pq.pop();
-        ll par = p[s1.root];
-
-        if(s1.root != v[uf.leader(s1.root)].root) continue;
-
-        S s2 = v[uf.leader(par)];
-        S s21 = S(s1.a+s2.a,s1.l+s2.l,s2.root);
-
-        uf.merge(s1.root,s2.root);
-        v[uf.leader(s1.root)] = s21;
-
-        ans += s1.a*s1.l + s2.a*s2.l;
-        pq.push(s21);
+    ll rmin = M;
+    repr(l,M){
+        for(ll r:rs[l]) chmin(rmin,r);
+        ans += rmin-l;
     }
 
-    ans/=atot;
-    cout << ans.val() << endl;
+    cout << ans << endl;
+
+
+
+
+
+
+    // priority_queue<ll,vector<ll>,greater<ll>> pq;
+
+    // rep(l,M){
+    //     for(auto r:rs[l]){
+    //         pq.push(r);
+    //     }
+    //     if(!pq.empty()){
+    //         ll r = pq.top();
+    //         ans += r-l;
+    //         cerr << "l: " << l << " r: " << r << endl;
+    //     }
+
+    //     while(!pq.empty() && pq.top()<=l) pq.pop();
+    // }
+
+    // cout << ans << endl;
+
 
 
 }
@@ -124,7 +107,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }
