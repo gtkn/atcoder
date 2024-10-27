@@ -52,20 +52,69 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+struct TrieTree{
+    vvec(ll) g; // 子への辺
+    vector<ll> cnt; // そのノードに該当する文字列が追加された数
+    ll sigma = 26; // アルファベットの数
+    ll maxsize; // ノード数の最大
+    ll gcnt = 1; // すでに使ったノードの数
+
+    vector<ll> dp;
+
+    TrieTree(ll maxsize):maxsize(maxsize){
+        g = vvec(ll)(maxsize,vec(ll)(sigma));
+        cnt = vec(ll)(maxsize);
+        dp = vec(ll)(maxsize,llINF);
+        dp[0] = 0;
+    }
+
+    ll add(const string& s){
+        ll l = s.size();
+        ll res = l;
+        ll now = 0;
+
+        vec(ll) path;
+
+        for(char c:s){
+            ll x = c-'a';
+            if(g[now][x]==0) g[now][x] = gcnt++;
+            now = g[now][x];
+
+            path.push_back(now);
+            l--;
+            chmin(res, dp[now] + l);
+        }
+        cnt[now]++;
+
+        assert(path.size() == s.size());
+        reverse(all(path));
+        rep(i,path.size()){
+            ll pos = path[i];
+            chmin(dp[pos], i);
+        }
+
+        return res;
+    }
+
+
 };
 
 
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
+
 
 void solve(){
     ll N;
     cin >> N;
 
+    TrieTree trie(200200);
+
+    rep(_,N){
+        string s;
+        cin >> s;
+        ll res = trie.add(s);
+        cout << res << endl;
+    }
 
 
 }

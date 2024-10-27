@@ -52,82 +52,68 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
+
 struct S{
-    ll a,l,root;
-    S(ll a=0, ll l=1, ll root=0):a(a),l(l),root(root){}
+    ll a,b,r;
+    S(ll a=0,ll b=0, ll r=0):a(a),b(b),r(r){}
 
-    // bool operator>(const S &s) const{
-    //     return a*s.l > s.a*l;
-    // }
-
-    bool operator<(const S &s) const{
-        return a*s.l < s.a*l;
+    bool operator<(const S& s) const{
+        return b*s.a < s.b*a;
+    }    
+    bool operator>(const S& s) const{
+        return b*s.a > s.b*a;
     }
 
-    S operator+(const S &s) const{
-        return S(a+s.a, l+s.l, root);
+    S operator+(const S& s){
+        return S(a+s.a, b+s.b, r);
     }
-
 };
 
-
-struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
-};
-
-
-// vec(ll) dh = {1,0,-1,0};
-// vec(ll) dw = {0,1,0,-1};
-vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
     ll N;
     cin >> N;
+    vec(ll) P(N),V(N);
+    rep1(i,N-1) cin >> P[i];
+    rep(i,N) cin >> V[i];
 
-    vec(ll) p(N+1),a(N+1);
-    rep1(i,N) cin >> p[i];
-    rep1(i,N) cin >> a[i];
-
-    mint atot = 0;
-    rep1(i,N) atot += a[i];
-
-    vec(S) v(N+1);
-    rep(i,N+1) v[i] = S(a[i],1,i);
-
-    dsu uf(N+1);
-
-    priority_queue<S> pq;
-    rep1(i,N) pq.emplace(a[i],1,i);
-
-    mint ans = 0;
-
-    while(!pq.empty()){
-        S s1 = pq.top(); pq.pop();
-        ll par = p[s1.root];
-
-        if(s1.l != v[uf.leader(s1.root)].l) continue;
+    rep1(i,N-1) P[i]--;
 
 
-        S s2 = v[uf.leader(par)];
-        S s21 = s2 + s1;
-
-        uf.merge(s1.root,s2.root);
-        v[uf.leader(s1.root)] = s21;
-
-        mint d = s2.l * s1.a;
-        ans += d;
-        if(s21.root != 0) pq.push(s21);
-
-        // cerr << s1.root << " " << par << " " << d.val() << endl;
-
+    dsu uf(N);
+    vec(S) ss(N);
+    rep(i,N){
+        if(V[i]==0) ss[i] = S(1,0,i);
+        else ss[i] = S(0,1,i);
     }
 
-    S s0 = v[uf.leader(0)];
-    // ans += s0.a*s0.l;
+    priority_queue<S,vector<S>,greater<S>> pq;
+    rep1(i,N-1) pq.push(ss[i]);
 
-    ans/=atot;
-    cout << ans.val() << endl;
+    ll ans = 0;
+    while(!pq.empty()){
+        S snow = pq.top(); pq.pop();
+
+        S schk = ss[ uf.leader(snow.r) ];
+        if(snow.a!=schk.a || snow.b!=schk.b) continue;
+
+        S spar = ss[ uf.leader(P[snow.r]) ];
+        S snew = spar + snow;
+
+        uf.merge(snow.r, spar.r);
+        ss[uf.leader(snew.r)] = snew;
+
+
+        ll d = spar.b * snow.a;
+        ans += d;
+
+        // cerr << snow.r << " " << P[snow.r] << " : " << d << endl;
+
+        if(spar.r!=0) pq.push(snew);
+    }
+
+    cout << ans << endl;
+
 
 
 }
@@ -136,7 +122,7 @@ void solve(){
 
 int main(){
     int testcasenum=1;
-    cin >> testcasenum;
+    //cin >> testcasenum;
     rep1(ti,testcasenum){
         solve();
     }
