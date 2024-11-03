@@ -34,8 +34,6 @@ using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 using mint = modint998244353;
-// using mint = modint;
-// mint::set_mod(P);
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -55,8 +53,13 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 struct edge{
-    ll to,c,idx;
-    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+    ll frm,to,c;
+    edge(ll frm=0, ll to=0, ll c=0):frm(frm),to(to),c(c){}
+
+    bool operator<(edge e){
+        return c<e.c;
+    }
+
 };
 
 
@@ -65,8 +68,61 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,M;
+    cin >> N >> M;
+    vec(ll) X(N),Y(N);
+    rep(i,N) cin >> X[i];
+    rep(i,N) cin >> Y[i];
+    vec(ll) A(M),B(M),Z(M);
+    rep(i,M) cin >> A[i] >> B[i] >> Z[i];
+    rep(i,M) A[i]--, B[i]--;
+
+
+    auto f = [](vector<edge> es, ll n)->ll{
+        sort(all(es));
+        ll res = 0;
+        dsu uf(n);
+        for(auto e:es){
+            if(uf.same(e.frm,e.to)) continue;
+            uf.merge(e.frm,e.to);
+            res += e.c;
+        }
+
+        if(uf.groups().size()!=1) res = llINF;
+        return res;
+    };
+
+
+
+    ll ans = llINF;
+    {
+        vec(edge) es;
+        rep(i,M) es.emplace_back(A[i],B[i],Z[i]);
+        chmin(ans, f(es,N));
+    }
+    {
+        vec(edge) es;
+        rep(i,M) es.emplace_back(A[i],B[i],Z[i]);
+        rep(i,N) es.emplace_back(i,N,X[i]);
+        chmin(ans, f(es,N+1));
+    }
+    {
+        vec(edge) es;
+        rep(i,M) es.emplace_back(A[i],B[i],Z[i]);
+        rep(i,N) es.emplace_back(i,N,Y[i]);
+        chmin(ans, f(es,N+1));
+    }
+        {
+        vec(edge) es;
+        rep(i,M) es.emplace_back(A[i],B[i],Z[i]);
+        rep(i,N) es.emplace_back(i,N,X[i]);
+        rep(i,N) es.emplace_back(i,N+1,Y[i]);
+        chmin(ans, f(es,N+2));
+    }
+
+    cout << ans << endl;
+
+
 
 
 

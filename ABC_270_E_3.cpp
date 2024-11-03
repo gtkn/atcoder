@@ -34,8 +34,6 @@ using tri = tuple<ll,ll,ll>;
 
 //using mint = modint1000000007;
 using mint = modint998244353;
-// using mint = modint;
-// mint::set_mod(P);
 
 
 template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
@@ -65,8 +63,45 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
+    ll N,K;
+    cin >> N >> K;
+
+    vec(ll) A(N);
+    rep(i,N) cin >> A[i];
+
+    auto f = [&](ll k)->ll{
+        ll res = 0;
+        rep(i,N) res += min(k,A[i]);
+        return res;
+    };
+
+
+    ll l=-1, r=K+10;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)<=K) l=mid;
+        else r = mid;
+    }
+
+    ll rem = K;
+    vec(ll) ans = A;
+    rep(i,N){
+        ll x = min(l,A[i]);
+        ans[i]-=x;
+        rem-=x;
+    }
+
+    ll now = 0;
+    while(rem>0){
+        if(ans[now]>0){
+            ans[now]--;
+            rem--;
+        }
+        now = (now+1)%N;
+    }
+
+    rep(i,N) cout << ans[i] << " "; cout << endl;
+
 
 
 
