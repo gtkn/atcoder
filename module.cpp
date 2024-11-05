@@ -1558,6 +1558,22 @@ void doubling(vvec(ll) &db, ll xx){
 // 文字列を数値列と見て、区間を "b進数MOD M" で表す
 // あり本332
 
+// https://atcoder.jp/contests/abc272/submissions/59468671
+// vector<mint> hash(ssxtt.size() + 1, 0);
+// vector<mint> power(ssxtt.size() + 1, 1);
+// mint base = 31;
+
+// for (int i = 0; i < ssxtt.size(); ++i) {
+//     hash[i + 1] = hash[i] * base + (ssxtt[i] - 'a' + 1);
+//     power[i + 1] = power[i] * base;
+// }
+
+// auto get_hash = [&](int l, int r) {
+//     return hash[r] - hash[l] * power[r-l];
+// };
+
+
+
 
 // uniqueで重複削除する時
     // sort(all(mr));
