@@ -2590,6 +2590,35 @@ struct CHT {
 // https://atcoder.jp/contests/abc341/submissions/51470753
 
 
+// 凸包を求める
+// https://atcoder.jp/contests/abc275/submissions/59790285
+struct Point {
+    double x, y;
+    bool operator<(const Point& p) const {
+        return x < p.x || (x == p.x && y < p.y);
+    }
+};
+
+
+vector<Point> convex_hull(vector<Point>& points, bool is_lower=true) {
+    sort(points.begin(), points.end());
+    vector<Point> hull;
+    for (const auto& p : points) {
+        while (hull.size() >= 2) {
+            Point q = hull[hull.size() - 1];
+            Point r = hull[hull.size() - 2];
+            if ((q.x - r.x) * (p.y - r.y) - (q.y - r.y) * (p.x - r.x) <= 0) {
+                hull.pop_back();
+            } else {
+                break;
+            }
+        }
+        hull.push_back(p);
+    }
+    return hull;
+}
+
+
 
 
 class Timer {
