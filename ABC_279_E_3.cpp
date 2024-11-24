@@ -54,57 +54,42 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-//---modintで組み合わせ扱う用の構造体---
-struct mcomb{
-    ll nmax;
-    vec(mint) fa,af;
-    mcomb(ll sz=200020){
-        nmax = sz;
-        fa.resize(nmax+1);
-        fa[0]=1;
-        rep1(i,nmax) fa[i]=fa[i-1]*i;
-        af.resize(nmax+1);
-        rep(i,nmax+1) af[i]=fa[i].inv();
-    }
-    mint c(ll n, ll k){
-        if(n<k || k<0 || n>nmax) return 0;
-        return fa[n]*af[k]*af[n-k];
-    }
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
+
+// vec(ll) dh = {1,0,-1,0};
+// vec(ll) dw = {0,1,0,-1};
+vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
 void solve(){
-    ll N,K,C;
-    cin >> N >> K >> C;
+    ll N,M;
+    cin >> N >> M;
+    vec(ll) A(M);
+    rep(i,M) cin >> A[i];
+    rep(i,M) A[i]--;
 
-    // mcomb mc(N+1);
-
-    vec(mint) dp(N+1);
-    dp[0] = 1;
-
-    ll kk = K-2;
-    // rep(i,K+1) dp[i] = 1;
-    // cerr << "kk: " << kk << nl;
-    rep(i,N){
-        mint c1,c2;
-
-        if(i==0){
-            c1 = 1;
-        }else if(i<=kk){
-            c1 = C;
-        }else{
-            c1 = dp[i-kk];
-        }
-        c2 = dp[i] - c1;
-
-        // cerr << "i: " << i << " c1: " << c1.val() << " c2: " << c2.val() << nl;
-
-        dp[i+1] += c1 * C;
-        dp[i+1] += c2 * 2;
+    vec(ll) pos(M);
+    ll x = 0;
+    rep(i,M){
+        pos[i] = x;
+        if(A[i]==x) x++;
+        else if(A[i]+1==x) x--;
     }
 
-    mint ans = dp[N];
-    cout << ans.val() << nl;
+
+    vec(ll) ans(M);
+    vec(ll) b(N);
+    rep(i,N) b[i]=i;
+    repr(i,M){
+        ans[i] = b[pos[i]];
+        swap(b[A[i]],b[A[i]+1]);
+    }
+
+    rep(i,M) cout << ans[i]+1 << nl;
+
 
 
 

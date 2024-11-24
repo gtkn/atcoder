@@ -54,57 +54,80 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-//---modintで組み合わせ扱う用の構造体---
-struct mcomb{
-    ll nmax;
-    vec(mint) fa,af;
-    mcomb(ll sz=200020){
-        nmax = sz;
-        fa.resize(nmax+1);
-        fa[0]=1;
-        rep1(i,nmax) fa[i]=fa[i-1]*i;
-        af.resize(nmax+1);
-        rep(i,nmax+1) af[i]=fa[i].inv();
-    }
-    mint c(ll n, ll k){
-        if(n<k || k<0 || n>nmax) return 0;
-        return fa[n]*af[k]*af[n-k];
-    }
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
+
+// vec(ll) dh = {1,0,-1,0};
+// vec(ll) dw = {0,1,0,-1};
+vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
 void solve(){
-    ll N,K,C;
-    cin >> N >> K >> C;
+    ll N,Q;
+    cin >> N >> Q;
 
-    // mcomb mc(N+1);
+    vec(ll) b(N+1);
+    rep1(i,N) b[i] = i;
 
-    vec(mint) dp(N+1);
-    dp[0] = 1;
+    ll nn = N+Q+10;
+    dsu uf(nn);
 
-    ll kk = K-2;
-    // rep(i,K+1) dp[i] = 1;
-    // cerr << "kk: " << kk << nl;
-    rep(i,N){
-        mint c1,c2;
+    vec(ll) pos(nn);
+    rep1(i,N) pos[i] = i;
+    ll k=N;
 
-        if(i==0){
-            c1 = 1;
-        }else if(i<=kk){
-            c1 = C;
+    auto get_pos = [&](ll x){
+        return pos[ uf.leader(x) ];
+    };
+
+    while(Q--){
+        ll t;
+        cin >> t;
+        // cerr << "t: " << t << nl;
+
+        if(t==1){
+            ll x,y;
+            cin >> x >> y;
+            ll b1 = b[x], b2 = b[y];
+
+            if(b2==-1) continue;
+            
+            if(b1==-1){
+                b[x] = b2;
+                b[y] = -1;
+                ll l2 = uf.leader(b2);
+                pos[l2] = x;
+            }else{
+                b[y] = -1;
+                uf.merge(b1,b2);
+                ll l1 = uf.leader(b1);
+                pos[l1] = x;
+            }
+
+        }else if(t==2){
+            ll x;
+            cin >> x;
+
+            k++;
+            ll b1 = b[x];
+            if(b1==-1){
+                b[x] = k;
+                pos[k] = x;
+            }else{
+                uf.merge(b1,k);
+                pos[ uf.leader(k) ] = x;
+            }
+
         }else{
-            c1 = dp[i-kk];
+            ll x;
+            cin >> x;
+            ll res = get_pos(x);
+            cout << res << nl;
+
         }
-        c2 = dp[i] - c1;
-
-        // cerr << "i: " << i << " c1: " << c1.val() << " c2: " << c2.val() << nl;
-
-        dp[i+1] += c1 * C;
-        dp[i+1] += c2 * 2;
     }
-
-    mint ans = dp[N];
-    cout << ans.val() << nl;
 
 
 
