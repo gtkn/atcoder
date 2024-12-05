@@ -3158,6 +3158,12 @@ F composition(F f,F g){
 }
 F id(){return F{-1};}
 
+//---prod:区間max, apply:一括変更 のlazy_segtreeのテンプレート---
+// ll op(ll a, ll b){ return max(a,b);}
+// ll ee(){return 0;}
+// ll mapping(ll f, ll x){return max(f,x);}
+// ll composition(ll f,ll g){return max(f,g);}
+// ll id(){return 0;}
 
 
 //---prod:区間max, apply:区間addのlazy_segtreeのテンプレート---
