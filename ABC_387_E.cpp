@@ -65,8 +65,56 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
+    string N;
     cin >> N;
+
+    ll k = N.size();
+
+    auto f = [&](ll x)->bool{
+        ll t = 0;
+        ll tmp = x;
+        while(tmp){
+            t += tmp%10;
+            tmp/=10;
+        }
+        return x%t==0;
+    };
+
+
+    if(k<7){
+        ll n = stoll(N);
+        for(ll a=n; a<2*n; a++){
+            if(f(a)&&f(a+1)){
+                cout << a << endl;
+                return;
+            }
+        }
+        cout << -1 << endl;
+        return;
+    }
+
+
+    ll n0 = N[0]-'0';
+    ll n1 = N[1]-'0';
+    ll nn = n0*10+n1;
+
+    ll x = 17;
+    if(nn<17){
+        x = 17;
+    }else if(nn<26){
+        x = 26;
+    }else if(nn < 35){
+        x = 35;
+    }else if(nn < 62){
+        x = 62;
+    }else{
+        x = 107;
+    }
+
+    cout << x;
+    rep(_,k-2) cout << 0;
+    cout << endl;
+
 
 
 

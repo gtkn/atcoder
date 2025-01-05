@@ -71,38 +71,32 @@ void solve(){
     cin >> S >> T;
 
     ll n = S.size(), m = T.size();
-    if(n>m){
-        swap(n,m);
-        swap(S,T);
+
+    if(abs(n-m)>K) sayno;
+
+    ll KK = 2*K+1;
+    vvec(ll) dp(n+1,vec(ll)(KK,llINF));
+    dp[0][K] = 0;
+    rep(i,n)rep(j,KK){
+
+        ll ii = i+(j-K);
+        if(ii<0 || ii>=m) continue;
+
+        if(S[i]==T[ii]){
+            chmin(dp[i+1][j],dp[i][j]);
+        }
+        
+        if(j+1<KK){
+            chmin(dp[i][j+1],dp[i][j]+1);
+        }
+        if(j-1>=0){
+            chmin(dp[i+1][j-1],dp[i][j]+1);
+        }
+        chmin(dp[i+1][j],dp[i][j]+1);
     }
 
-    ll t_add = m-n;
-    ll t_chg = K-t_add;
+    if(dp[n][m-n+K]<=K) sayyn;
 
-    vvvec(ll) dp(n+1,vvec(ll)(t_add+1,vec(ll)(t_chg+1,-llINF)));
-    dp[0][0][0] = 0;
-
-    rep(i,n)rep(j,t_add+1)rep(k,t_chg+1){
-        ll x = dp[i][j][k];
-        if(x==-llINF) continue;
-        if(x>=m){            
-            continue;
-        }
-
-        if(S[i]==T[x]){
-            chmax(dp[i+1][j][k],x+1);
-        }
-
-        if(j<t_add) chmax(dp[i][j+1][k],x+1);
-        if(k<t_chg) chmax(dp[i+1][j][k+1],x+1);
-    }
-
-    rep(k,t_chg+1){
-        if(dp[n][t_add][k]>=m){
-            sayyes;
-        }
-    }
-    sayno;
 
 
 }

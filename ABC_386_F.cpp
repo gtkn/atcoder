@@ -71,38 +71,40 @@ void solve(){
     cin >> S >> T;
 
     ll n = S.size(), m = T.size();
-    if(n>m){
-        swap(n,m);
-        swap(S,T);
-    }
 
-    ll t_add = m-n;
-    ll t_chg = K-t_add;
+    if(abs(n-m)>K) sayno;
 
-    vvvec(ll) dp(n+1,vvec(ll)(t_add+1,vec(ll)(t_chg+1,-llINF)));
-    dp[0][0][0] = 0;
+    ll KK = 2*K+1;
+    vvec(ll) dp(n+1,vec(ll)(KK,llINF));
+    dp[0][K] = 0;
+    rep(i,n+1)rep(j,KK){
 
-    rep(i,n)rep(j,t_add+1)rep(k,t_chg+1){
-        ll x = dp[i][j][k];
-        if(x==-llINF) continue;
-        if(x>=m){            
-            continue;
+        ll ii = i+(j-K);
+
+        if(S[i]==T[ii] && i<n && ii<m){
+            chmin(dp[i+1][j],dp[i][j]);
         }
 
-        if(S[i]==T[x]){
-            chmax(dp[i+1][j][k],x+1);
+        if(j+1<KK){
+            chmin(dp[i][j+1],dp[i][j]+1);
         }
-
-        if(j<t_add) chmax(dp[i][j+1][k],x+1);
-        if(k<t_chg) chmax(dp[i+1][j][k+1],x+1);
-    }
-
-    rep(k,t_chg+1){
-        if(dp[n][t_add][k]>=m){
-            sayyes;
+        if(j-1>=0 && i<n){
+            chmin(dp[i+1][j-1],dp[i][j]+1);
+        }
+        if(i<n){
+            chmin(dp[i+1][j],dp[i][j]+1);
         }
     }
-    sayno;
+
+    // rep(i,n+1){
+    //     rep(j,KK){
+    //         cout << dp[i][j] << ' ';
+    //     }
+    //     cout << endl;
+    // }
+
+    if(dp[n][m-n+K]<=K) sayyn;
+
 
 
 }

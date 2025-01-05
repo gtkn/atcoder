@@ -70,11 +70,17 @@ void solve(){
     vec(ll) A(N);
     rep(i,N) cin >> A[i];
 
+    ll atot = 0;
+    rep(i,N) atot ^= A[i];
+    bool flag = (K>N/2);
+    if(flag) K = N-K;
+
     ll ans = 0;
 
     auto f = [&](auto f, ll now, ll ii, ll cnt)->void{
         if(cnt==K){
-            chmax(ans,now);
+            if(!flag) chmax(ans,now);
+            else chmax(ans,now^atot);
             return;
         }
         if(ii==N) return;
