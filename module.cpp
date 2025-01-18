@@ -6,7 +6,7 @@ using namespace atcoder;
 #define rep1(i,n) for (ll i = 1; i <= (n); ++i)
 #define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
 #define rep1r(i,n) for (ll i = (n); i > 0; --i)
-#define bit(n,k) ((n>>k)&1) //nのk　bit目
+#define bit(n,k) ((n>>k)&1) //nのk bit目
 #define vec(T) vector<T>
 #define vvec(T) vec(vec(T))
 using ll = long long;
@@ -476,7 +476,7 @@ string toBinary(ll num, int N) {
 
 
 
-// 数列の区間最小値を求める
+// スパーステーブルで数列の区間最小値を求める
 struct SparseTable {
     int N;
     vector<vector<ll>> table;
@@ -499,7 +499,7 @@ struct SparseTable {
     
     SparseTable() = default; // Add default constructor
     
-    ll query(ll l, ll r) {
+    ll query(ll l, ll r) { // [l, r]
         ll j = log2(r - l + 1);
         return min(table[l][j], table[r - (1 << j) + 1][j]);
     }
