@@ -33,8 +33,8 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-// using mint = modint998244353;
-using mint = modint;
+using mint = modint998244353;
+// using mint = modint;
 // mint::set_mod(P);
 
 
@@ -53,6 +53,49 @@ constexpr char nl = '\n';
 #define sayfs {puts("First");}else{puts("Second");}
 
 //------------------------------------------------
+
+
+struct FPS{
+    ll K;
+    vec(mint) coeffs;
+
+    FPS(vec(mint) v):coeffs(v){
+        K = v.size();
+    }
+
+    void add(const vec(mint)& v){
+        rep(i,v.size()) coeffs[i] += v[i];
+    }
+
+    void add(ll idx, mint d){
+        assert(idx>=0 && idx<K);
+        coeffs[idx]+=d;
+    }
+
+
+    void mul(const vec(mint)& v){
+        coeffs = convolution(coeffs, v);
+        coeffs.resize(K);
+    };
+
+    void mul(ll d){ // これは内容による // *(x^d+1) ?
+        for(ll i=K; i>=d; i--){
+            coeffs[i] += coeffs[i-d];
+        }
+    };
+
+    void div(ll d){ // これは内容による
+        for(ll i=d; i<=K; i++){
+            coeffs[i] -= coeffs[i-d];
+        }
+    }
+
+    void show(ll th){
+        rep(i,th) cout << i<< ":" << coeffs[i].val() <<", "; cout << endl;
+    }
+
+
+};
 
 
 //---modintで組み合わせ扱う用の構造体---
@@ -74,46 +117,37 @@ struct mcomb{
 };
 
 
+
+
 void solve(){
-    ll N,P;
-    cin >> N >> P;
-    mint::set_mod(P);
+    ll N;
+    cin >> N;
 
-    ll nn = N*(N-1)/2;
-    ll hf = N/2;
-
-    mint dp[2][hf+1][hf+1][nn+1][hf+1]; // 偶奇、偶数の数、奇数の数、使った辺の数、今の距離の頂点数 // 偶奇要らないかも
-    rep(i,2)rep(j,hf+1)rep(k,hf+1)rep(l,nn+1)rep(m,hf+1) dp[i][j][k][l][m] = 0;
-    dp[0][1][0][0][1] = 1;
-
-    rep(ne,hf)rep(no,hf)rep(ed,nn)rep(now,hf)rep(eo,2){
-        ll rem = N - ne - no;
-        ll ed_rem = nn - ed;
-
-        vvec(mint) dp2(rem+1,vec(mint)(ed_rem+1));
-        dp2[0][0] = 1;
-        rep(i,rem)rep(j,ed_rem+1){
-            mint a = now;
-            rep1(k,ed_rem){
-                if(j+k>ed_rem) continue;
-                dp2[i+1][j+k] += dp2[i][j] * a;
-                a *= now-k;
-            }
+    mint ans = 0;
+    auto keta = [](ll x)->ll{
+        ll res = 0;
+        while(x>0){
+            x/=10;
+            ++res;
         }
+        return res;
+    };
 
-        rep1(nxt,rem)for(ll ed2=nxt; ed2<=ed_rem; ed2++){
-            mint x = 1;
-            rep(i,nxt) x*=(rem-i);
-            x *= dp2[nxt][ed2];
-            rep(ed3,ed_rem){
-                if(ed2+ed3>ed_rem) break;
-                dp[1-eo][ne+nxt][no][ed+ed2][ed3] += dp[eo][ne][no][ed][now] * x;
-            }
+    vec(ll) ks(N+1);
+    vec(ll) kcnt(7);
+    rep1(i,N) ks[i] = keta(i);
+    rep1(i,N) ++kcnt[ks[i]];
 
 
-        }
+    ll M = 2000000;
+    vec(mint) v0(M);
 
+    FPS fps(v0);
+    rep1(k,6){
+        vec(mint) v(M);
+        rep(j,kcnt[k]) v[j*k] = ;
     }
+
 
 
 

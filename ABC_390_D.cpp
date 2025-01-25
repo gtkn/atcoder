@@ -33,8 +33,8 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-// using mint = modint998244353;
-using mint = modint;
+using mint = modint998244353;
+// using mint = modint;
 // mint::set_mod(P);
 
 
@@ -54,70 +54,36 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
+unordered_set <ll> st;
+ll v[12];
+ll N;
+ll A[12];
 
-//---modintで組み合わせ扱う用の構造体---
-struct mcomb{
-    ll nmax;
-    vec(mint) fa,af;
-    mcomb(ll sz=200020){
-        nmax = sz;
-        fa.resize(nmax+1);
-        fa[0]=1;
-        rep1(i,nmax) fa[i]=fa[i-1]*i;
-        af.resize(nmax+1);
-        rep(i,nmax+1) af[i]=fa[i].inv();
+void dfs(ll now){
+    if(now==N){
+        ll x = 0;
+        rep(i,N) x ^= v[i];
+        st.insert(x);
+        return;
     }
-    mint c(ll n, ll k){
-        if(n<k || k<0 || n>nmax) return 0;
-        return fa[n]*af[k]*af[n-k];
+    rep(i,N){
+        v[i] += A[now];
+        dfs(now+1);
+        v[i] -= A[now];
+        if(v[i]==0) break;
     }
+
 };
 
 
 void solve(){
-    ll N,P;
-    cin >> N >> P;
-    mint::set_mod(P);
+    cin >> N;
+    rep(i,N) cin >> A[i];
 
-    ll nn = N*(N-1)/2;
-    ll hf = N/2;
+    rep(i,12) v[i] = 0;
+    dfs(0);
 
-    mint dp[2][hf+1][hf+1][nn+1][hf+1]; // 偶奇、偶数の数、奇数の数、使った辺の数、今の距離の頂点数 // 偶奇要らないかも
-    rep(i,2)rep(j,hf+1)rep(k,hf+1)rep(l,nn+1)rep(m,hf+1) dp[i][j][k][l][m] = 0;
-    dp[0][1][0][0][1] = 1;
-
-    rep(ne,hf)rep(no,hf)rep(ed,nn)rep(now,hf)rep(eo,2){
-        ll rem = N - ne - no;
-        ll ed_rem = nn - ed;
-
-        vvec(mint) dp2(rem+1,vec(mint)(ed_rem+1));
-        dp2[0][0] = 1;
-        rep(i,rem)rep(j,ed_rem+1){
-            mint a = now;
-            rep1(k,ed_rem){
-                if(j+k>ed_rem) continue;
-                dp2[i+1][j+k] += dp2[i][j] * a;
-                a *= now-k;
-            }
-        }
-
-        rep1(nxt,rem)for(ll ed2=nxt; ed2<=ed_rem; ed2++){
-            mint x = 1;
-            rep(i,nxt) x*=(rem-i);
-            x *= dp2[nxt][ed2];
-            rep(ed3,ed_rem){
-                if(ed2+ed3>ed_rem) break;
-                dp[1-eo][ne+nxt][no][ed+ed2][ed3] += dp[eo][ne][no][ed][now] * x;
-            }
-
-
-        }
-
-    }
-
-
-
-
+    cout << st.size() << endl;
 }
 
 

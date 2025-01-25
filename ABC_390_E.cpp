@@ -33,8 +33,8 @@ using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
 //using mint = modint1000000007;
-// using mint = modint998244353;
-using mint = modint;
+using mint = modint998244353;
+// using mint = modint;
 // mint::set_mod(P);
 
 
@@ -54,66 +54,86 @@ constexpr char nl = '\n';
 
 //------------------------------------------------
 
-
-//---modintで組み合わせ扱う用の構造体---
-struct mcomb{
-    ll nmax;
-    vec(mint) fa,af;
-    mcomb(ll sz=200020){
-        nmax = sz;
-        fa.resize(nmax+1);
-        fa[0]=1;
-        rep1(i,nmax) fa[i]=fa[i-1]*i;
-        af.resize(nmax+1);
-        rep(i,nmax+1) af[i]=fa[i].inv();
-    }
-    mint c(ll n, ll k){
-        if(n<k || k<0 || n>nmax) return 0;
-        return fa[n]*af[k]*af[n-k];
-    }
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
 };
 
 
+// vec(ll) dh = {1,0,-1,0};
+// vec(ll) dw = {0,1,0,-1};
+vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
 void solve(){
-    ll N,P;
-    cin >> N >> P;
-    mint::set_mod(P);
+    ll N,X;
+    cin >> N >> X;
 
-    ll nn = N*(N-1)/2;
-    ll hf = N/2;
-
-    mint dp[2][hf+1][hf+1][nn+1][hf+1]; // 偶奇、偶数の数、奇数の数、使った辺の数、今の距離の頂点数 // 偶奇要らないかも
-    rep(i,2)rep(j,hf+1)rep(k,hf+1)rep(l,nn+1)rep(m,hf+1) dp[i][j][k][l][m] = 0;
-    dp[0][1][0][0][1] = 1;
-
-    rep(ne,hf)rep(no,hf)rep(ed,nn)rep(now,hf)rep(eo,2){
-        ll rem = N - ne - no;
-        ll ed_rem = nn - ed;
-
-        vvec(mint) dp2(rem+1,vec(mint)(ed_rem+1));
-        dp2[0][0] = 1;
-        rep(i,rem)rep(j,ed_rem+1){
-            mint a = now;
-            rep1(k,ed_rem){
-                if(j+k>ed_rem) continue;
-                dp2[i+1][j+k] += dp2[i][j] * a;
-                a *= now-k;
-            }
-        }
-
-        rep1(nxt,rem)for(ll ed2=nxt; ed2<=ed_rem; ed2++){
-            mint x = 1;
-            rep(i,nxt) x*=(rem-i);
-            x *= dp2[nxt][ed2];
-            rep(ed3,ed_rem){
-                if(ed2+ed3>ed_rem) break;
-                dp[1-eo][ne+nxt][no][ed+ed2][ed3] += dp[eo][ne][no][ed][now] * x;
-            }
-
-
-        }
-
+    vvec(Pll) vv(3);
+    rep(_,N){
+        ll v,a,c;
+        cin >> v >> a >> c;
+        v--;
+        vv[v].push_back({a,c});
     }
+
+    vvec(ll) memo(3,vec(ll)(X+1));
+
+    rep(ii,3){
+        ll n = vv[ii].size();
+        vvec(ll) dp(n+1,vec(ll)(X+2,-llINF));
+        dp[0][0] = 0;
+        rep(i,n)rep(j,X+1){
+            auto [a,c] = vv[ii][i];
+            // chmax(dp[i][j+1],dp[i][j]);
+            chmax(dp[i+1][j],dp[i][j]);
+            if(j+c<=X) chmax(dp[i+1][j+c],dp[i][j]+a);
+        }
+        rep1(j,X) dp[n][j] = max(dp[n][j],dp[n][j-1]);
+        rep(j,X+1) memo[ii][j] = dp[n][j];
+    }
+
+
+    auto f = [&](ll th)->ll{
+        ll res = 0;
+        rep(ii,3){
+            auto itr = lower_bound(all(memo[ii]),th);
+            if(itr == memo[ii].end()) return llINF;
+            res += itr-memo[ii].begin();
+        }
+        return res;
+    };
+
+
+    ll l = 0, r = llINF;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)<=X) l = mid;
+        else r = mid;
+    }
+
+    cout << l << endl;
+
+
+    // rep(ii,3){
+    //     cerr << ii << "---" << endl;
+    //     for(auto [a,c]:vv[ii]){
+    //         cerr << a << " " << c << endl;
+    //     }
+    // }
+
+    // rep(ii,3){
+    //     cerr << ii << "---" << endl;
+    //     rep(j,X+1){
+    //         cerr << memo[ii][j] << " ";
+    //     }
+    //     cerr << endl;
+    // }
+
+    // cerr << f(0) << endl;
+    // cerr << f(1) << endl;
+    // cerr << f(2) << endl;
+    // cerr << f(3) << endl;
+    // cerr << f(4) << endl;
 
 
 
