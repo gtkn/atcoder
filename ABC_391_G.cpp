@@ -32,6 +32,8 @@ using Pll = pair<ll,ll>;
 using tri = tuple<ll,ll,ll>;
 // using tri = array<ll,3>;
 
+using arr = array<ll,11>;
+
 //using mint = modint1000000007;
 using mint = modint998244353;
 // using mint = modint;
@@ -70,39 +72,73 @@ void solve(){
     string S;
     cin >> S;
 
-    vec(ll) ss(N+1);
-    rep(i,N) ss[i+1] = S[i] - 'a';
-
-    vec(ll) rem(N+1);
-    vec(bool) used(26);
-    rem[N] = 26;
-    repr(i,N){
-        if(used[ss[i+1]]) rem[i] = rem[i+1];
-        else rem[i] = rem[i+1]-1;
-        used[ss[i+1]] = true;
-    }
+    vec(ll) ss(N);
+    rep(i,N) ss[i] = S[i] - 'a';
 
 
+    map<arr,mint> dp;
+    arr a0;
+    rep(i,N+1) a0[i] = 0;
+    dp[a0] = 1;
 
-    ll nn = (1<<N);
-    vec(mint) memo(nn);
-    rep(b,nn){
-        vec(ll) pos;
-        rep(i,N) if(bit(b,i)) pos.push_back(i+1);
-        ll sz = pos.size();
-
-        vvec(mint) dp(M+1,vec(mint)(sz+1));
-        dp[0][0] = 1;
-        rep(i,M+1)rep(j,sz){
-            mint x = 1;            
-            for(ll ii=i+1; ii<=M; ++ii){
-                dp[ii][j+1] += dp[i][j] * x;
-                x *= rem[pos[j]];
+    rep(_,M){
+        map<arr,mint> ndp;
+        for(auto [a,cnt]:dp)rep(c,26){
+            arr na = a0;
+            rep(j,N){
+                na[j+1] = max(na[j],a[j+1]);
+                if(ss[j]==c) chmax(na[j+1],a[j]+1);
             }
+            ndp[na] += cnt;
         }
-
-        rep(i,M+1) memo[b] += dp[i][sz] * mint(rem[i]).pow(M-i);
+        dp = ndp;
     }
+
+    vec(mint) ans(N+1);
+    for(auto [a,cnt]:dp) ans[a[N]] += cnt;
+    rep(i,N+1) cout << ans[i].val() << " "; cout << endl;
+
+    // for(auto [a,cnt]:dp){
+    //     cerr << "a: ";
+    //     rep(i,N+1) cerr << a[i] << " ";
+    //     cerr << "cnt: " << cnt.val() << endl;
+    // }
+
+
+    
+
+
+
+    // vec(ll) rem(N+1);
+    // vec(bool) used(26);
+    // rem[N] = 26;
+    // repr(i,N){
+    //     if(used[ss[i+1]]) rem[i] = rem[i+1];
+    //     else rem[i] = rem[i+1]-1;
+    //     used[ss[i+1]] = true;
+    // }
+
+
+
+    // ll nn = (1<<N);
+    // vec(mint) memo(nn);
+    // rep(b,nn){
+    //     vec(ll) pos;
+    //     rep(i,N) if(bit(b,i)) pos.push_back(i+1);
+    //     ll sz = pos.size();
+
+    //     vvec(mint) dp(M+1,vec(mint)(sz+1));
+    //     dp[0][0] = 1;
+    //     rep(i,M+1)rep(j,sz){
+    //         mint x = 1;            
+    //         for(ll ii=i+1; ii<=M; ++ii){
+    //             dp[ii][j+1] += dp[i][j] * x;
+    //             x *= rem[pos[j]];
+    //         }
+    //     }
+
+    //     rep(i,M+1) memo[b] += dp[i][sz] * mint(rem[i]).pow(M-i);
+    // }
 
     
 
