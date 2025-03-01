@@ -65,28 +65,52 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
-    vec(ll) L(N);
-    rep(i,N) cin >> L[i];
-    sort(all(L));
+    ll N,X;
+    cin >> N >> X;
 
-    // auto f = [&](ll th)->ll{
-    //     auto itr = upper_bound(all(L),th);
-    //     return itr - L.begin();
-    // };
+    vec(ll) U(N),D(N);
+    rep(i,N) cin >> U[i] >> D[i];
+
+    vec(ll) H(N);
+    rep(i,N) H[i] = U[i]+D[i];
+
+    ll hmax = 0;
+    rep(i,N) chmax(hmax,H[i]);
+    
+
+    auto f = [&](ll h)->bool{
+        ll a = 0, b = hmax;
+        rep(i,N){
+            ll xx = H[i]-h;
+            if(xx<0) return false;
+            ll anow = U[i]-xx;
+            ll bnow = U[i];
+            if(anow > b+X) return false;
+            if(bnow < a-X) return false;
+            a = max(a-X,anow);
+            b = min(b+X,bnow);
+        }
+        return true;
+    };
 
 
-    ll ans = 0;
-    rep(i,N)rep(j,i){
-        ll a = L[i], b = L[j];
-        ll x = upper_bound(all(L),a-b) - L.begin();
-        // cerr << i << " " << j << " " << x << " , " << a << " " << b << " " << L[x] <<  endl;
-        chmax(x,j+1);
-        ans += max(0LL,i-x);
+    ll l = 0, r = hmax+10;
+
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if(f(mid)) l=mid;
+        else r=mid;
     }
 
+    ll ans = 0;
+    rep(i,N) ans += H[i]-l;
     cout << ans << endl;
+
+
+    // cerr << l << endl;
+
+
+
 
 
 
@@ -102,4 +126,3 @@ int main(){
     }
     return 0;
 }
- 

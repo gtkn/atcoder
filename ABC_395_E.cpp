@@ -65,28 +65,57 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
-    vec(ll) L(N);
-    rep(i,N) cin >> L[i];
-    sort(all(L));
+    ll N,M,X;
+    cin >> N >> M >> X;
 
-    // auto f = [&](ll th)->ll{
-    //     auto itr = upper_bound(all(L),th);
-    //     return itr - L.begin();
-    // };
-
-
-    ll ans = 0;
-    rep(i,N)rep(j,i){
-        ll a = L[i], b = L[j];
-        ll x = upper_bound(all(L),a-b) - L.begin();
-        // cerr << i << " " << j << " " << x << " , " << a << " " << b << " " << L[x] <<  endl;
-        chmax(x,j+1);
-        ans += max(0LL,i-x);
+    vvec(ll) gf(N),gr(N);
+    rep(_,M){
+        ll u,v;
+        cin >> u >> v;
+        --u; --v;
+        gf[u].push_back(v);
+        gr[v].push_back(u);
     }
 
+
+    vvec(ll) dp(N,vec(ll)(2,llINF));
+    // dp[0][0] = 0;
+
+
+    priority_queue<tri, vec(tri), greater<tri>> pq;
+    auto push = [&](ll cost, ll pos, ll xx)->void{
+        if(chmin(dp[pos][xx],cost)){
+            pq.push({cost,pos,xx});
+        }
+    };
+
+
+    push(0,0,0);
+
+
+    while(!pq.empty()){
+        auto [cost,pos,xx] = pq.top(); pq.pop();
+        if(dp[pos][xx]<cost) continue;
+
+        if(xx==0){
+            for(ll to:gf[pos]){
+                push(cost+1,to,xx);
+            }
+            push(cost+X,pos,1);
+        }else{
+            for(ll to:gr[pos]){
+                push(cost+1,to,xx);
+            }
+            push(cost+X,pos,0); 
+        }
+    }
+
+
+    ll ans = min(dp[N-1][0],dp[N-1][1]);
+
     cout << ans << endl;
+
+
 
 
 
@@ -102,4 +131,3 @@ int main(){
     }
     return 0;
 }
- 

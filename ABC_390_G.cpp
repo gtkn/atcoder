@@ -55,49 +55,6 @@ constexpr char nl = '\n';
 //------------------------------------------------
 
 
-struct FPS{
-    ll K;
-    vec(mint) coeffs;
-
-    FPS(vec(mint) v):coeffs(v){
-        K = v.size();
-    }
-
-    void add(const vec(mint)& v){
-        rep(i,v.size()) coeffs[i] += v[i];
-    }
-
-    void add(ll idx, mint d){
-        assert(idx>=0 && idx<K);
-        coeffs[idx]+=d;
-    }
-
-
-    void mul(const vec(mint)& v){
-        coeffs = convolution(coeffs, v);
-        coeffs.resize(K);
-    };
-
-    void mul(ll d){ // これは内容による // *(x^d+1) ?
-        for(ll i=K; i>=d; i--){
-            coeffs[i] += coeffs[i-d];
-        }
-    };
-
-    void div(ll d){ // これは内容による
-        for(ll i=d; i<=K; i++){
-            coeffs[i] -= coeffs[i-d];
-        }
-    }
-
-    void show(ll th){
-        rep(i,th) cout << i<< ":" << coeffs[i].val() <<", "; cout << endl;
-    }
-
-
-};
-
-
 //---modintで組み合わせ扱う用の構造体---
 struct mcomb{
     ll nmax;
@@ -123,31 +80,42 @@ void solve(){
     ll N;
     cin >> N;
 
-    mint ans = 0;
-    auto keta = [](ll x)->ll{
-        ll res = 0;
-        while(x>0){
-            x/=10;
-            ++res;
-        }
-        return res;
-    };
+    vec(ll) keta_cnt(7);
+    vec(mint) keta_sum(7);
 
-    vec(ll) ks(N+1);
-    vec(ll) kcnt(7);
-    rep1(i,N) ks[i] = keta(i);
-    rep1(i,N) ++kcnt[ks[i]];
-
-
-    ll M = 2000000;
-    vec(mint) v0(M);
-
-    FPS fps(v0);
-    rep1(k,6){
-        vec(mint) v(M);
-        rep(j,kcnt[k]) v[j*k] = ;
+    rep1(i,N){
+        string s = to_string(i);
+        ll k = s.size();
+        keta_cnt[k]++;
+        keta_sum[k] += i;
     }
 
+    mcomb mc(200020);
+
+    ll M = 2e6;
+    vec(mint) ten(M);
+    ten[0] = 1;
+    rep1(i,M-1) ten[i] = ten[i-1]*10;
+
+    mint ans = 0;
+    rep1(now,6){
+        vec(mint) v(M);
+        v[0] = 1;
+
+        rep1(k,6){
+            ll n = keta_cnt[k];
+            if(k==now) n--;
+
+            vec(mint) tmp(M);
+            rep(i,n+1) tmp[i*k] = mc.c(n,i);
+
+            v = convolution(v,tmp);
+        }
+
+        rep(i,M) ans += v[i]*keta_sum[now]*ten[i];
+    }
+
+    cout << ans.val() << endl;
 
 
 

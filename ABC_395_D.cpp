@@ -65,28 +65,88 @@ struct edge{
 vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 
 void solve(){
-    ll N;
-    cin >> N;
-    vec(ll) L(N);
-    rep(i,N) cin >> L[i];
-    sort(all(L));
+    ll N,Q;
+    cin >> N >> Q;
 
-    // auto f = [&](ll th)->ll{
-    //     auto itr = upper_bound(all(L),th);
-    //     return itr - L.begin();
-    // };
+    vec(ll) pos(N);
+    rep(i,N) pos[i] = i;
+
+    vec(ll) p(N);
+    vec(ll) q(N);
+    rep(i,N) p[i] = i;
+    rep(i,N) q[i] = i;
 
 
-    ll ans = 0;
-    rep(i,N)rep(j,i){
-        ll a = L[i], b = L[j];
-        ll x = upper_bound(all(L),a-b) - L.begin();
-        // cerr << i << " " << j << " " << x << " , " << a << " " << b << " " << L[x] <<  endl;
-        chmax(x,j+1);
-        ans += max(0LL,i-x);
+    while(Q--){
+        ll t;
+        cin >> t;
+        if(t==1){
+            ll a,b;
+            cin >>  a >> b;
+            --a; --b;
+
+            pos[a] = q[b];
+        }
+        if(t==2){
+            ll a,b;
+            cin >> a >> b;
+            --a; --b;
+
+            ll pa = q[a];
+            ll pb = q[b];
+
+            p[pa] = b;
+            p[pb] = a;
+            q[a] = pb;
+            q[b] = pa;
+        }
+        if(t==3){
+            ll a;
+            cin >> a;
+            --a;
+            cout << p[pos[a]]+1 << endl;
+        }
+
     }
 
-    cout << ans << endl;
+
+    
+
+
+    // vector<set<ll>> mem(N);
+    // rep(i,N) mem[i].insert(i);
+
+    // while(Q--){
+    //     ll t;
+    //     cin >> t;
+    //     if(t==1){
+    //         ll a,b;
+    //         cin >>  a >> b;
+    //         --a; --b;
+    //         pos[a] = b;
+    //         mem[a].erase(a);
+    //         mem[b].insert(a);            
+    //     }
+    //     if(t==2){
+    //         ll a,b;
+    //         cin >> a >> b;
+    //         --a; --b;
+    //         for(ll x:mem[a]){
+    //             pos[x] = b;
+    //         }
+    //         for(ll x:mem[b]){
+    //             pos[x] = a;
+    //         }
+    //         swap(mem[a],mem[b]);
+    //     }
+    //     if(t==3){
+    //         ll a;
+    //         cin >> a;
+    //         --a;
+    //         cout << pos[a]+1 << endl;            
+    //     }
+    // }
+    
 
 
 
@@ -102,4 +162,3 @@ int main(){
     }
     return 0;
 }
- 

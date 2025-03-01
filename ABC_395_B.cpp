@@ -67,26 +67,30 @@ vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
 void solve(){
     ll N;
     cin >> N;
-    vec(ll) L(N);
-    rep(i,N) cin >> L[i];
-    sort(all(L));
 
-    // auto f = [&](ll th)->ll{
-    //     auto itr = upper_bound(all(L),th);
-    //     return itr - L.begin();
-    // };
+    vvec(char) vv(N,vec(char)(N,'.'));
 
-
-    ll ans = 0;
-    rep(i,N)rep(j,i){
-        ll a = L[i], b = L[j];
-        ll x = upper_bound(all(L),a-b) - L.begin();
-        // cerr << i << " " << j << " " << x << " , " << a << " " << b << " " << L[x] <<  endl;
-        chmax(x,j+1);
-        ans += max(0LL,i-x);
+    rep(i,N){
+        ll j = N-i;
+        if(i<=j){
+            char c;
+            if(i&1){
+                c = '.';
+            }else{
+                c = '#';
+            }
+            for(ll h=i; h<j; ++h)for(ll w=i; w<j; ++w){
+                vv[h][w] = c;
+            }
+        }
     }
 
-    cout << ans << endl;
+    rep(i,N){
+        rep(j,N){
+            cout << vv[i][j];
+        }
+        cout << endl;
+    }
 
 
 
@@ -102,4 +106,3 @@ int main(){
     }
     return 0;
 }
- 
