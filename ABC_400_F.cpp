@@ -1,0 +1,142 @@
+//title
+#include <bits/stdc++.h>
+using namespace std;
+#include <atcoder/all>
+using namespace atcoder;
+#define rep(i,n) for (ll i = 0; i < (n); ++i)
+#define rep1(i,n) for (ll i = 1; i <= (n); ++i)
+#define repr(i,n) for (ll i = (n)-1; i >= 0; --i)
+#define rep1r(i,n) for (ll i = (n); i > 0; --i)
+#define bit(n,k) ((n>>k)&1) //nのk bit目
+
+#define vec(T) vector<T>
+#define vvec(T) vector<vec(T)>
+#define vvvec(T) vector<vvec(T)>
+#define vvvvec(T) vector<vvvec(T)>
+
+//typedef vector<mint>vi;
+//typedef vector<vi>vvi;
+//typedef vector<vvi>vvvi;
+//typedef vector<vvvi>vvvvi;
+
+#define all(x) x.begin(),x.end()
+#define watch(x) cerr << (#x) << " is " << (x) << endl
+#define sfind(s,x) (s.find(x)!=s.end())
+
+using ll = long long;
+using ld = long double;
+using l3 = __int128;
+
+using Pii = pair<int,int>;
+using Pll = pair<ll,ll>;
+using tri = tuple<ll,ll,ll>;
+// using tri = array<ll,3>;
+
+//using mint = modint1000000007;
+using mint = modint998244353;
+// using mint = modint;
+// mint::set_mod(P);
+
+
+template<class T> inline bool chmax(T& a, T b) { if (a < b) { a = b; return 1; } return 0; }
+template<class T> inline bool chmin(T& a, T b) { if (a > b) { a = b; return 1; } return 0; }
+inline ll mod(ll a, ll m) {return (a % m + m) % m;}
+inline Pll PllSum(Pll x, Pll y){return {x.first+y.first,x.second+y.second};}
+constexpr ll llINF = 1LL << 61;
+constexpr int iINF = 1e9;
+constexpr char nl = '\n';
+
+#define dame { puts("-1"); return;}
+#define sayno { puts("No"); return;}
+#define sayyes { puts("Yes"); return;}
+#define sayyn {puts("Yes");}else{puts("No");}
+#define sayfs {puts("First");}else{puts("Second");}
+
+//------------------------------------------------
+
+struct edge{
+    ll to,c,idx;
+    edge(ll to=0, ll c=0, ll idx=0):to(to),c(c),idx(idx){}
+};
+
+
+// vec(ll) dh = {1,0,-1,0};
+// vec(ll) dw = {0,1,0,-1};
+vec(Pll) dhw = { {1,0},{0,1},{-1,0},{0,-1} };
+
+void solve(){
+    ll N;
+    cin >> N;
+    vec(ll) C(N),X(N);
+    rep(i,N) cin >> C[i];   
+    rep(i,N) cin >> X[i];
+    rep(i,N) C[i]--;
+
+    vec(ll) cc = C;
+    cc.insert(cc.end(), all(C));
+
+    ll nn = 2*N;
+    vvec(ll) dp(nn+1, vec(ll)(nn+1, llINF));
+    rep(i,nn) dp[i][i+1] = X[cc[i]] + 1;
+    rep(i,nn+1) dp[i][i] = 0;
+
+    for(ll w=2; w<=N; w++)rep(l,nn){
+        ll r = l+w;
+        if(r>nn) break;
+        for(ll m = l+1; m < r; ++m){
+            chmin(dp[l][r], dp[l][m]+dp[m][r]);
+            if(cc[l]==cc[m]){
+                chmin(dp[l][r], dp[l+1][m]+dp[m][r]+m-l);
+            }
+        }
+    }
+
+    ll ans = llINF;
+    rep(i,N) chmin(ans, dp[i][i+N]);
+    cout << ans << nl;
+
+
+    // rep(i,nn+1){
+    //     rep(j,nn+1){
+    //         if(dp[i][j] == llINF) cerr << "INF" << " ";
+    //         else cerr << dp[i][j] << " ";
+    //     }
+    //     cerr << nl;
+    // }
+
+
+    // auto f = [&](auto f, ll l, ll r)->ll{
+    //     if(l>=r) return llINF;
+    //     if(dp[l][r] != llINF) return dp[l][r];
+
+    //     for(ll x=l+1; x<=r; ++x){
+    //         chmin(dp[l][r], f(f,l,x)+f(f,x,r));
+    //         if(cc[l]==cc[x]){
+    //             chmin(dp[l][r], f(f,l+1,x)+f(f,x,r)+x-l);
+    //         }            
+    //     }
+    //     return dp[l][r];
+    // };
+
+    // ll ans = llINF;
+    // rep(i,N+1) chmin(ans, f(f,i,i+N));
+
+    // cout << ans << nl;
+
+
+
+
+
+
+}
+
+
+
+int main(){
+    int testcasenum=1;
+    //cin >> testcasenum;
+    rep1(ti,testcasenum){
+        solve();
+    }
+    return 0;
+}
