@@ -30,7 +30,56 @@ using bs = bitset<8>;
 //==================================================================================
 
 
+// 動的セグメント木っぽいの
+// https://atcoder.jp/contests/abc403/submissions/65298845
+// https://atcoder.jp/contests/abc403/submissions/65543955
+struct dynamic_segtree{
+    struct S{
+        ll n,sum0,sum1;
+        S():n(0),sum0(0),sum1(0){}
+        S(ll x):n(1),sum0(x),sum1(0){}
+        
+        S& operator+=(const S& s){
+            if(this->n&1){
+                this->sum0 += s.sum1;
+                this->sum1 += s.sum0;
+            }else{
+                this->sum0 += s.sum0;
+                this->sum1 += s.sum1;
+            }
+            this->n += s.n;    
+            return *this;
+        }     
+        S operator+(const S& s) const{
+            S res = *this;
+            res += s;
+            return res;
+        }
+    };
+    
+    
+    ll n;
+    unordered_map<ll,S> mp;
+    dynamic_segtree(ll max_size=0){
+        n = 1;
+        while(n < max_size) n <<= 1;
+    }
 
+    void add(ll idx, S s){
+        ll now = idx + n;
+        mp[now] += s;
+        while(now > 1){
+            now >>= 1;
+            ll l = (now<<1);
+            ll r = l|1;
+            mp[now] = mp[l] + mp[r];
+        }
+    }
+
+    S get() {
+        return mp[1];
+    }
+};
 
 
 
