@@ -29,6 +29,77 @@ using bs = bitset<8>;
 
 //==================================================================================
 
+// 2次元配列を回転させる構造体
+template<typename T>
+struct RotatableMatrix {
+    vector<vector<T>> mat;
+    int h, w; // 回転前の行数と列数
+    int rot; // (0,1,2,3) * 90deg
+
+    RotatableMatrix(int h, int w) : h(h), w(w), rot(0) {
+        mat.resize(h, vector<T>(w));
+    }
+    RotatableMatrix(const vector<vector<T>>& m) : h(m.size()), w(m[0].size()), rot(0) {
+        mat = m;
+    }
+
+
+    // 回転
+    void rotate(int r) {
+        rot = (rot + r) % 4;
+        if (rot < 0) rot += 4;
+    }
+
+    // 回転後の(i, j)成分を取得
+    T get(int i, int j) const {
+        int ni, nj;
+        if (rot == 0) {
+            ni = i; nj = j;
+        } else if (rot == 1) {
+            ni = w - 1 - j; nj = i;
+        } else if (rot == 2) {
+            ni = h - 1 - i; nj = w - 1 - j;
+        } else { // rot == 3
+            ni = j; nj = h - 1 - i;
+        }
+        if (ni < 0 || ni >= h || nj < 0 || nj >= w) {
+            throw out_of_range("Index out of range");
+        }
+        return mat[ni][nj];
+    }
+
+    // 回転後の(i, j)成分を設定
+    T set(int i, int j, T value) {
+        int ni, nj;
+        if (rot == 0) {
+            ni = i; nj = j;
+        } else if (rot == 1) {
+            ni = w - 1 - j; nj = i;
+        } else if (rot == 2) {
+            ni = h - 1 - i; nj = w - 1 - j;
+        } else { // rot == 3
+            ni = j; nj = h - 1 - i;
+        }
+        if (ni < 0 || ni >= h || nj < 0 || nj >= w) {
+            throw out_of_range("Index out of range");
+        }
+        mat[ni][nj] = value;
+    }
+
+    void show() const {
+        cout << "rot = " << rot << endl;
+        for (int i = 0; i < h; ++i) {
+            for (int j = 0; j < w; ++j) {
+                cout << get(i, j) << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+
+
+
 
 // 動的セグメント木っぽいの
 // https://atcoder.jp/contests/abc403/submissions/65298845
